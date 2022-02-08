@@ -1,0 +1,2142 @@
+{
+	"info": {
+		"_postman_id": "16b3208e-e7e6-4c39-82d3-22947673adb0",
+		"name": "Venia POC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Adobe IO Token (READONLY) Copy",
+			"item": [
+				{
+					"name": "INIT: Load Crypto Library for RS256",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"postman.setGlobalVariable(\"jsrsasign-js\", responseBody);",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://kjur.github.io/jsrsasign/jsrsasign-latest-all-min.js",
+							"protocol": "http",
+							"host": [
+								"kjur",
+								"github",
+								"io"
+							],
+							"path": [
+								"jsrsasign",
+								"jsrsasign-latest-all-min.js"
+							]
+						},
+						"description": "Load the RSA-Sign Crypto LIbrary in a global environment variable\n\nSource: http://kjur.github.io/jsrsasign/jsrsasign-latest-all-min.js\n\nGithub: https://github.com/kjur/jsrsasign"
+					},
+					"response": []
+				},
+				{
+					"name": "IMS: JWT Generate + Auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"access_token\", data.access_token);",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"  pm.expect(\"access_token\").to.be.not.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Tips from: https://github.com/kjur/jsrsasign/issues/199",
+									"// https://github.com/kjur/jsrsasign/wiki/Tutorial-for-JWT-generation",
+									"",
+									"var navigator = {}; //fake a navigator object for the lib",
+									"var window = {}; //fake a window object for the lib",
+									"eval(postman.getGlobalVariable(\"jsrsasign-js\")); //import javascript jsrsasign",
+									"",
+									"",
+									"var header = {",
+									"\t\"alg\": \"RS256\"",
+									"};",
+									"",
+									"var data = {",
+									"\t\"exp\": Math.round(87000 + Date.now()/1000),",
+									"\t\"iss\": postman.getEnvironmentVariable(\"ORG_ID\"),",
+									"\t\"sub\": postman.getEnvironmentVariable(\"TECHNICAL_ACCOUNT\"),",
+									"\t\"aud\": postman.getEnvironmentVariable(\"IMS\")+\"/c/\"+postman.getEnvironmentVariable(\"CLIENT_ID\")",
+									"};",
+									"",
+									"meta_scopes = postman.getEnvironmentVariable(\"META_SCOPE\").split(',');",
+									"meta_scopes.forEach(function(scope){",
+									"    var meta_scope = postman.getEnvironmentVariable(\"IMS\")+\"/s/\"+",
+									"                     scope;",
+									"    data[meta_scope] = true;",
+									"});",
+									"",
+									"var private_key = postman.getEnvironmentVariable(\"PRIVATE_KEY\");",
+									"",
+									"var sHeader = JSON.stringify(header);",
+									"var sPayload = JSON.stringify(data);",
+									"var sJWT = KJUR.jws.JWS.sign(\"RS256\", sHeader, sPayload, private_key);",
+									"",
+									"console.log(sPayload);",
+									"console.log(sJWT);",
+									"",
+									"pm.variables.set(\"jwt_token\", sJWT);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "client_id",
+									"value": "{{CLIENT_ID}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{CLIENT_SECRET}}",
+									"type": "text"
+								},
+								{
+									"key": "jwt_token",
+									"value": "{{access_token}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{IMS}}/ims/exchange/jwt/",
+							"host": [
+								"{{IMS}}"
+							],
+							"path": [
+								"ims",
+								"exchange",
+								"jwt",
+								""
+							]
+						},
+						"description": "Generate a JWT token using the Crypto RS256\nSend to IMS for access_token"
+					},
+					"response": []
+				},
+				{
+					"name": "IMS: Get Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{IMS}}/ims/profile/v1",
+							"host": [
+								"{{IMS}}"
+							],
+							"path": [
+								"ims",
+								"profile",
+								"v1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Venia Tag",
+			"item": [
+				{
+					"name": "Clear Variables (READONLY)",
+					"item": [
+						{
+							"name": "Clear Collection Variables",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Clear all old IDs in the collection",
+											"pm.collectionVariables.clear();",
+											"",
+											"pm.test(\"Collection Variables cleared\", function () {",
+											"  pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{IMS}}/ims/profile/v1",
+									"host": [
+										"{{IMS}}"
+									],
+									"path": [
+										"ims",
+										"profile",
+										"v1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create Property (pre-request)",
+					"item": [
+						{
+							"name": "Get Company",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var resp = JSON.parse(responseBody);",
+											"",
+											"//evKey and evValue are the only values that should be changed in this script. Everything else is boilerplate.",
+											"var evKey = \"companyID\";",
+											"var evValue = resp.data[0].id;",
+											"",
+											"pm.collectionVariables.set(evKey, evValue);",
+											"",
+											"pm.test(evKey + \" is set to \" + evValue, function () {",
+											"  pm.response.to.have.status(200);",
+											"  pm.expect(evValue).to.be.not.empty;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{HOST}}/companies",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"companies"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create/Save Property",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var resp = JSON.parse(responseBody);",
+											"",
+											"//evKey and evValue are the only values that should be changed in this script. Everything else is boilerplate.",
+											"var evKey = \"propID\";",
+											"var evValue = resp.data.id;",
+											"",
+											"pm.collectionVariables.set(evKey, evValue);",
+											"",
+											"pm.test(evKey + \" is set to \" + evValue, function () {",
+											"  pm.response.to.have.status(201);",
+											"  pm.expect(evValue).to.be.not.empty;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var now = new Date(Date.now());",
+											"postman.setEnvironmentVariable(\"PROPERTY_UID\", now.toISOString());",
+											"",
+											"// var current = postman.getEnvironmentVariable(\"NAME_Index\");",
+											"// if(current === undefined || current == -1){",
+											"//   current = 1;",
+											"// }",
+											"// else {",
+											"//     current = parseInt(current) + 1;",
+											"// }",
+											"",
+											"// var propName = pm.iterationData.get(\"property_name\"+current);",
+											"// if(propName === undefined && current != 1){",
+											"//     postman.setEnvironmentVariable(\"propName\", \"No property_name\"+current+\" given in runner.data-file.json\");",
+											"//     current = -1;",
+											"// } else {",
+											"//     postman.setEnvironmentVariable(\"propName\", propName);",
+											"// }",
+											"",
+											"// postman.setEnvironmentVariable(\"NAME_Index\", current);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"data\": {\n    \"attributes\": {\n      \"name\": \"{{propName}} {{PROPERTY_UID}}\",\n      \"domains\": [\n        \"example.com\"\n      ],\n      \"platform\": \"web\"\n    },\n    \"type\": \"properties\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/companies/{{companyID}}/properties",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"companies",
+										"{{companyID}}",
+										"properties"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create/Save Host",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var resp = JSON.parse(responseBody);",
+											"",
+											"//evKey and evValue are the only values that should be changed in this script. Everything else is boilerplate.",
+											"var evKey = \"hostID\";",
+											"var evValue = resp.data.id;",
+											"",
+											"pm.collectionVariables.set(evKey, evValue);",
+											"",
+											"pm.test(evKey + \" is set to \" + evValue, function () {",
+											"  pm.response.to.have.status(201);",
+											"  pm.expect(evValue).to.be.not.empty;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"data\": {\n        \"attributes\": {\n            \"name\": \"Managed by Adobe\",\n            \"type_of\": \"akamai\"\n        },\n        \"type\": \"hosts\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/properties/{{propID}}/hosts",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"properties",
+										"{{propID}}",
+										"hosts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Dev Environment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var resp = JSON.parse(responseBody);",
+											"",
+											"//evKey and evValue are the only values that should be changed in this script. Everything else is boilerplate.",
+											"var environment = \"Dev\"",
+											"var evKey = \"envID_\"+environment;",
+											"var evValue = resp.data.id;",
+											"var scriptCode = '<script src=\"'+resp.data.meta.script_sources[0].minified+'\" async></script>';",
+											"pm.collectionVariables.set(\"env\"+environment+\"_script\", scriptCode);   ",
+											"",
+											"pm.collectionVariables.set(evKey, evValue);",
+											"",
+											"pm.test(evKey + \" is set to \" + evValue, function () {",
+											"  pm.response.to.have.status(201);",
+											"  pm.expect(evValue).to.be.not.empty;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"data\": {\n    \"attributes\": {\n      \"name\": \"Development\",\n      \"stage\": \"development\"\n    },\n    \"relationships\": {\n      \"host\": {\n        \"data\": {\n          \"id\": \"{{hostID}}\",\n          \"type\": \"hosts\"\n        }\n      }\n    },\n    \"type\": \"environments\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/properties/{{propID}}/environments",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"properties",
+										"{{propID}}",
+										"environments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Stage Environment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var resp = JSON.parse(responseBody);",
+											"",
+											"//evKey and evValue are the only values that should be changed in this script. Everything else is boilerplate.",
+											"var environment = \"Stage\"",
+											"var evKey = \"envID_\"+environment;",
+											"var evValue = resp.data.id;",
+											"var scriptCode = '<script src=\"'+resp.data.meta.script_sources[0].minified+'\" async></script>';",
+											"pm.collectionVariables.set(\"env\"+environment+\"_script\", scriptCode);   ",
+											"",
+											"pm.collectionVariables.set(evKey, evValue);",
+											"",
+											"pm.test(evKey + \" is set to \" + evValue, function () {",
+											"  pm.response.to.have.status(201);",
+											"  pm.expect(evValue).to.be.not.empty;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"data\": {\n    \"attributes\": {\n      \"name\": \"Staging\",\n      \"stage\": \"staging\"\n    },\n    \"relationships\": {\n      \"host\": {\n        \"data\": {\n          \"id\": \"{{hostID}}\",\n          \"type\": \"hosts\"\n        }\n      }\n    },\n    \"type\": \"environments\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/properties/{{propID}}/environments",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"properties",
+										"{{propID}}",
+										"environments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Prod Environment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var resp = JSON.parse(responseBody);",
+											"",
+											"//evKey and evValue are the only values that should be changed in this script. Everything else is boilerplate.",
+											"var environment = \"Prod\"",
+											"var evKey = \"envID_\"+environment;",
+											"var evValue = resp.data.id;",
+											"var scriptCode = '<script src=\"'+resp.data.meta.script_sources[0].minified+'\" async></script>';",
+											"pm.collectionVariables.set(\"env\"+environment+\"_script\", scriptCode);   ",
+											"",
+											"pm.collectionVariables.set(evKey, evValue);",
+											"",
+											"pm.test(evKey + \" is set to \" + evValue, function () {",
+											"  pm.response.to.have.status(201);",
+											"  pm.expect(evValue).to.be.not.empty;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"data\": {\n    \"attributes\": {\n      \"name\": \"Production\",\n      \"stage\": \"production\"\n    },\n    \"relationships\": {\n      \"host\": {\n        \"data\": {\n          \"id\": \"{{hostID}}\",\n          \"type\": \"hosts\"\n        }\n      }\n    },\n    \"type\": \"environments\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/properties/{{propID}}/environments",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"properties",
+										"{{propID}}",
+										"environments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET Extension Packages",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var res = JSON.parse(responseBody);",
+											"",
+											"extensionPackages = [];",
+											"extensionPackages.push('core');",
+											"extensionPackages.push('adobe-mcid'); //ECID",
+											"extensionPackages.push('adobe-target-v2'); //Target v2",
+											"extensionPackages.push('adobe-analytics');",
+											"extensionPackages.push('gcoe-adobe-client-data-layer'); //ACDL",
+											"extensionPackages.push('adobe-alloy'); //AEP",
+											"extensionPackages.push('mapping-table'); //Event Mapping Table",
+											"",
+											"//Legacy Extentions",
+											"extensionPackages.push('adobe-target');",
+											"extensionPackages.push('adobe-contexthub');",
+											"",
+											"for(const packageName of extensionPackages){",
+											"    function extension_package(data) {",
+											"      return data.attributes.name === packageName;",
+											"    }",
+											"    package = res.data.find(extension_package);",
+											"    if(package != null) pm.collectionVariables.set(\"extPackageID_\"+packageName, package.id);",
+											"}",
+											"",
+											"pm.test(\"Extension Package IDs saved for: \"+ extensionPackages.toString(), function () {",
+											"  pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{HOST}}/extension_packages?page[size]=999&sort=display_name&filter[platform]=EQ%20web,EQ%20null&max_availability=private",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"extension_packages"
+									],
+									"query": [
+										{
+											"key": "page[size]",
+											"value": "999"
+										},
+										{
+											"key": "sort",
+											"value": "display_name"
+										},
+										{
+											"key": "filter[platform]",
+											"value": "EQ%20web,EQ%20null"
+										},
+										{
+											"key": "max_availability",
+											"value": "private"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Save Core Extension Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var res = JSON.parse(responseBody);",
+											"",
+											"//evKey and evValue are the only values that should be changed in this script. Everything else is boilerplate.",
+											"var name = \"core\";",
+											"var evKey = \"extID_\"+name;",
+											"var evValue = \"\";",
+											"",
+											"//Core",
+											"function core_extension(data) {",
+											"  return data.attributes.name === name;",
+											"}",
+											"extension = res.data.find(core_extension);",
+											"if(extension != null) evValue = extension.id;",
+											"",
+											"pm.collectionVariables.set(evKey, evValue);",
+											"",
+											"pm.test(evKey + \" is set to \" + evValue, function () {",
+											"  pm.response.to.have.status(200);",
+											"  pm.expect(evValue).to.be.not.empty;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{HOST}}/properties/{{propID}}/extensions",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"properties",
+										"{{propID}}",
+										"extensions"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.variables.set(\"propName\",\"TechOps_Venia\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Add Extentions (datafile)",
+					"item": [
+						{
+							"name": "Add Extensions",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var attr = pm.iterationData.get('attributes');",
+											"if(!attr.delegate_descriptor_id.includes('core')){",
+											"    var resp = JSON.parse(responseBody);",
+											"    ",
+											"    //evKey and evValue are the only values that should be changed in this script. Everything else is boilerplate.",
+											"    var name = resp.data.attributes.name.replace(/\\s+/g, '-');",
+											"    var evKey = \"extID_\"+name;",
+											"    var evValue = resp.data.id;",
+											"",
+											"    pm.collectionVariables.set(evKey, evValue);",
+											"",
+											"    pm.test(evKey + \" is set to \" + evValue, function () {",
+											"    pm.response.to.have.status(201);",
+											"    });",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var attr = pm.iterationData.get('attributes');",
+											"",
+											"var ddi = attr.delegate_descriptor_id.split(':')",
+											"var id = ddi[0];",
+											"",
+											"//If the extension is Core, skip since it's auto added on property creation",
+											"if(id == \"core\") {",
+											"    postman.setNextRequest(this);",
+											"};",
+											"",
+											"envVariables = pm.environment.toObject();",
+											"// Find All environment variables with SETTINGS and then replace the attribute settings",
+											"for (var envKey in envVariables){",
+											"    if(envKey.includes(\"SETTINGS\")){",
+											"        arr = envKey.split(\"_\");",
+											"        key = arr[arr.length-1];",
+											"        if(id === key){",
+											"            newSettings = pm.environment.get(envKey);",
+											"            // console.log(\"newSettings: \" + JSON.stringify(newSettings));",
+											"            attr.settings = JSON.stringify(newSettings);",
+											"            // console.log(\"UPDATED: \"+ JSON.stringify(attr));",
+											"        }",
+											"    }",
+											"}",
+											"",
+											"pm.variables.set(\"datafile-attribute\", JSON.stringify(attr));",
+											"pm.variables.set(\"datafile-id\", pm.collectionVariables.get('extPackageID_'+id));",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"data\": {\n    \"attributes\": {{datafile-attribute}},\n    \"relationships\": {\n      \"extension_package\": {\n        \"data\": {\n          \"id\": \"{{datafile-id}}\",\n          \"type\": \"extension_packages\"\n        }\n      }\n    },\n    \"type\": \"extensions\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/properties/{{propID}}/extensions",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"properties",
+										"{{propID}}",
+										"extensions"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Add Data Elements (datafile)",
+					"item": [
+						{
+							"name": "Add Data Element",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var resp = JSON.parse(responseBody);",
+											"",
+											"var name = resp.data.attributes.name.replace(/\\s+/g, '-');",
+											"var evKey = \"dataElementID_\"+name;",
+											"var evValue = resp.data.id;",
+											"",
+											"pm.collectionVariables.set(evKey, evValue);",
+											"",
+											"pm.collectionVariables.set(\"dataElementName_\"+name,resp.data.attributes.name);",
+											"",
+											"pm.test(evKey + \" is set to \" + evValue, function () {",
+											"  pm.response.to.have.status(201);",
+											"  pm.expect(evValue).to.be.not.empty;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var attr = pm.iterationData.get('attributes');",
+											"",
+											"// console.log(\"attribute: \"+JSON.stringify(attr));",
+											"",
+											"var ddi = attr.delegate_descriptor_id.split(':')",
+											"var id = ddi[0];",
+											"",
+											"pm.variables.set(\"datafile-attribute\", JSON.stringify(attr));",
+											"pm.variables.set(\"datafile-id\", pm.collectionVariables.get('extID_'+id));",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"data\": {\n    \"attributes\": {{datafile-attribute}},\n    \"relationships\": {\n      \"extension\": {\n        \"data\": {\n          \"id\": \"{{datafile-id}}\",\n          \"type\": \"extensions\"\n        }\n      }\n    },\n    \"type\": \"data_elements\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/properties/{{propID}}/data_elements",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"properties",
+										"{{propID}}",
+										"data_elements"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Add rule and cmps (datafile & pre-request)",
+					"item": [
+						{
+							"name": "Run Add Rule once",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Skip \"Add Rule\" if it's not the first iteration",
+											"if(pm.info.iteration != 0){",
+											"    postman.setNextRequest(\"Add Rule Component\");",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{HOST}}/properties/{{propID}}",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"properties",
+										"{{propID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Rule",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var resp = JSON.parse(responseBody);",
+											"",
+											"//evKey and evValue are the only values that should be changed in this script. Everything else is boilerplate.",
+											"var name = resp.data.attributes.name.replace(/\\s+/g, '-');",
+											"var evKey = \"ruleID_\"+name;",
+											"var evValue = resp.data.id;",
+											"",
+											"pm.collectionVariables.set(evKey, evValue);",
+											"console.log(\"Rule ID: \"+evValue+ \" for \"+name);",
+											"",
+											"pm.variables.set(\"currentRule\",evValue);",
+											"",
+											"pm.test(evKey + \" is set to \" + evValue, function () {",
+											"  pm.response.to.have.status(201);",
+											"  pm.expect(evValue).to.be.not.empty;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"data\": {\n    \"attributes\": {\n                \"enabled\": true,\n                \"name\": \"{{ruleName}}\"\n            },\n    \"type\": \"rules\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/properties/{{propID}}/rules",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"properties",
+										"{{propID}}",
+										"rules"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Rule Component",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var attr = pm.iterationData.get('attributes');",
+											"",
+											"// console.log(\"attribute: \"+JSON.stringify(attr));",
+											"",
+											"var ddi = attr.delegate_descriptor_id.split(':')",
+											"var id = ddi[0];",
+											"",
+											"pm.variables.set(\"datafile-attribute\", JSON.stringify(attr));",
+											"pm.variables.set(\"datafile-id\", pm.collectionVariables.get('extID_'+id));",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var resp = JSON.parse(responseBody);",
+											"",
+											"//evKey and evValue are the only values that should be changed in this script. Everything else is boilerplate.",
+											"var name = resp.data.attributes.name;",
+											"var currentRule = pm.variables.get(\"currentRule\");",
+											"",
+											"pm.test(name + \" component added to \" + currentRule + \" rule\", function () {",
+											"  pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"data\": {\n    \"attributes\": {{datafile-attribute}},\n    \"relationships\": {\n      \"extension\": {\n        \"data\": {\n          \"id\": \"{{datafile-id}}\",\n          \"type\": \"extensions\"\n        }\n      },\n      \"rules\": {\n        \"data\": [\n          {\n            \"id\": \"{{currentRule}}\",\n            \"type\": \"rules\"\n          }\n        ]\n      }\n    },\n    \"type\": \"rule_components\"\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/properties/{{propID}}/rule_components",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"properties",
+										"{{propID}}",
+										"rule_components"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.variables.set(\"ruleName\",\"[10] ECID Authentication\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Publish Library (READONLY)",
+					"item": [
+						{
+							"name": "Create Library",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var resp = JSON.parse(responseBody);",
+											"",
+											"//evKey and evValue are the only values that should be changed in this script. Everything else is boilerplate.",
+											"var evKey = \"libraryID\";",
+											"var evValue = resp.data.id;",
+											"",
+											"pm.collectionVariables.set(evKey, evValue);",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"  pm.response.to.have.status(201);",
+											"  pm.expect(evValue).to.be.not.empty;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var data_data_elements = [];",
+											"var data_rules = [];",
+											"var data_extensions = [];",
+											"// envVariables = pm.environment.toObject();",
+											"envVariables = pm.collectionVariables.toObject();",
+											"",
+											"//Find all data elements, rules, and extensions in this property so they can be added to the Library",
+											"for (var key in envVariables){",
+											"    if(envVariables.hasOwnProperty(key)){",
+											"        if(key.includes(\"dataElementID\") && envVariables[key] != \"\"){",
+											"                var dEObj_data = new Object();",
+											"                dEObj_data.id = envVariables[key];",
+											"                dEObj_data.type = \"data_elements\";",
+											"                dEObj_data.meta = {};",
+											"                dEObj_data.meta.action = \"revise\";",
+											"                data_data_elements.push(JSON.stringify(dEObj_data));",
+											"        }",
+											"        if(key.includes(\"ruleID\") && envVariables[key] != \"\"){",
+											"                var ruleObj_data = new Object();",
+											"                ruleObj_data.id = envVariables[key];",
+											"                ruleObj_data.type = \"rules\";",
+											"                ruleObj_data.meta = {};",
+											"                ruleObj_data.meta.action = \"revise\";",
+											"                data_rules.push(JSON.stringify(ruleObj_data));",
+											"        }",
+											"        if(key.includes(\"extID\") && envVariables[key] != \"\"){",
+											"                var extObj_data = new Object();",
+											"                extObj_data.id = envVariables[key];",
+											"                extObj_data.type = \"extensions\";",
+											"                extObj_data.meta = {};",
+											"                extObj_data.meta.action = \"revise\";",
+											"                data_extensions.push(JSON.stringify(extObj_data));",
+											"        }",
+											"    }",
+											"}",
+											"//If there are data elements, create a JSON entry for them",
+											"var data_elementsObj = \"\";",
+											"if(data_data_elements.length != 0){",
+											"    data_elementsObj = `\"data_elements\": {",
+											"          \"data\": [`",
+											"            +data_data_elements+",
+											"          `]",
+											"        },`;",
+											"}",
+											"//If there are rules, create a JSON entry for them",
+											"var rulesObj = \"\";",
+											"if(data_rules.length != 0){",
+											"    rulesObj = `\"rules\": {",
+											"          \"data\": [`",
+											"            +data_rules+",
+											"          `]",
+											"        },`;",
+											"}",
+											"//If there are extensions, create a JSON entry for them",
+											"var extensionsObj = \"\";",
+											"if(data_extensions.length != 0){",
+											"    extensionsObj = `\"extensions\": {",
+											"          \"data\": [`",
+											"            +data_extensions+",
+											"          `]",
+											"        },`;",
+											"}",
+											"pm.globals.set(\"data_data_elements\", data_elementsObj);",
+											"pm.globals.set(\"data_rules\", rulesObj);",
+											"pm.globals.set(\"data_extensions\", extensionsObj);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"data\": {\n        \"attributes\": {\n            \"name\": \"My Library\"\n        },\n        \"type\": \"libraries\",\n      \"relationships\": {\n        {{data_data_elements}}\n        {{data_rules}}\n        {{data_extensions}}\n        \"environment\": {\n          \"data\": { \n            \"type\": \"environments\", \n            \"id\": \"{{envID_Dev}}\" \n          }\n        }\n      }\n  }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/properties/{{propID}}/libraries",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"properties",
+										"{{propID}}",
+										"libraries"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Build",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"setTimeout(function(){}, 10000);",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"  pm.response.to.have.status(201);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{HOST}}/libraries/{{libraryID}}/builds",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"libraries",
+										"{{libraryID}}",
+										"builds"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Submit",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 20\", function () {",
+											"  pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"data\": {\n        \"id\": \"{{libraryID}}\",\n        \"type\": \"libraries\",\n        \"meta\": {\n            \"action\": \"submit\"\n        }\n    }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/libraries/{{libraryID}}",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"libraries",
+										"{{libraryID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Approve",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 20\", function () {",
+											"  pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"data\": {\n        \"id\": \"{{libraryID}}\",\n        \"type\": \"libraries\",\n        \"meta\": {\n            \"action\": \"approve\"\n        }\n    }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/libraries/{{libraryID}}",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"libraries",
+										"{{libraryID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add to prod Environment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"  pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"data\": {\n        \"id\": \"{{envID_Prod}}\",\n        \"type\": \"environments\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}/libraries/{{libraryID}}/relationships/environment",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"libraries",
+										"{{libraryID}}",
+										"relationships",
+										"environment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Publish",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"  pm.response.to.have.status(201);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CLIENT_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Gw-Ims-Org-Id",
+										"value": "{{ORG_ID}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.api+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.api+json;revision=1",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{HOST}}/libraries/{{libraryID}}/builds",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"libraries",
+										"{{libraryID}}",
+										"builds"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "companyID",
+			"value": ""
+		},
+		{
+			"key": "propID",
+			"value": ""
+		},
+		{
+			"key": "hostID",
+			"value": ""
+		},
+		{
+			"key": "envDev_script",
+			"value": ""
+		},
+		{
+			"key": "envID_Dev",
+			"value": ""
+		},
+		{
+			"key": "envStage_script",
+			"value": ""
+		},
+		{
+			"key": "envID_Stage",
+			"value": ""
+		},
+		{
+			"key": "envProd_script",
+			"value": ""
+		},
+		{
+			"key": "envID_Prod",
+			"value": ""
+		},
+		{
+			"key": "extPackageID_core",
+			"value": ""
+		},
+		{
+			"key": "extPackageID_adobe-mcid",
+			"value": ""
+		},
+		{
+			"key": "extPackageID_adobe-target-v2",
+			"value": ""
+		},
+		{
+			"key": "extPackageID_adobe-analytics",
+			"value": ""
+		},
+		{
+			"key": "extPackageID_gcoe-adobe-client-data-layer",
+			"value": ""
+		},
+		{
+			"key": "extPackageID_adobe-alloy",
+			"value": ""
+		},
+		{
+			"key": "extPackageID_mapping-table",
+			"value": ""
+		},
+		{
+			"key": "extPackageID_adobe-target",
+			"value": ""
+		},
+		{
+			"key": "extPackageID_adobe-contexthub",
+			"value": ""
+		},
+		{
+			"key": "extID_core",
+			"value": ""
+		},
+		{
+			"key": "extID_adobe-mcid",
+			"value": ""
+		},
+		{
+			"key": "extID_adobe-analytics",
+			"value": ""
+		},
+		{
+			"key": "ruleID_[10]-ECID-Authentication",
+			"value": ""
+		},
+		{
+			"key": "extID_adobe-target-v2",
+			"value": ""
+		},
+		{
+			"key": "extID_gcoe-adobe-client-data-layer",
+			"value": ""
+		},
+		{
+			"key": "extID_mapping-table",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_Authentication-State",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_Authentication-State",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_[Cart/wishlist]-Product-Id",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_[Cart/wishlist]-Product-Id",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_[Cart/wishlist]-Product-quantity",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_[Cart/wishlist]-Product-quantity",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_[Cart/wishlist]-SKU",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_[Cart/wishlist]-SKU",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_Email-(hashed)",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_Email-(hashed)",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_eventMappingTable",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_eventMappingTable",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_Page-Path",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_Page-Path",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_Page-resourceType",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_Page-resourceType",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_Page-Template",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_Page-Template",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_Page-Title",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_Page-Title",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_Product-Name",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_Product-Name",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_Product-Path",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_Product-Path",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_Product-SKU",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_Product-SKU",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_ShopperContext-Email",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_ShopperContext-Email",
+			"value": ""
+		},
+		{
+			"key": "dataElementID_ShopperContext-Shopper-Id",
+			"value": ""
+		},
+		{
+			"key": "dataElementName_ShopperContext-Shopper-Id",
+			"value": ""
+		}
+	]
+}
