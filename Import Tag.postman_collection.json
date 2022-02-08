@@ -9,7 +9,7 @@
 			"name": "Import Tag",
 			"item": [
 				{
-					"name": "Clear Variables (READONLY)",
+					"name": "Create Property (pre-request)",
 					"item": [
 						{
 							"name": "Clear Collection Variables",
@@ -60,12 +60,7 @@
 								}
 							},
 							"response": []
-						}
-					]
-				},
-				{
-					"name": "Create Property (pre-request)",
-					"item": [
+						},
 						{
 							"name": "Get Company",
 							"event": [
