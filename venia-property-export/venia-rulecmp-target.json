@@ -1,437 +1,431 @@
-[
-        {
-            "id": "RCed08bc046188419bb1f37ecac354a37c",
-            "type": "rule_components",
-            "attributes": {
-                "created_at": "2022-02-03T21:34:07.115Z",
-                "delegate_descriptor_id": "gcoe-adobe-client-data-layer::events::datalayer-push",
-                "deleted_at": null,
-                "dirty": false,
-                "name": "Adobe Client Data Layer - Data Pushed",
-                "negate": false,
-                "order": 0,
-                "rule_order": 10.0,
-                "timeout": 2000,
-                "delay_next": true,
-                "published": true,
-                "published_at": null,
-                "revision_number": 0,
-                "updated_at": "2022-02-04T20:13:49.168Z",
-                "settings": "{\"scope\":\"all\",\"method\":\"allData\"}"
-            },
-            "relationships": {
-                "updated_with_extension_package": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/updated_with_extension_package"
-                    },
-                    "data": {
-                        "id": "EP6e4c031a8b7640d7ac3fab013fa28b17",
-                        "type": "extension_packages"
-                    }
+[{
+        "id": "RC9d9027a7a2f84049ad5c1a7cf0b47fd0",
+        "type": "rule_components",
+        "attributes": {
+            "created_at": "2022-02-08T19:44:18.269Z",
+            "delegate_descriptor_id": "core::actions::custom-code",
+            "deleted_at": null,
+            "dirty": false,
+            "name": "targetGlobalSettings",
+            "negate": false,
+            "order": 0,
+            "rule_order": 50.0,
+            "timeout": 2000,
+            "delay_next": true,
+            "published": true,
+            "published_at": null,
+            "revision_number": 0,
+            "updated_at": "2022-02-08T19:49:53.706Z",
+            "settings": "{\"source\":\"window.targetGlobalSettings = {  \\n   cookieDomain: \\\"adobeaemcloud.com\\\" //set the cookie directly on this subdomain \\n};\",\"language\":\"javascript\"}"
+        },
+        "relationships": {
+            "updated_with_extension_package": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC9d9027a7a2f84049ad5c1a7cf0b47fd0/updated_with_extension_package"
                 },
-                "updated_with_extension": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/updated_with_extension"
-                    },
-                    "data": {
-                        "id": "EX5a9dfa8056a14e5f82bcab0204703ce2",
-                        "type": "extensions"
-                    }
-                },
-                "extension": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/extension"
-                    },
-                    "data": {
-                        "id": "EX1eb2107b364f4c1cb998642eb9177844",
-                        "type": "extensions"
-                    }
-                },
-                "notes": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/notes"
-                    }
-                },
-                "origin": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/origin"
-                    },
-                    "data": {
-                        "id": "RCed08bc046188419bb1f37ecac354a37c",
-                        "type": "rule_components"
-                    }
-                },
-                "property": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
-                    },
-                    "data": {
-                        "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
-                        "type": "properties"
-                    }
-                },
-                "rules": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/rules"
-                    }
+                "data": {
+                    "id": "EPd22815afd48447aa955be6a3a012e3b5",
+                    "type": "extension_packages"
                 }
             },
-            "links": {
-                "extension": "https://reactor.adobe.io/extensions/EX1eb2107b364f4c1cb998642eb9177844",
-                "origin": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c",
-                "rules": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/rules",
-                "self": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c"
+            "updated_with_extension": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC9d9027a7a2f84049ad5c1a7cf0b47fd0/updated_with_extension"
+                },
+                "data": {
+                    "id": "EXfd58bcffee0646459064cbb7de6b9754",
+                    "type": "extensions"
+                }
             },
-            "meta": {
-                "latest_revision_number": 6
+            "extension": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC9d9027a7a2f84049ad5c1a7cf0b47fd0/extension"
+                },
+                "data": {
+                    "id": "EX03d7f33dead9439db3f073528d164e99",
+                    "type": "extensions"
+                }
+            },
+            "notes": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC9d9027a7a2f84049ad5c1a7cf0b47fd0/notes"
+                }
+            },
+            "origin": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC9d9027a7a2f84049ad5c1a7cf0b47fd0/origin"
+                },
+                "data": {
+                    "id": "RC9d9027a7a2f84049ad5c1a7cf0b47fd0",
+                    "type": "rule_components"
+                }
+            },
+            "property": {
+                "links": {
+                    "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
+                },
+                "data": {
+                    "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
+                    "type": "properties"
+                }
+            },
+            "rules": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC9d9027a7a2f84049ad5c1a7cf0b47fd0/rules"
+                }
             }
         },
-        {
-            "id": "RC59c17b2aa67a42538802a75ff277947c",
-            "type": "rule_components",
-            "attributes": {
-                "created_at": "2022-02-03T22:18:00.460Z",
-                "delegate_descriptor_id": "core::actions::custom-code",
-                "deleted_at": null,
-                "dirty": false,
-                "name": "targetGlobalSettings",
-                "negate": false,
-                "order": 0,
-                "rule_order": 50.0,
-                "timeout": 2000,
-                "delay_next": true,
-                "published": true,
-                "published_at": null,
-                "revision_number": 0,
-                "updated_at": "2022-02-03T22:18:00.460Z",
-                "settings": "{\"source\":\"window.targetGlobalSettings = {  \\n   cookieDomain: 'publish-p50203-e282782.adobeaemcloud.com' //set the cookie directly on this subdomain \\n};\",\"language\":\"javascript\"}"
-            },
-            "relationships": {
-                "updated_with_extension_package": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC59c17b2aa67a42538802a75ff277947c/updated_with_extension_package"
-                    },
-                    "data": {
-                        "id": "EPd22815afd48447aa955be6a3a012e3b5",
-                        "type": "extension_packages"
-                    }
-                },
-                "updated_with_extension": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC59c17b2aa67a42538802a75ff277947c/updated_with_extension"
-                    },
-                    "data": {
-                        "id": "EXfd58bcffee0646459064cbb7de6b9754",
-                        "type": "extensions"
-                    }
-                },
-                "extension": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC59c17b2aa67a42538802a75ff277947c/extension"
-                    },
-                    "data": {
-                        "id": "EX03d7f33dead9439db3f073528d164e99",
-                        "type": "extensions"
-                    }
-                },
-                "notes": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC59c17b2aa67a42538802a75ff277947c/notes"
-                    }
-                },
-                "origin": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC59c17b2aa67a42538802a75ff277947c/origin"
-                    },
-                    "data": {
-                        "id": "RC59c17b2aa67a42538802a75ff277947c",
-                        "type": "rule_components"
-                    }
-                },
-                "property": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
-                    },
-                    "data": {
-                        "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
-                        "type": "properties"
-                    }
-                },
-                "rules": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC59c17b2aa67a42538802a75ff277947c/rules"
-                    }
-                }
-            },
-            "links": {
-                "extension": "https://reactor.adobe.io/extensions/EX03d7f33dead9439db3f073528d164e99",
-                "origin": "https://reactor.adobe.io/rule_components/RC59c17b2aa67a42538802a75ff277947c",
-                "rules": "https://reactor.adobe.io/rule_components/RC59c17b2aa67a42538802a75ff277947c/rules",
-                "self": "https://reactor.adobe.io/rule_components/RC59c17b2aa67a42538802a75ff277947c"
-            },
-            "meta": {
-                "latest_revision_number": 6
-            }
+        "links": {
+            "extension": "https://reactor.adobe.io/extensions/EX03d7f33dead9439db3f073528d164e99",
+            "origin": "https://reactor.adobe.io/rule_components/RC9d9027a7a2f84049ad5c1a7cf0b47fd0",
+            "rules": "https://reactor.adobe.io/rule_components/RC9d9027a7a2f84049ad5c1a7cf0b47fd0/rules",
+            "self": "https://reactor.adobe.io/rule_components/RC9d9027a7a2f84049ad5c1a7cf0b47fd0"
         },
-        {
-            "id": "RCdbbe5ef3175a4b04b529e8e5a28735de",
-            "type": "rule_components",
-            "attributes": {
-                "created_at": "2022-02-03T21:34:07.070Z",
-                "delegate_descriptor_id": "adobe-target-v2::actions::load-target",
-                "deleted_at": null,
-                "dirty": false,
-                "name": "Adobe Target v2 - Load Target",
-                "negate": false,
-                "order": 1,
-                "rule_order": 50.0,
-                "timeout": 2000,
-                "delay_next": true,
-                "published": true,
-                "published_at": null,
-                "revision_number": 0,
-                "updated_at": "2022-02-03T22:18:00.432Z",
-                "settings": "{}"
-            },
-            "relationships": {
-                "updated_with_extension_package": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/updated_with_extension_package"
-                    },
-                    "data": {
-                        "id": "EP1b546118eb2742ad8d50d37a8325daca",
-                        "type": "extension_packages"
-                    }
-                },
-                "updated_with_extension": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/updated_with_extension"
-                    },
-                    "data": {
-                        "id": "EX7ef2c2750f9a49cea8ad9ccad8c2d179",
-                        "type": "extensions"
-                    }
-                },
-                "extension": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/extension"
-                    },
-                    "data": {
-                        "id": "EX7c0a138c9e1245e8a2f2e35820a65a48",
-                        "type": "extensions"
-                    }
-                },
-                "notes": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/notes"
-                    }
-                },
-                "origin": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/origin"
-                    },
-                    "data": {
-                        "id": "RCdbbe5ef3175a4b04b529e8e5a28735de",
-                        "type": "rule_components"
-                    }
-                },
-                "property": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
-                    },
-                    "data": {
-                        "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
-                        "type": "properties"
-                    }
-                },
-                "rules": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/rules"
-                    }
-                }
-            },
-            "links": {
-                "extension": "https://reactor.adobe.io/extensions/EX7c0a138c9e1245e8a2f2e35820a65a48",
-                "origin": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de",
-                "rules": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/rules",
-                "self": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de"
-            },
-            "meta": {
-                "latest_revision_number": 6
-            }
-        },
-        {
-            "id": "RC4e445ba5e48441369187318199414bf3",
-            "type": "rule_components",
-            "attributes": {
-                "created_at": "2022-02-03T21:35:23.543Z",
-                "delegate_descriptor_id": "adobe-target-v2::actions::add-page-load-params",
-                "deleted_at": null,
-                "dirty": false,
-                "name": "Adobe Target v2 - Add Params to Page Load Request",
-                "negate": false,
-                "order": 2,
-                "rule_order": 50.0,
-                "timeout": 2000,
-                "delay_next": true,
-                "published": true,
-                "published_at": null,
-                "revision_number": 0,
-                "updated_at": "2022-02-04T19:30:24.644Z",
-                "settings": "{\"params\":{\"pageName\":{\"value\":\"%Page Title%\",\"checked\":false},\"entity.id\":{\"value\":\"%Product SKU%\",\"checked\":false},\"entity.name\":{\"value\":\"%Product Name%\",\"checked\":false},\"entity.pageUrl\":{\"value\":\"%Product Path%\",\"checked\":false}}}"
-            },
-            "relationships": {
-                "updated_with_extension_package": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/updated_with_extension_package"
-                    },
-                    "data": {
-                        "id": "EP1b546118eb2742ad8d50d37a8325daca",
-                        "type": "extension_packages"
-                    }
-                },
-                "updated_with_extension": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/updated_with_extension"
-                    },
-                    "data": {
-                        "id": "EX7ef2c2750f9a49cea8ad9ccad8c2d179",
-                        "type": "extensions"
-                    }
-                },
-                "extension": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/extension"
-                    },
-                    "data": {
-                        "id": "EX7c0a138c9e1245e8a2f2e35820a65a48",
-                        "type": "extensions"
-                    }
-                },
-                "notes": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/notes"
-                    }
-                },
-                "origin": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/origin"
-                    },
-                    "data": {
-                        "id": "RC4e445ba5e48441369187318199414bf3",
-                        "type": "rule_components"
-                    }
-                },
-                "property": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
-                    },
-                    "data": {
-                        "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
-                        "type": "properties"
-                    }
-                },
-                "rules": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/rules"
-                    }
-                }
-            },
-            "links": {
-                "extension": "https://reactor.adobe.io/extensions/EX7c0a138c9e1245e8a2f2e35820a65a48",
-                "origin": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3",
-                "rules": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/rules",
-                "self": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3"
-            },
-            "meta": {
-                "latest_revision_number": 6
-            }
-        },
-        {
-            "id": "RC3c8bb40e03ef4b2eb0935a2c8a77f105",
-            "type": "rule_components",
-            "attributes": {
-                "created_at": "2022-02-03T21:35:23.530Z",
-                "delegate_descriptor_id": "adobe-target-v2::actions::fire-page-load",
-                "deleted_at": null,
-                "dirty": false,
-                "name": "Adobe Target v2 - Fire Page Load Request",
-                "negate": false,
-                "order": 3,
-                "rule_order": 50.0,
-                "timeout": 2000,
-                "delay_next": true,
-                "published": true,
-                "published_at": null,
-                "revision_number": 0,
-                "updated_at": "2022-02-03T22:18:00.448Z",
-                "settings": "{\"bodyHiddenStyle\":\"body {opacity: 0}\",\"bodyHidingEnabled\":true}"
-            },
-            "relationships": {
-                "updated_with_extension_package": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/updated_with_extension_package"
-                    },
-                    "data": {
-                        "id": "EP1b546118eb2742ad8d50d37a8325daca",
-                        "type": "extension_packages"
-                    }
-                },
-                "updated_with_extension": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/updated_with_extension"
-                    },
-                    "data": {
-                        "id": "EX7ef2c2750f9a49cea8ad9ccad8c2d179",
-                        "type": "extensions"
-                    }
-                },
-                "extension": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/extension"
-                    },
-                    "data": {
-                        "id": "EX7c0a138c9e1245e8a2f2e35820a65a48",
-                        "type": "extensions"
-                    }
-                },
-                "notes": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/notes"
-                    }
-                },
-                "origin": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/origin"
-                    },
-                    "data": {
-                        "id": "RC3c8bb40e03ef4b2eb0935a2c8a77f105",
-                        "type": "rule_components"
-                    }
-                },
-                "property": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
-                    },
-                    "data": {
-                        "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
-                        "type": "properties"
-                    }
-                },
-                "rules": {
-                    "links": {
-                        "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/rules"
-                    }
-                }
-            },
-            "links": {
-                "extension": "https://reactor.adobe.io/extensions/EX7c0a138c9e1245e8a2f2e35820a65a48",
-                "origin": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105",
-                "rules": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/rules",
-                "self": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105"
-            },
-            "meta": {
-                "latest_revision_number": 6
-            }
+        "meta": {
+            "latest_revision_number": 10
         }
-    ]
+    }, {
+        "id": "RCed08bc046188419bb1f37ecac354a37c",
+        "type": "rule_components",
+        "attributes": {
+            "created_at": "2022-02-03T21:34:07.115Z",
+            "delegate_descriptor_id": "gcoe-adobe-client-data-layer::events::datalayer-push",
+            "deleted_at": null,
+            "dirty": false,
+            "name": "Adobe Client Data Layer - Data Pushed",
+            "negate": false,
+            "order": 0,
+            "rule_order": 10.0,
+            "timeout": 2000,
+            "delay_next": true,
+            "published": true,
+            "published_at": null,
+            "revision_number": 0,
+            "updated_at": "2022-02-04T20:13:49.168Z",
+            "settings": "{\"scope\":\"all\",\"method\":\"allData\"}"
+        },
+        "relationships": {
+            "updated_with_extension_package": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/updated_with_extension_package"
+                },
+                "data": {
+                    "id": "EP6e4c031a8b7640d7ac3fab013fa28b17",
+                    "type": "extension_packages"
+                }
+            },
+            "updated_with_extension": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/updated_with_extension"
+                },
+                "data": {
+                    "id": "EX5a9dfa8056a14e5f82bcab0204703ce2",
+                    "type": "extensions"
+                }
+            },
+            "extension": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/extension"
+                },
+                "data": {
+                    "id": "EX1eb2107b364f4c1cb998642eb9177844",
+                    "type": "extensions"
+                }
+            },
+            "notes": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/notes"
+                }
+            },
+            "origin": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/origin"
+                },
+                "data": {
+                    "id": "RCed08bc046188419bb1f37ecac354a37c",
+                    "type": "rule_components"
+                }
+            },
+            "property": {
+                "links": {
+                    "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
+                },
+                "data": {
+                    "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
+                    "type": "properties"
+                }
+            },
+            "rules": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/rules"
+                }
+            }
+        },
+        "links": {
+            "extension": "https://reactor.adobe.io/extensions/EX1eb2107b364f4c1cb998642eb9177844",
+            "origin": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c",
+            "rules": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c/rules",
+            "self": "https://reactor.adobe.io/rule_components/RCed08bc046188419bb1f37ecac354a37c"
+        },
+        "meta": {
+            "latest_revision_number": 10
+        }
+    }, {
+        "id": "RCdbbe5ef3175a4b04b529e8e5a28735de",
+        "type": "rule_components",
+        "attributes": {
+            "created_at": "2022-02-03T21:34:07.070Z",
+            "delegate_descriptor_id": "adobe-target-v2::actions::load-target",
+            "deleted_at": null,
+            "dirty": false,
+            "name": "Adobe Target v2 - Load Target",
+            "negate": false,
+            "order": 1,
+            "rule_order": 50.0,
+            "timeout": 2000,
+            "delay_next": true,
+            "published": true,
+            "published_at": null,
+            "revision_number": 0,
+            "updated_at": "2022-02-08T19:44:18.211Z",
+            "settings": "{}"
+        },
+        "relationships": {
+            "updated_with_extension_package": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/updated_with_extension_package"
+                },
+                "data": {
+                    "id": "EP1b546118eb2742ad8d50d37a8325daca",
+                    "type": "extension_packages"
+                }
+            },
+            "updated_with_extension": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/updated_with_extension"
+                },
+                "data": {
+                    "id": "EX7ef2c2750f9a49cea8ad9ccad8c2d179",
+                    "type": "extensions"
+                }
+            },
+            "extension": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/extension"
+                },
+                "data": {
+                    "id": "EX7c0a138c9e1245e8a2f2e35820a65a48",
+                    "type": "extensions"
+                }
+            },
+            "notes": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/notes"
+                }
+            },
+            "origin": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/origin"
+                },
+                "data": {
+                    "id": "RCdbbe5ef3175a4b04b529e8e5a28735de",
+                    "type": "rule_components"
+                }
+            },
+            "property": {
+                "links": {
+                    "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
+                },
+                "data": {
+                    "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
+                    "type": "properties"
+                }
+            },
+            "rules": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/rules"
+                }
+            }
+        },
+        "links": {
+            "extension": "https://reactor.adobe.io/extensions/EX7c0a138c9e1245e8a2f2e35820a65a48",
+            "origin": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de",
+            "rules": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de/rules",
+            "self": "https://reactor.adobe.io/rule_components/RCdbbe5ef3175a4b04b529e8e5a28735de"
+        },
+        "meta": {
+            "latest_revision_number": 10
+        }
+    }, {
+        "id": "RC4e445ba5e48441369187318199414bf3",
+        "type": "rule_components",
+        "attributes": {
+            "created_at": "2022-02-03T21:35:23.543Z",
+            "delegate_descriptor_id": "adobe-target-v2::actions::add-page-load-params",
+            "deleted_at": null,
+            "dirty": false,
+            "name": "Adobe Target v2 - Add Params to Page Load Request",
+            "negate": false,
+            "order": 2,
+            "rule_order": 50.0,
+            "timeout": 2000,
+            "delay_next": true,
+            "published": true,
+            "published_at": null,
+            "revision_number": 0,
+            "updated_at": "2022-02-08T19:44:18.217Z",
+            "settings": "{\"params\":{\"pageName\":{\"value\":\"%Page Title%\",\"checked\":false},\"entity.id\":{\"value\":\"%Product SKU%\",\"checked\":false},\"entity.name\":{\"value\":\"%Product Name%\",\"checked\":false},\"entity.pageUrl\":{\"value\":\"%Product Path%\",\"checked\":false}}}"
+        },
+        "relationships": {
+            "updated_with_extension_package": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/updated_with_extension_package"
+                },
+                "data": {
+                    "id": "EP1b546118eb2742ad8d50d37a8325daca",
+                    "type": "extension_packages"
+                }
+            },
+            "updated_with_extension": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/updated_with_extension"
+                },
+                "data": {
+                    "id": "EX7ef2c2750f9a49cea8ad9ccad8c2d179",
+                    "type": "extensions"
+                }
+            },
+            "extension": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/extension"
+                },
+                "data": {
+                    "id": "EX7c0a138c9e1245e8a2f2e35820a65a48",
+                    "type": "extensions"
+                }
+            },
+            "notes": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/notes"
+                }
+            },
+            "origin": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/origin"
+                },
+                "data": {
+                    "id": "RC4e445ba5e48441369187318199414bf3",
+                    "type": "rule_components"
+                }
+            },
+            "property": {
+                "links": {
+                    "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
+                },
+                "data": {
+                    "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
+                    "type": "properties"
+                }
+            },
+            "rules": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/rules"
+                }
+            }
+        },
+        "links": {
+            "extension": "https://reactor.adobe.io/extensions/EX7c0a138c9e1245e8a2f2e35820a65a48",
+            "origin": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3",
+            "rules": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3/rules",
+            "self": "https://reactor.adobe.io/rule_components/RC4e445ba5e48441369187318199414bf3"
+        },
+        "meta": {
+            "latest_revision_number": 10
+        }
+    }, {
+        "id": "RC3c8bb40e03ef4b2eb0935a2c8a77f105",
+        "type": "rule_components",
+        "attributes": {
+            "created_at": "2022-02-03T21:35:23.530Z",
+            "delegate_descriptor_id": "adobe-target-v2::actions::fire-page-load",
+            "deleted_at": null,
+            "dirty": false,
+            "name": "Adobe Target v2 - Fire Page Load Request",
+            "negate": false,
+            "order": 3,
+            "rule_order": 50.0,
+            "timeout": 2000,
+            "delay_next": true,
+            "published": true,
+            "published_at": null,
+            "revision_number": 0,
+            "updated_at": "2022-02-08T19:44:18.248Z",
+            "settings": "{\"bodyHiddenStyle\":\"body {opacity: 0}\",\"bodyHidingEnabled\":true}"
+        },
+        "relationships": {
+            "updated_with_extension_package": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/updated_with_extension_package"
+                },
+                "data": {
+                    "id": "EP1b546118eb2742ad8d50d37a8325daca",
+                    "type": "extension_packages"
+                }
+            },
+            "updated_with_extension": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/updated_with_extension"
+                },
+                "data": {
+                    "id": "EX7ef2c2750f9a49cea8ad9ccad8c2d179",
+                    "type": "extensions"
+                }
+            },
+            "extension": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/extension"
+                },
+                "data": {
+                    "id": "EX7c0a138c9e1245e8a2f2e35820a65a48",
+                    "type": "extensions"
+                }
+            },
+            "notes": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/notes"
+                }
+            },
+            "origin": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/origin"
+                },
+                "data": {
+                    "id": "RC3c8bb40e03ef4b2eb0935a2c8a77f105",
+                    "type": "rule_components"
+                }
+            },
+            "property": {
+                "links": {
+                    "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
+                },
+                "data": {
+                    "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
+                    "type": "properties"
+                }
+            },
+            "rules": {
+                "links": {
+                    "related": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/rules"
+                }
+            }
+        },
+        "links": {
+            "extension": "https://reactor.adobe.io/extensions/EX7c0a138c9e1245e8a2f2e35820a65a48",
+            "origin": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105",
+            "rules": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105/rules",
+            "self": "https://reactor.adobe.io/rule_components/RC3c8bb40e03ef4b2eb0935a2c8a77f105"
+        },
+        "meta": {
+            "latest_revision_number": 10
+        }
+    }]
