@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "9ff2adee-f781-4d43-a4a9-f764204ba85c",
+		"name": "Extract Tag",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Save Responses",
+			"item": [
+				{
+					"name": "List Extensions (save response)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create a <name>-extensions.json file with the data array in the response.\", function () {",
+									"  pm.response.to.have.status(200);",
+									"  pm.expect(responseBody).to.be.not.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{CLIENT_ID}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Gw-Ims-Org-Id",
+								"value": "{{ORG_ID}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json;revision=1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/properties/{{propID}}/extensions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"properties",
+								"{{propID}}",
+								"extensions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Data Elements (save response)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create a <name>-dataElements.json file with the data array in the response.\", function () {",
+									"  pm.response.to.have.status(200);",
+									"  pm.expect(responseBody).to.be.not.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{CLIENT_ID}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Gw-Ims-Org-Id",
+								"value": "{{ORG_ID}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json;revision=1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/properties/{{propID}}/data_elements",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"properties",
+								"{{propID}}",
+								"data_elements"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Rules (save response)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var resp = JSON.parse(responseBody);",
+									"",
+									"rules = [];",
+									"for(const rule of resp.data){",
+									"    console.log(rule.attributes.name + \" with RuleID: \" + rule.id);",
+									"}",
+									"",
+									"pm.test(\"Create a <name>-rules.json file with the data array in the response.\", function () {",
+									"  pm.response.to.have.status(200);",
+									"  pm.expect(responseBody).to.be.not.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{CLIENT_ID}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Gw-Ims-Org-Id",
+								"value": "{{ORG_ID}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json;revision=1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/properties/{{propID}}/rules",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"properties",
+								"{{propID}}",
+								"rules"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "List Rule Components (datafile)",
+			"item": [
+				{
+					"name": "List Rule Components (save all responses)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var id = pm.iterationData.get('id');",
+									"var attr = pm.iterationData.get('attributes');",
+									"console.log(\"[Iteration \" + pm.info.iteration + \"] is \" +attr.name + \" with RuleID: \" + id);",
+									"",
+									"",
+									"pm.test(attr.name + \" with RuleID: \" + id, function () {",
+									"  pm.response.to.have.status(200);",
+									"  pm.expect(id).to.be.not.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var id = pm.iterationData.get('id');",
+									"pm.variables.set(\"currentRule\", id)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{CLIENT_ID}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Gw-Ims-Org-Id",
+								"value": "{{ORG_ID}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json;revision=1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/rules/{{currentRule}}/rule_components",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"rules",
+								"{{currentRule}}",
+								"rule_components"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "propID",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
