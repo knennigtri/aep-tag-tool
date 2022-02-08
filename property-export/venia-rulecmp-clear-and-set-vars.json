@@ -1,0 +1,263 @@
+[
+        {
+            "id": "RC7639547024424511aaa7378592f0e5ef",
+            "type": "rule_components",
+            "attributes": {
+                "created_at": "2022-02-04T21:19:37.267Z",
+                "delegate_descriptor_id": "adobe-analytics::actions::clear-variables",
+                "deleted_at": null,
+                "dirty": false,
+                "name": "Adobe Analytics - Clear Variables",
+                "negate": false,
+                "order": 0,
+                "rule_order": 50.0,
+                "timeout": 2000,
+                "delay_next": true,
+                "published": true,
+                "published_at": null,
+                "revision_number": 0,
+                "updated_at": "2022-02-04T21:19:37.267Z",
+                "settings": "{}"
+            },
+            "relationships": {
+                "updated_with_extension_package": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC7639547024424511aaa7378592f0e5ef/updated_with_extension_package"
+                    },
+                    "data": {
+                        "id": "EPa06d4a70bf964e93808ee073533d9238",
+                        "type": "extension_packages"
+                    }
+                },
+                "updated_with_extension": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC7639547024424511aaa7378592f0e5ef/updated_with_extension"
+                    },
+                    "data": {
+                        "id": "EX4cf2c0a81945467b81f28f9025bcbcbd",
+                        "type": "extensions"
+                    }
+                },
+                "extension": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC7639547024424511aaa7378592f0e5ef/extension"
+                    },
+                    "data": {
+                        "id": "EXe472053b31b04f95b990728e8ceb684b",
+                        "type": "extensions"
+                    }
+                },
+                "notes": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC7639547024424511aaa7378592f0e5ef/notes"
+                    }
+                },
+                "origin": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC7639547024424511aaa7378592f0e5ef/origin"
+                    },
+                    "data": {
+                        "id": "RC7639547024424511aaa7378592f0e5ef",
+                        "type": "rule_components"
+                    }
+                },
+                "property": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
+                    },
+                    "data": {
+                        "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
+                        "type": "properties"
+                    }
+                },
+                "rules": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC7639547024424511aaa7378592f0e5ef/rules"
+                    }
+                }
+            },
+            "links": {
+                "extension": "https://reactor.adobe.io/extensions/EXe472053b31b04f95b990728e8ceb684b",
+                "origin": "https://reactor.adobe.io/rule_components/RC7639547024424511aaa7378592f0e5ef",
+                "rules": "https://reactor.adobe.io/rule_components/RC7639547024424511aaa7378592f0e5ef/rules",
+                "self": "https://reactor.adobe.io/rule_components/RC7639547024424511aaa7378592f0e5ef"
+            },
+            "meta": {
+                "latest_revision_number": 12
+            }
+        },
+        {
+            "id": "RC0641fba1c6bb46938ac4689fa471cb2a",
+            "type": "rule_components",
+            "attributes": {
+                "created_at": "2022-02-03T20:18:11.187Z",
+                "delegate_descriptor_id": "gcoe-adobe-client-data-layer::events::datalayer-push",
+                "deleted_at": null,
+                "dirty": false,
+                "name": "Adobe Client Data Layer - Data Pushed",
+                "negate": false,
+                "order": 0,
+                "rule_order": 50.0,
+                "timeout": 2000,
+                "delay_next": true,
+                "published": true,
+                "published_at": null,
+                "revision_number": 0,
+                "updated_at": "2022-02-03T21:00:58.227Z",
+                "settings": "{\"scope\":\"all\",\"method\":\"allEvents\"}"
+            },
+            "relationships": {
+                "updated_with_extension_package": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC0641fba1c6bb46938ac4689fa471cb2a/updated_with_extension_package"
+                    },
+                    "data": {
+                        "id": "EP6e4c031a8b7640d7ac3fab013fa28b17",
+                        "type": "extension_packages"
+                    }
+                },
+                "updated_with_extension": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC0641fba1c6bb46938ac4689fa471cb2a/updated_with_extension"
+                    },
+                    "data": {
+                        "id": "EX5a9dfa8056a14e5f82bcab0204703ce2",
+                        "type": "extensions"
+                    }
+                },
+                "extension": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC0641fba1c6bb46938ac4689fa471cb2a/extension"
+                    },
+                    "data": {
+                        "id": "EX1eb2107b364f4c1cb998642eb9177844",
+                        "type": "extensions"
+                    }
+                },
+                "notes": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC0641fba1c6bb46938ac4689fa471cb2a/notes"
+                    }
+                },
+                "origin": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC0641fba1c6bb46938ac4689fa471cb2a/origin"
+                    },
+                    "data": {
+                        "id": "RC0641fba1c6bb46938ac4689fa471cb2a",
+                        "type": "rule_components"
+                    }
+                },
+                "property": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
+                    },
+                    "data": {
+                        "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
+                        "type": "properties"
+                    }
+                },
+                "rules": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC0641fba1c6bb46938ac4689fa471cb2a/rules"
+                    }
+                }
+            },
+            "links": {
+                "extension": "https://reactor.adobe.io/extensions/EX1eb2107b364f4c1cb998642eb9177844",
+                "origin": "https://reactor.adobe.io/rule_components/RC0641fba1c6bb46938ac4689fa471cb2a",
+                "rules": "https://reactor.adobe.io/rule_components/RC0641fba1c6bb46938ac4689fa471cb2a/rules",
+                "self": "https://reactor.adobe.io/rule_components/RC0641fba1c6bb46938ac4689fa471cb2a"
+            },
+            "meta": {
+                "latest_revision_number": 12
+            }
+        },
+        {
+            "id": "RC8f3e6472dd084b0ba89b1729781b238d",
+            "type": "rule_components",
+            "attributes": {
+                "created_at": "2022-02-03T20:18:11.200Z",
+                "delegate_descriptor_id": "adobe-analytics::actions::set-variables",
+                "deleted_at": null,
+                "dirty": false,
+                "name": "Adobe Analytics - Set Variables",
+                "negate": false,
+                "order": 1,
+                "rule_order": 50.0,
+                "timeout": 2000,
+                "delay_next": true,
+                "published": true,
+                "published_at": null,
+                "revision_number": 0,
+                "updated_at": "2022-02-04T21:19:37.321Z",
+                "settings":"{\"customSetup\":{\"source\":\"/**\\n * Sets AA events based on an input string\\n * @param mappedEvent name of the event to set, e.g. 'event1'\\n */\\nfunction setAnalyticsEvent(mappedEvent) {\\n    if (typeof mappedEvent !== 'undefined' \\&\\& mappedEvent !== null \\&\\& mappedEvent !== '') {\\n        // Set mappedEvent into s.events\\n        if (typeof s.events === 'undefined') {\\n            s.events = '';\\n        } else if (s.events !== '') {\\n            s.events += ','\\n        }\\n        console.log(\\\"Analytics Event: \\\"+mappedEvent);\\n        s.events += mappedEvent;\\n\\n \\n        // Update s.linkTrackEvents to contain mappedEvent\\n        if (typeof s.linkTrackEvents === 'undefined') {\\n            s.linkTrackEvents = '';\\n        } else if (s.linkTrackEvents !== '') {\\n            s.linkTrackEvents += ',';\\n        }\\n        s.linkTrackEvents += mappedEvent;\\n \\n        // Add events to s.linkTrackVars if not already present\\n        if (typeof s.linkTrackVars === 'undefined' || s.linkTrackVars === null) {\\n            s.linkTrackVars = '';\\n        }\\n        if (s.linkTrackVars.indexOf('events') === -1) {\\n            if (s.linkTrackVars !== '') {\\n                s.linkTrackVars += ',';\\n            }\\n            s.linkTrackVars += 'events';\\n        }\\n    }\\n}\\n \\n// Retrieve the event to set from the mapping table, passing in the current event.\\nsetAnalyticsEvent(_satellite.getVar('eventMappingTable', event));\"},\"trackerProperties\":{\"eVars\":[{\"name\":\"eVar1\",\"type\":\"value\",\"value\":\"%Page Title%\"},{\"name\":\"eVar2\",\"type\":\"value\",\"value\":\"%Page Path%\"},{\"name\":\"eVar3\",\"type\":\"value\",\"value\":\"%Page Template%\"},{\"name\":\"eVar4\",\"type\":\"value\",\"value\":\"%Page resourceType%\"},{\"name\":\"eVar5\",\"type\":\"value\",\"value\":\"%ShopperContext Shopper Id%\"},{\"name\":\"eVar6\",\"type\":\"value\",\"value\":\"%Product Name%\"},{\"name\":\"eVar7\",\"type\":\"value\",\"value\":\"%Product SKU%\"},{\"name\":\"eVar8\",\"type\":\"value\",\"value\":\"%[Cart/wishlist] Product Id%\"},{\"name\":\"eVar9\",\"type\":\"value\",\"value\":\"%[Cart/wishlist] SKU%\"},{\"name\":\"eVar10\",\"type\":\"value\",\"value\":\"%[Cart/wishlist] Product quantity%\"}],\"pageURL\":\"%Page Path%\",\"pageName\":\"%Page Title%\"}}"
+            },
+            "relationships": {
+                "updated_with_extension_package": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC8f3e6472dd084b0ba89b1729781b238d/updated_with_extension_package"
+                    },
+                    "data": {
+                        "id": "EPa06d4a70bf964e93808ee073533d9238",
+                        "type": "extension_packages"
+                    }
+                },
+                "updated_with_extension": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC8f3e6472dd084b0ba89b1729781b238d/updated_with_extension"
+                    },
+                    "data": {
+                        "id": "EX4cf2c0a81945467b81f28f9025bcbcbd",
+                        "type": "extensions"
+                    }
+                },
+                "extension": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC8f3e6472dd084b0ba89b1729781b238d/extension"
+                    },
+                    "data": {
+                        "id": "EXe472053b31b04f95b990728e8ceb684b",
+                        "type": "extensions"
+                    }
+                },
+                "notes": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC8f3e6472dd084b0ba89b1729781b238d/notes"
+                    }
+                },
+                "origin": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC8f3e6472dd084b0ba89b1729781b238d/origin"
+                    },
+                    "data": {
+                        "id": "RC8f3e6472dd084b0ba89b1729781b238d",
+                        "type": "rule_components"
+                    }
+                },
+                "property": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/properties/PRe1347b49046a4ebab1bbea6c1dd2460e"
+                    },
+                    "data": {
+                        "id": "PRe1347b49046a4ebab1bbea6c1dd2460e",
+                        "type": "properties"
+                    }
+                },
+                "rules": {
+                    "links": {
+                        "related": "https://reactor.adobe.io/rule_components/RC8f3e6472dd084b0ba89b1729781b238d/rules"
+                    }
+                }
+            },
+            "links": {
+                "extension": "https://reactor.adobe.io/extensions/EXe472053b31b04f95b990728e8ceb684b",
+                "origin": "https://reactor.adobe.io/rule_components/RC8f3e6472dd084b0ba89b1729781b238d",
+                "rules": "https://reactor.adobe.io/rule_components/RC8f3e6472dd084b0ba89b1729781b238d/rules",
+                "self": "https://reactor.adobe.io/rule_components/RC8f3e6472dd084b0ba89b1729781b238d"
+            },
+            "meta": {
+                "latest_revision_number": 12
+            }
+        }
+    ]
