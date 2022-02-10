@@ -16,7 +16,7 @@
             "published_at": null,
             "revision_number": 0,
             "updated_at": "2022-02-08T19:49:53.706Z",
-            "settings": "{\"source\":\"window.targetGlobalSettings = {  \\n   cookieDomain: \\\"adobeaemcloud.com\\\" //set the cookie directly on this subdomain \\n};\",\"language\":\"javascript\"}"
+            "settings": "{\"source\":\"window.targetGlobalSettings = {  \\n   cookieDomain: \\\"publish-p50203-e282782.adobeaemcloud.com\\\" //set the cookie directly on this subdomain \\n};\",\"language\":\"javascript\"}"
         },
         "relationships": {
             "updated_with_extension_package": {
