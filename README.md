@@ -17,14 +17,14 @@ To use these collections you will need use your own environment:
 
 Automation can be easily achieved using the [npm module Newman](https://www.npmjs.com/package/newman). Learn how to use newman in your own project: https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/#options
 
-An [example bash script](example-venia-tag/run-venia-tag.sh) using Newman can be found in the [example-venia-tag](example-vena-tag) folder
+An [example bash script](example-venia-tag/import-venia-tag.sh) using Newman can be found in the [example-venia-tag](example-vena-tag) folder
 
 ### Import Tag collection
 
 The Import tag collection can be used one of two ways:
 
 * Using Postman collection runner on folders - [Learn how to use the Import Tag collection](importTagCollection.md)
-* Using Newman to run the collection folders - See [example bash script](example-venia-tag/run-venia-tag.sh)
+* Using Newman to run the collection folders - See [example bash script](example-venia-tag/import-venia-tag.sh)
 
 Once you have the json responses from the original tag property, importing these values into a new organization can be done in less than 5 minutes. 
 
