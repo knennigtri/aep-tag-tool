@@ -1,11 +1,11 @@
-# Import a Tag
+# Import a Tag using Postman UI
 
 Prerequisites:
 
 * Postman_environment.json file is configured and imported into postman
-* All collections in this project are imported into postman
+* You are using the latest [Import Tag collection](https://www.postman.com/science-participant-93156893/workspace/nennig-public/overview)
 
-## Import Process
+## Import process
 
 1. In Postman, set your environment to the organization that needs the Tag property imported
 2. Run the collection `Adobe IO Token` to authenticate to your organization
