@@ -5,7 +5,21 @@ Prerequisites:
 * Postman_environment.json file is configured and imported into postman
 * All collections in this project are imported into postman
 
-
+> **IMPORTANT!!** When you export custom code from extensions, data elements, and rules there is a chance you might need to escape certain characters again to make valid JSON files. Make sure you validate your JSON files after you copy the responses!
+>
+> Example:
+>
+> ```json
+> "settings":"{\"source\":\"if(event \&\& event.id) {\\n    return event.id;\\n}\"}"
+> ```
+>
+> Should be updated to:
+>
+> ```json
+> "settings":"{\"source\":\"if(event \\&\\& event.id) {\\n    return event.id;\\n}\"}"
+> ```
+>
+> 
 
 ## Export Process
 
