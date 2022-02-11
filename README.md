@@ -24,11 +24,16 @@ An [example bash script](example-venia-tag/import-venia-tag.sh) using Newman can
 The Import tag collection can be used one of two ways:
 
 * Using Postman collection runner on folders - [Learn how to use the Import Tag collection](importTagCollection.md)
-* Using Newman to run the collection folders - See [example bash script](example-venia-tag/import-venia-tag.sh)
+* Using Newman to run the collection folders - See [example import bash script](example-venia-tag/import-venia-tag.sh)
 
 Once you have the json responses from the original tag property, importing these values into a new organization can be done in less than 5 minutes. 
 
 ### Export Tag collection
 
-The [Export Tag collection](Export Tag.postman_collection.json) can be used to extract the original Tag property from an existing organization. Running through the requests of this collection will create responses that need to be saved to use for Importing into other organizations. [Learn how to use the Export Tag collection](exportTagCollection.md)
+The Export tag collection can be used one of two ways:
+
+* Using Postman collection runner on folders - [Learn how to use the Export Tag collection](exportTagCollection.md)
+* Using Newman to run the collection folders - See [example export bash script](example-venia-tag/export-venia-tag.sh)
+
+Running through the requests of this collection will create responses that need to be saved to use for Importing into other organizations. You will end up with `1` **extensions.json**, `1` **data-elements.json**, and `n` **rulecmp-json** files where `n` is the number of rules in your property
 
