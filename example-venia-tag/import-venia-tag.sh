@@ -20,7 +20,7 @@ RULENAMES[3]="[10] ECID Authentication"
 RULECMP_JSONS[3]="venia-rulecmp-ecid.json"
 
 IO_COLLECTION=https://www.getpostman.com/collections/c962d6b3b81776a4c4bf
-COLLECTION=https://www.getpostman.com/collections/9bd1949af558aee390c6
+IMPORT_COLLECTION=https://www.getpostman.com/collections/9bd1949af558aee390c6
 
 # Manually set the postman environment
 ENVIRONMENT=example.postman_environment.json
@@ -33,23 +33,23 @@ newman run $IO_COLLECTION -e $ENVIRONMENT --export-environment "token.$(basename
 ENVIRONMENT="token.$(basename -- $ENVIRONMENT)"
 
 #Import Tag
-newman run $COLLECTION -e $ENVIRONMENT --folder "Create Tag Property" --env-var "propName=$PROPNAME"
+newman run $IMPORT_COLLECTION -e $ENVIRONMENT --folder "Create Tag Property" --env-var "propName=$PROPNAME"
 
 echo "Enter the propID from the 'Create Property' response above:" 
 read propID
 
 #Extensions
-newman run $COLLECTION -e $ENVIRONMENT --folder "Add Tag Extensions" -d $EXT_JSON --env-var "propID=$propID"
+newman run $IMPORT_COLLECTION -e $ENVIRONMENT --folder "Add Tag Extensions" -d $EXT_JSON --env-var "propID=$propID"
 
 #Data Elements
-newman run $COLLECTION -e $ENVIRONMENT --folder "Add Tag Data Elements" -d $DE_JSON --env-var "propID=$propID"
+newman run $IMPORT_COLLECTION -e $ENVIRONMENT --folder "Add Tag Data Elements" -d $DE_JSON --env-var "propID=$propID"
 
 for ((i = 0; i < ${#RULECMP_JSONS[@]}; i++))
 do
-	newman run $COLLECTION -e $ENVIRONMENT --folder "Add Tag Rule and CMPs" -d ${RULECMP_JSONS[$i]} --env-var "propID=$propID" --env-var "ruleName=${RULENAMES[$i]}"
+	newman run $IMPORT_COLLECTION -e $ENVIRONMENT --folder "Add Tag Rule and CMPs" -d ${RULECMP_JSONS[$i]} --env-var "propID=$propID" --env-var "ruleName=${RULENAMES[$i]}"
 done
 
 #Publish
-newman run $COLLECTION -e $ENVIRONMENT --folder "Publish Tag Library" --env-var "propID=$propID"
+newman run $IMPORT_COLLECTION -e $ENVIRONMENT --folder "Publish Tag Library" --env-var "propID=$propID"
 
 rm $ENVIRONMENT

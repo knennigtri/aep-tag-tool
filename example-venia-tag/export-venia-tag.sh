@@ -20,7 +20,7 @@ RULENAMES[3]="[10] ECID Authentication"
 RULECMP_JSONS[3]="venia-rulecmp-ecid.json"
 
 IO_COLLECTION=https://www.getpostman.com/collections/c962d6b3b81776a4c4bf
-COLLECTION=https://www.getpostman.com/collections/55520565b0f9933b5cf8
+EXPORT_COLLECTION=https://www.getpostman.com/collections/e8287cbeae23e348a791
 
 # Manually set the postman environment
 ENVIRONMENT=example.postman_environment.json
@@ -36,9 +36,9 @@ echo "Enter the ID of the property you would like export:"
 read propID
 
 # Get Extensions, Data Elements, and Rules
-newman run $COLLECTION -e $ENVIRONMENT --folder "Extensions and Data Elements" --env-var "propID=$propID"
+newman run $EXPORT_COLLECTION -e $ENVIRONMENT --folder "Extensions and Data Elements" --env-var "propID=$propID"
 
-newman run $COLLECTION -e $ENVIRONMENT --folder "Rule Components" --env-var "propID=$propID"
+newman run $EXPORT_COLLECTION -e $ENVIRONMENT --folder "Rule Components" --env-var "propID=$propID"
 
 rm $ENVIRONMENT
 
