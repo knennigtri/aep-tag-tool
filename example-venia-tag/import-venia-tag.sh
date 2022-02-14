@@ -8,18 +8,18 @@ PROPNAME="Venia"
 GLOBALS="venia.postman-globals.json"
 
 # JSON files for all extensions and data elements
-EXT_JSON="venia-extensions.json"
-DE_JSON="venia-data-elements.json"
+EXT_JSON="json-exports/venia-extensions.json"
+DE_JSON="json-exports/venia-data-elements.json"
 
 # Rule Names and corresponding rule component json files
 RULENAMES[0]="[10] Target"
-RULECMP_JSONS[0]="venia-rulecmp-target.json"
+RULECMP_JSONS[0]="json-exports/venia-rulecmp-target.json"
 RULENAMES[1]="[50] Analytics Clear and Set Variables"
-RULECMP_JSONS[1]="venia-rulecmp-clear-and-set-vars.json"
+RULECMP_JSONS[1]="json-exports/venia-rulecmp-clear-and-set-vars.json"
 RULENAMES[2]="[90] Analytics Fire Beacon"
-RULECMP_JSONS[2]="venia-rulecmp-send-beacon.json"
+RULECMP_JSONS[2]="json-exports/venia-rulecmp-send-beacon.json"
 RULENAMES[3]="[10] ECID Authentication"
-RULECMP_JSONS[3]="venia-rulecmp-ecid.json"
+RULECMP_JSONS[3]="json-exports/venia-rulecmp-ecid.json"
 
 IO_COLLECTION=https://www.getpostman.com/collections/c962d6b3b81776a4c4bf
 IMPORT_COLLECTION=https://www.getpostman.com/collections/c0c463dbe2f98d3b354a

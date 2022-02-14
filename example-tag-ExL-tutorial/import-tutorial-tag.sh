@@ -6,12 +6,12 @@
 PROPNAME="ExL Target Tutorial"
 
 # JSON files for all extensions and data elements
-EXT_JSON="tutorial-extensions.json"
-DE_JSON="tutorial-data-elements.json"
+EXT_JSON="json-exports/tutorial-extensions.json"
+DE_JSON="json-exports/tutorial-data-elements.json"
 
 # Rule Names and corresponding rule component json files
 RULENAMES[0]="[10] Target"
-RULECMP_JSONS[0]="tutorial-rulecmp-target.json"
+RULECMP_JSONS[0]="json-exports/tutorial-rulecmp-target.json"
 
 
 IO_COLLECTION=https://www.getpostman.com/collections/c962d6b3b81776a4c4bf
