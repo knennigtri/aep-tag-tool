@@ -19,8 +19,6 @@ echo "Enter the ID of the property you would like export:"
 read propID
 
 # Get Extensions, Data Elements, and Rules
-newman run $EXPORT_COLLECTION -e $ENVIRONMENT --folder "Extensions and Data Elements" --env-var "propID=$propID"
-
-newman run $EXPORT_COLLECTION -e $ENVIRONMENT --folder "Rule Components" --env-var "propID=$propID"
+newman run $EXPORT_COLLECTION -e $ENVIRONMENT --env-var "propID=$propID"
 
 rm $ENVIRONMENT
