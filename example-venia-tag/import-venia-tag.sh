@@ -5,7 +5,7 @@
 # Name of Tag property
 PROPNAME="Venia"
 
-GLOBALS="venia.postman-globals.json"
+GLOBALS="settings.postman-globals.json"
 
 # JSON files for all extensions and data elements
 EXT_JSON="json-exports/venia-extensions.json"
