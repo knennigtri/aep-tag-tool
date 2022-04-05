@@ -3,7 +3,7 @@
 Prerequisites:
 
 * Postman_environment.json file is configured and imported into postman
-* You are using the latest [Import Tag collection](https://www.postman.com/science-participant-93156893/workspace/nennig-public/overview)
+* You are using the latest Import Tag collection (See README.md)
 
 ## Import process
 
