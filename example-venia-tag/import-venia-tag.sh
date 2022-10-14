@@ -37,7 +37,7 @@ newman run $IO_COLLECTION -e $ENVIRONMENT --export-environment "token.$(basename
 ENVIRONMENT="token.$(basename -- $ENVIRONMENT)"
 
 #Import Tag
-newman run $IMPORT_COLLECTION -e $ENVIRONMENT --folder "Create Tag Property" --env-var "propName=$PROPNAME"
+newman run $IMPORT_COLLECTION -e $ENVIRONMENT --folder "Create Tag Property" --env-var propName
 
 echo "Enter the propID from the 'Create Property' response above:" 
 read propID

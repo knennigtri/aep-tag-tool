@@ -6,3 +6,5 @@ newman-commands.txt
 environments/US-vLabPlatform.postman_environment.json
 example-venia-tag/json-exports/venia-extensions-empty.json
 example-venia-tag/token.vLab7.postman_environment.json
+environments/vLab2.postman_environment.json
+node_modules/
