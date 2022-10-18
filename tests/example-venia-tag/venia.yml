@@ -8,5 +8,5 @@ rules:
   "[90] Analytics Fire Beacon": json-exports/venia-rulecmp-send-beacon.json
   "[10] ECID Authentication": json-exports/venia-rulecmp-ecid.json
 globals: settings.postman-globals.json
-environment: ../environments/vLab7.postman_environment.json
+environment: ../../environments/vLab7.postman_environment.json
 ---
