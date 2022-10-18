@@ -3,6 +3,9 @@
 
 research/
 environments/
+newman/
+*postman_environment.json
+
 
 token.*
 
