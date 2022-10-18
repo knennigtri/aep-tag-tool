@@ -5,6 +5,8 @@ var minimist = require("minimist");
 var args = minimist(process.argv.slice(2));
 var path = require("path");
 
+var REPORTERS = ['emojitrain','junit','html'];
+
 var IO_COLLECTION = "https://www.getpostman.com/collections/c962d6b3b81776a4c4bf";
 var EXPORT_COLLECTION = "https://www.getpostman.com/collections/e8287cbeae23e348a791";
 // var IMPORT_COLLECTION = "https://www.getpostman.com/collections/c0c463dbe2f98d3b354a";
@@ -15,8 +17,7 @@ var IMPORT_COLLECTION = "https://www.getpostman.com/collections/2f3dc4c81eb464c2
 
 var init = function(yamlExports){
   //TODO remove manual test
-  var yamlFile = yamlExports || args.f || '../example-venia-tag/venia.yml';
-  
+  var yamlFile = yamlExports || args.f || 'tests/example-venia-tag/venia.yml';
   //TODO delete setup
   var deletePropStr = "";
   if(args.delete){
@@ -28,32 +29,59 @@ var init = function(yamlExports){
   var obj = yaml.loadAll(file)[0];
 
   console.log("Name: " + obj['property-name']);
+  
+  authenicateAIO(obj, yamlFileDir, function(yamlObj){
+    //TODO export
+    
+    //import
+    createProperty(yamlObj, function(yamlObj){
+      installExtension(yamlObj, yamlFileDir, function(yamlObj){
+        importDataElements(yamlObj, yamlFileDir, function(yamlObj){
+          importRules(yamlObj, yamlFileDir, function(yamlObj){
+            publishLibrary(yamlObj, yamlFileDir, function(yamlObj){
+              var tagName = "";
+              
+              var envVals = JSON.parse(JSON.stringify(yamlObj.environment.values));
+              var environmentKey = "propFullName";
+              for(var element of envVals){
+                if(element.key.includes(environmentKey)){
+                  console.log(element.value);
+                  tagName = element.value;
+                }
+              }
+              console.log("Successfully created tag property: " + tagName);
+            });
+          });
+        });
+      });
+    });
 
-  // console.log(obj.rules);
+    //TODO delete
 
-  // for (var [key, value] of Object.entries(obj.rules)){
-  //   console.log(key);
-  //   console.log(value);
-  // }
+  });
+  
+  
+}
 
-  // Authenticate with Adobe IO
+// Runs the Adobe IO Token collection
+function authenicateAIO(yamlObj, yamlFileDir, callback){
   newman.run({
-      collection: IO_COLLECTION,
-      environment: path.resolve(yamlFileDir, obj.environment),
-      reporters: 'cli'
+    collection: IO_COLLECTION,
+    environment: path.resolve(yamlFileDir, yamlObj.environment),
+    reporters: REPORTERS
   }).on('done', function (err, summary) {
     if (err) { throw err; }
-    obj.environment = summary.environment;
+    yamlObj.environment = summary.environment;
     console.log('Connected to IO');
+
     if(summary.run.failures == ""){
-      createProperty(obj, yamlFileDir);
+      callback(yamlObj);
     }
   });
 }
 
-//Create a tag property
-function createProperty(yamlObj, yamlFileDir){
-  
+// Runs the Import Tag collection folder "Create Tag Property"
+function createProperty(yamlObj, callback){
   newman.run({
     collection: IMPORT_COLLECTION,
     environment: yamlObj.environment,
@@ -62,116 +90,132 @@ function createProperty(yamlObj, yamlFileDir){
       "key": "propName",
       "value": yamlObj['property-name']
     }],
-    reporters: 'cli'
+    reporters: REPORTERS
   }).on('done', function (err, summary) {
     if (err) { throw err; }
-    // console.log(JSON.stringify(summary.environment, null, 2));
-
+    // Get the resulting environment with the token
     yamlObj.environment = summary.environment;
     if(summary.run.failures == ""){
-      console.log('Created Tag Property!');
-      installExtension(yamlObj, yamlFileDir);
+      console.log('Created Tag Property!'); //TODO move this and make better
+      callback(yamlObj);
     } else {
       console.error("Failed");
+      //TODO handle
     }
   });
 }
 
-// Need propID
-function installExtension(yamlObj, yamlFileDir){
-  // newman run $IMPORT_COLLECTION -e $ENVIRONMENT -g $GLOBALS --folder "Add Tag Extensions" -d $EXT_JSON --env-var "propID=$propID"
+// Runs the Import Tag collection folder "Add Tag Extensions"
+function installExtension(yamlObj, yamlFileDir, callback){
   newman.run({
     collection: IMPORT_COLLECTION,
     environment: yamlObj.environment,
     globals: path.resolve(yamlFileDir, yamlObj.globals),
     folder: "Add Tag Extensions",
     iterationData: path.resolve(yamlFileDir, yamlObj.extensions),
-    reporters: 'cli'
+    reporters: REPORTERS
   }).on('done', function (err, summary) {
     if (err) { throw err; }
-    console.log(JSON.stringify(yamlObj.environment,null,2));
     if(summary.run.failures == ""){
-      console.log('Installed Extensions!');
-      importDataElements(yamlObj, yamlFileDir);
+      console.log('Installed Extensions!'); //TODO move this and make better
+      callback(yamlObj);
     } else {
       console.error("Failed");
+      //TODO Handle
     }
     
   });
 }
 
-function importDataElements(yamlObj, yamlFileDir){
-  // newman run $IMPORT_COLLECTION -e $ENVIRONMENT -g $GLOBALS --folder "Add Tag Data Elements" -d $DE_JSON --env-var "propID=$propID"
-
+// Runs the Import Tag collection folder "Add Tag Data Elements"
+function importDataElements(yamlObj, yamlFileDir, callback){
   newman.run({
     collection: IMPORT_COLLECTION,
     environment: yamlObj.environment,
     globals: path.resolve(yamlFileDir, yamlObj.globals),
     folder: "Add Tag Data Elements",
     iterationData: path.resolve(yamlFileDir, yamlObj['data-elements']),
-    reporters: 'cli'
+    reporters: REPORTERS
   }).on('done', function (err, summary) {
     if (err) { throw err; }
     // console.log(JSON.stringify(summary.environment, null, 2));
     
     if(summary.run.failures == ""){
-      console.log('Imported Data Elements!');
-      importRules(yamlObj, yamlFileDir);
+      console.log('Imported Data Elements!'); //TODO move this and make better
+      callback(yamlObj);
     } else {
       console.error("Failed");
+      //TODO Handle
     }
 
   });
 }
 
-function importRules(yamlObj, yamlFileDir){
-  // for ((i = 0; i < ${#RULECMP_JSONS[@]}; i++))
-  // do
-  //   newman run $IMPORT_COLLECTION -e $ENVIRONMENT -g $GLOBALS --folder "Add Tag Rule and CMPs" -d ${RULECMP_JSONS[$i]} --env-var "propID=$propID" --env-var "ruleName=${RULENAMES[$i]}"
-  // done
-  var noError = true;
-  for (var [ruleName, ruleCmps] of Object.entries(yamlObj.rules)){
-    if(noError){
+/** Recursive function to 
+ *  - grab yamlObj.rules[0]
+ *  - delete yamlObj.rules[0]
+ *  - run newman and recurse yamlObj.rules
+ *  - recursion breaks when all rules are deleted
+ */
+function importRules(yamlObj, yamlFileDir, callback){
+  var ruleName = Object.keys(yamlObj.rules)[0];
+  var ruleCmps = Object.values(yamlObj.rules)[0];
 
-      newman.run({
-        collection: IMPORT_COLLECTION,
-        environment: yamlObj.environment,
-        globals: path.resolve(yamlFileDir, yamlObj.globals),
-        folder: "Add Tag Rule and CMPs",
-        envVar: [{
-          "key": "ruleName",
-          "value": ruleName
-        }],
-        iterationData: path.resolve(yamlFileDir, ruleCmps),
-        reporters: 'cli'
-      }).on('done', function (err, summary) {
-        if (err) { throw err; }
-        // console.log(JSON.stringify(summary.environment, null, 2));
-        
-        if(summary.run.failures == ""){
-          console.log('Imported Rule: ' + ruleName);
-        } else {
-          noError = false;
-          console.error("Rule Failed: " + ruleName);
-        }
-
-      });
-    } else {
-      console.log("Skipping '" + ruleName + "' due to Error");
-    }
-  }
-  if(noError){
-    console.log("Rules successfully imported!");
-    publishLibrary(yamlObj, yamlFileDir);
+  //Break recursion if there are no rules left
+  if(ruleName === undefined){
+    callback(yamlObj);
   } else {
-    console.error("Failure on Rules");
+    //remove rule from yamlObj
+    delete yamlObj.rules[ruleName];
+
+    //run newman to create new rule
+    newman.run({
+      collection: IMPORT_COLLECTION,
+      environment: yamlObj.environment,
+      globals: path.resolve(yamlFileDir, yamlObj.globals),
+      folder: "Add Tag Rule and CMPs",
+      envVar: [{
+        "key": "ruleName",
+        "value": ruleName
+      }],
+      iterationData: path.resolve(yamlFileDir, ruleCmps),
+      reporters: REPORTERS
+    }).on('done', function (err, summary) {
+      if (err) { throw err; }
+      // console.log(JSON.stringify(summary.environment, null, 2));
+      
+      if(summary.run.failures == ""){
+        console.log('Imported Rule: ' + ruleName);
+      } else {
+        console.error("Rule Failed: " + ruleName);
+      }
+      //recurse to the next rule
+      importRules(yamlObj, yamlFileDir, callback);
+    });
   }
 }
 
-//TODO
-function publishLibrary(yamlObj, yamlFileDir){
-  //newman run $IMPORT_COLLECTION -e $ENVIRONMENT -g $GLOBALS --folder "Publish Tag Library" --env-var "propID=$propID"
-  console.log("Time for publishing!");
+// Runs the Import Tag collection folder "Publish Tag Library"
+function publishLibrary(yamlObj, yamlFileDir, callback){
+  newman.run({
+    collection: IMPORT_COLLECTION,
+    environment: yamlObj.environment,
+    globals: path.resolve(yamlFileDir, yamlObj.globals),
+    folder: "Publish Tag Library",
+    reporters: REPORTERS
+  }).on('done', function (err, summary) {
+    if (err) { throw err; }
+
+
+  
+    if(summary.run.failures == ""){
+      console.log("Tag Property published successfully!");
+      callback(yamlObj);
+    } else {
+      console.error("Publishing Failed");
+      //TODO handle
+    }
+  });
 }
 
 exports.run = init;
