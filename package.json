@@ -21,6 +21,7 @@
   "author": "Kevin Nennig",
   "license": "ISC",
   "dependencies": {
+    "debug": "^4.3.4",
     "fs": "^0.0.1-security",
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.7",

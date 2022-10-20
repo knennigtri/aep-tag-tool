@@ -4,6 +4,11 @@ const fs = require('fs');
 var minimist = require("minimist");
 var args = minimist(process.argv.slice(2));
 var path = require("path");
+var debug = require("debug")("index");
+var debugConfig = require("debug")("index:config");
+var debugNewman = require("debug")("index:newman");
+
+
 
 var REPORTERS = ['emojitrain','junit', 'html'];
 
@@ -19,18 +24,30 @@ DELETE_PROPS = "https://www.getpostman.com/collections/357a7d9bea644bfc5b46";
 EXPORT_COLLECTION = "https://www.getpostman.com/collections/55520565b0f9933b5cf8";
 // REPORTERS = ['cli','junit', 'html'];
 
-var TIMESTAMP = formatDateTime();
+let TIMESTAMP = formatDateTime();
+let reportersDir = "newman/";
 
-var init = function(yamlExports){
+var init = function(mode, exportsParam, envParam, globalsParam){
+/** CLI arguments
+ * -f json/yml file
+ * --[import | export | delete STR] modes this tool uses
+ *     STR - string value that should be searched in the property titles for deletion
+ * //TODO -e specify an environment file
+ * //TODO -g specify a global file
+ * //TODO -h, --help
+ * //TODO -v, --version
+ */
+//TODO implement debugging
+//TODO implement lint
 
-  var yamlFile = yamlExports || args.f;
-  if(!yamlFile){
+  const configFile = exportsParam || args.f;
+  if(!configFile){
     console.log("No file specified");
     //TODO add help
     return;
   }
 
-  var fileContents = fs.readFileSync(yamlFile, 'utf8');
+  var fileContents = fs.readFileSync(configFile, 'utf8');
   var jsonObj = "";
   try {
     //Attempt to read the YAML and output JSON
@@ -47,34 +64,60 @@ var init = function(yamlExports){
       throw e;
     }
   }
+  if(!jsonObj.propertyName) return; //TODO help screen
+  debugConfig("Name: " + jsonObj.propertyName);
 
-  console.log("Name: " + jsonObj.propertyName);
-  var yamlFileDir = path.dirname(path.resolve(yamlFile));
-  authenicateAIO(jsonObj, yamlFileDir, function(err, yamlObj){
+  //Set function params or cli params for the environment and the globals file
+  let argsE = getData(args.e, "./")
+  jsonObj.environment = envParam || argsE || jsonObj.environment;
+  let argsG = getData(args.g, "./")
+  jsonObj.globals = globalsParam || argsG || jsonObj.globals;
+
+  
+  var configFileDir = path.dirname(path.resolve(configFile));
+  reportersDir = configFileDir + "/" + reportersDir;
+  //setup the data with ABS paths if they aren't objects
+  let env = getData(jsonObj.environment, configFileDir);
+  jsonObj.environment = env;
+  let g = getData(jsonObj.globals, configFileDir);
+  jsonObj.globals = g;
+  let ext = getData(jsonObj.extensions, configFileDir);
+  jsonObj.extensions = ext;
+  let de = getData(jsonObj.dataElements, configFileDir);
+  jsonObj.dataElements = de;
+  for (rule in jsonObj.rules){
+    let ruleCmps = getData(jsonObj.rules[rule], configFileDir);
+    jsonObj.rules[rule] = ruleCmps;
+  }
+  debugConfig(JSON.stringify(jsonObj, null, 2));
+  
+  // First authenticate before running and mode
+  authenicateAIO(jsonObj, function(err, yamlObj){
     if(err) throw err;
     console.log('Connected to AIO');
+    
 
-    if(args.export){
-      exportTag(yamlObj, yamlFileDir, function(err, yamlObj){
+    if(args.export || mode == 'export'){ // EXPORT mode
+      exportTag(yamlObj, configFileDir, function(err, yamlObj){
         if(err) throw err;
         console.log('Exported Tag property!');
       });
 
-    } else if(args.import){ // import tag
-      createProperty(yamlObj, yamlFileDir, function(err, yamlObj){
+    } else if(args.import || mode == 'import'){ // IMPORT mode
+      createProperty(yamlObj, function(err, yamlObj){
         if(err) throw err;
         console.log('Created Tag Property!');
 
-        installExtension(yamlObj, yamlFileDir, function(err, yamlObj){
+        installExtension(yamlObj, function(err, yamlObj){
           if(err) throw err;
           console.log('Installed Extensions!');
-          importDataElements(yamlObj, yamlFileDir, function(err, yamlObj){
+          importDataElements(yamlObj, function(err, yamlObj){
             if(err) throw err;
             console.log('Imported Data Elements!');
-            importRules(yamlObj, yamlFileDir, function(err, yamlObj){
+            importRules(yamlObj, function(err, yamlObj){
               if(err) throw err;
           
-              publishLibrary(yamlObj, yamlFileDir, function(err, yamlObj){
+              publishLibrary(yamlObj, function(err, yamlObj){
                 if(err) throw err;
                 console.log("Tag Property published successfully!");
 
@@ -87,12 +130,12 @@ var init = function(yamlExports){
         });
       });
 
-    } else if(args.delete){
+    } else if(args.delete || mode == 'delete'){ // DELETE mode
       var deletePropStr = "";
       if(typeof args.delete == "boolean") deletePropStr = "2022";
       else deletePropStr = args.delete;
       console.log("Time to delete tags that contain: " + deletePropStr);
-      deleteTags(yamlObj, yamlFileDir, deletePropStr, function(err, results){
+      deleteTags(yamlObj, deletePropStr, function(err, results){
         if(err) throw err;
         console.log("All tag propertys deleted with: " + deletePropStr);
       });
@@ -106,20 +149,21 @@ var init = function(yamlExports){
 }
 
 // Runs the Adobe IO Token collection
-function authenicateAIO(yamlObj, workingDir, callback){
+function authenicateAIO(yamlObj, callback){
   const name = "auth";
   const reportName = TIMESTAMP +"-"+ name + "-Report";
 
   newman.run({
     collection: IO_COLLECTION,
-    environment: path.resolve(workingDir, yamlObj.environment),
+    environment: yamlObj.environment,
     reporters: REPORTERS,
     reporter: {
-      'html': { export: workingDir+"/"+"newman/"+reportName+".html" },
-      'junit': { export: workingDir+"/"+"newman/"+reportName+".xml" }}
+      'html': { export: reportersDir+reportName+".html" },
+      'junit': { export: reportersDir+reportName+".xml" }}
   }).on('done', function (err, summary) {
     if (err) { callback(err, false) }
     
+    //set environment with the AIO token
     yamlObj.environment = summary.environment;
     if(summary.run.failures == ""){
       callback(null, yamlObj, summary);
@@ -130,7 +174,7 @@ function authenicateAIO(yamlObj, workingDir, callback){
 }
 
 // Runs the Import Tag collection folder "Create Tag Property"
-function createProperty(yamlObj, workingDir, callback){
+function createProperty(yamlObj, callback){
   const name = "createProp";
   const reportName = TIMESTAMP +"-"+ name + "-Report";
   newman.run({
@@ -143,8 +187,8 @@ function createProperty(yamlObj, workingDir, callback){
     }],
     reporters: REPORTERS,
     reporter: {
-      'html': { export: workingDir+"/"+"newman/"+reportName+".html" },
-      'junit': { export: workingDir+"/"+"newman/"+reportName+".xml" }}
+      'html': { export: reportersDir+reportName+".html" },
+      'junit': { export: reportersDir+reportName+".xml" }}
   }).on('done', function (err, summary) {
     if (err) { throw err; }
     // Get the resulting environment with the token
@@ -158,21 +202,20 @@ function createProperty(yamlObj, workingDir, callback){
 }
 
 // Runs the Import Tag collection folder "Add Tag Extensions"
-function installExtension(yamlObj, workingDir, callback){
+function installExtension(yamlObj, callback){
   const name = "installExts";
   const reportName = TIMESTAMP +"-"+ name + "-Report";
-  const iterationData = getIterationData(yamlObj.extensions, workingDir, name);
   
   newman.run({
     collection: IMPORT_COLLECTION,
     environment: yamlObj.environment,
-    globals: path.resolve(workingDir, yamlObj.globals),
+    globals: yamlObj.globals,
     folder: "Add Tag Extensions",
-    iterationData: iterationData,
+    iterationData: yamlObj.extensions,
     reporters: REPORTERS,
     reporter: {
-      'html': { export: workingDir+"/"+"newman/"+reportName+".html" },
-      'junit': { export: workingDir+"/"+"newman/"+reportName+".xml" }}
+      'html': { export: reportersDir+reportName+".html" },
+      'junit': { export: reportersDir+reportName+".xml" }}
   }).on('done', function (err, summary) {
     if (err) { throw err; }
     if(summary.run.failures == ""){
@@ -185,24 +228,22 @@ function installExtension(yamlObj, workingDir, callback){
 }
 
 // Runs the Import Tag collection folder "Add Tag Data Elements"
-function importDataElements(yamlObj, workingDir, callback){
+function importDataElements(yamlObj, callback){
   const name = "installDataElements";
   const reportName = TIMESTAMP +"-"+ name + "-Report";
-  const iterationData = getIterationData(yamlObj.dataElements, workingDir, name);
 
   newman.run({
     collection: IMPORT_COLLECTION,
     environment: yamlObj.environment,
-    globals: path.resolve(workingDir, yamlObj.globals),
+    globals: yamlObj.globals,
     folder: "Add Tag Data Elements",
-    iterationData: iterationData,
+    iterationData: yamlObj.dataElements,
     reporters: REPORTERS,
     reporter: {
-      'html': { export: workingDir+"/"+"newman/"+reportName+".html" },
-      'junit': { export: workingDir+"/"+"newman/"+reportName+".xml" }}
+      'html': { export: reportersDir+reportName+".html" },
+      'junit': { export: reportersDir+reportName+".xml" }}
   }).on('done', function (err, summary) {
     if (err) { throw err; }
-    // console.log(JSON.stringify(summary.environment, null, 2));
     
     if(summary.run.failures == ""){
       callback(null, yamlObj, summary);
@@ -219,12 +260,11 @@ function importDataElements(yamlObj, workingDir, callback){
  *  - run newman and recurse yamlObj.rules
  *  - recursion breaks when all rules are deleted
  */
-function importRules(yamlObj, workingDir, callback){
+function importRules(yamlObj, callback){
   var ruleName = Object.keys(yamlObj.rules)[0];
   var ruleCmps = Object.values(yamlObj.rules)[0];
   const name = ruleName;
   const reportName = TIMESTAMP +"-"+ name + "-Report";
-  const iterationData = getIterationData(ruleCmps, workingDir, name);
 
   //Break recursion if there are no rules left
   if(ruleName === undefined){
@@ -237,17 +277,17 @@ function importRules(yamlObj, workingDir, callback){
     newman.run({
       collection: IMPORT_COLLECTION,
       environment: yamlObj.environment,
-      globals: path.resolve(workingDir, yamlObj.globals),
+      globals: yamlObj.globals,
       folder: "Add Tag Rule and CMPs",
       envVar: [{
         "key": "ruleName",
         "value": ruleName
       }],
-      iterationData: iterationData,
+      iterationData: ruleCmps,
       reporters: REPORTERS,
       reporter: {
-      'html': { export: workingDir+"/"+"newman/"+reportName+".html" },
-      'junit': { export: workingDir+"/"+"newman/"+reportName+".xml" }}
+      'html': { export: reportersDir+reportName+".html" },
+      'junit': { export: reportersDir+reportName+".xml" }}
     }).on('done', function (err, summary) {
       if (err) { throw err; }
       
@@ -257,24 +297,24 @@ function importRules(yamlObj, workingDir, callback){
         callback(new Error("Collection Run Failures"), null);
       }
       //recurse to the next rule
-      importRules(yamlObj, workingDir, callback);
+      importRules(yamlObj, callback);
     });
   }
 }
 
 // Runs the Import Tag collection folder "Publish Tag Library"
-function publishLibrary(yamlObj, workingDir, callback){
+function publishLibrary(yamlObj, callback){
   const name = "publishLib";
   const reportName = TIMESTAMP +"-"+ name + "-Report";
   newman.run({
     collection: IMPORT_COLLECTION,
     environment: yamlObj.environment,
-    globals: path.resolve(workingDir, yamlObj.globals),
+    globals: yamlObj.globals,
     folder: "Publish Tag Library",
     reporters: REPORTERS,
     reporter: {
-      'html': { export: workingDir+"/"+"newman/"+reportName+".html" },
-      'junit': { export: workingDir+"/"+"newman/"+reportName+".xml" }}
+      'html': { export: reportersDir+reportName+".html" },
+      'junit': { export: reportersDir+reportName+".xml" }}
   }).on('done', function (err, summary) {
     if (err) { throw err; }
 
@@ -286,7 +326,7 @@ function publishLibrary(yamlObj, workingDir, callback){
   });
 }
 
-function deleteTags(yamlObj, workingDir, str, callback){
+function deleteTags(yamlObj, str, callback){
   const name = "deleteTags";
   const reportName = TIMESTAMP +"-"+ name + "-Report";
   newman.run({
@@ -298,8 +338,8 @@ function deleteTags(yamlObj, workingDir, str, callback){
     }],
     reporters: REPORTERS,
     reporter: {
-      'html': { export: workingDir+"/"+"newman/"+reportName+".html" },
-      'junit': { export: workingDir+"/"+"newman/"+reportName+".xml" }}
+      'html': { export: reportersDir+reportName+".html" },
+      'junit': { export: reportersDir+reportName+".xml" }}
   }).on('done', function (err, summary) {
     if (err) { throw err; }
     if(summary.run.failures == ""){
@@ -323,8 +363,8 @@ function exportTag(yamlObj, workingDir, callback){
     }],
     reporters: REPORTERS,
     reporter: {
-      'html': { export: workingDir+"/"+"newman/"+reportName+".html" },
-      'junit': { export: workingDir+"/"+"newman/"+reportName+".xml" }}
+      'html': { export: reportersDir+reportName+".html" },
+      'junit': { export: reportersDir+reportName+".xml" }}
   }).on('done', function (err, summary) {
     if (err) { throw err; }
     if(summary.run.failures == ""){
@@ -379,19 +419,18 @@ function getEnvironmentValue(envObj, key){
   return "";
 }
 
-function getIterationData(iterationData, rootDir, dataName){
-  try {
-    if(typeof iterationData == "string"){
-      let absPath = path.resolve(rootDir, iterationData);
-      if(fs.existsSync(iterationData)){
-        return absPath;
-      }
+function getData(data, rootDir){
+  if(typeof data == "string"){
+    let absPath = path.resolve(rootDir, data);
+    if(fs.existsSync(absPath)){
+      // console.log("Using path:" +absPath);
+      return absPath;
     } else {
-      return iterationData;
+      throw new Error("Cannot Read File: " + absPath);
     }
-  } catch (err){
-    // callback(err, "Iteration Data for "+dataName+ " does not exist.");
-    return err;
+  } else {
+    // console.log("Returning Data: " +data);
+    return data;
   }
 }
 
