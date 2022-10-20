@@ -1,12 +1,17 @@
 ---
-property-name: Venia
-extensions: json-exports/venia-extensions.json
-data-elements: json-exports/venia-data-elements.json
-rules:
+globals: vLab7-venia.postman-globals.json
+environment: ../../environments/vLab7.postman_environment.json
+export:
+ propID: PR6e367f5e04584d84974fcb82d8b1d705
+delete:
+ searchStr: VeniaIMPORTED
+import:
+ propertyName: Venia2
+ extensions: json-exports/venia-extensions.json
+ dataElements: json-exports/venia-data-elements.json
+ rules:
   "[10] Target": json-exports/venia-rulecmp-target.json
   "[50] Analytics Clear and Set Variables": json-exports/venia-rulecmp-clear-and-set-vars.json
   "[90] Analytics Fire Beacon": json-exports/venia-rulecmp-send-beacon.json
   "[10] ECID Authentication": json-exports/venia-rulecmp-ecid.json
-globals: settings.postman-globals.json
-environment: ../../environments/vLab7.postman_environment.json
 ---
