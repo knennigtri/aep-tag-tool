@@ -170,7 +170,6 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
         return;
       }
       console.log("PropID: "+jsonObj.export.propID);
-      return; //TODO remove
       exportTag(yamlObj, configFileDir, function(err, yamlObj){
         if(err) throw err;
         console.log('Exported Tag property!');
@@ -197,8 +196,6 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
           //TODO help
           return;
         }
-      //TODO put requirements in
-      return; //TODO remove
       createProperty(yamlObj, function(err, yamlObj){
         if(err) throw err;
         console.log('Created Tag Property!');
@@ -234,10 +231,9 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
         return;
       }
       console.log("SearchStr: " + jsonObj.delete.searchStr);
-      return; //TODO remove
       deleteTags(yamlObj, yamlObj.delete.searchStr, function(err, results){
         if(err) throw err;
-        console.log("All tag propertys deleted with: " + deletePropStr);
+        console.log("All tag propertys deleted with: " + jsonObj.delete.searchStr);
       });
     } else {
       console.log("No mode selected");
@@ -283,7 +279,7 @@ function createProperty(yamlObj, callback){
     folder: "Create Tag Property",
     envVar: [{
       "key": "propName",
-      "value": yamlObj.propertyName
+      "value": yamlObj.import.propertyName
     }],
     reporters: REPORTERS,
     reporter: {
@@ -311,7 +307,7 @@ function installExtension(yamlObj, callback){
     environment: yamlObj.environment,
     globals: yamlObj.globals,
     folder: "Add Tag Extensions",
-    iterationData: yamlObj.extensions,
+    iterationData: yamlObj.import.extensions,
     reporters: REPORTERS,
     reporter: {
       'html': { export: reportersDir+reportName+".html" },
@@ -337,7 +333,7 @@ function importDataElements(yamlObj, callback){
     environment: yamlObj.environment,
     globals: yamlObj.globals,
     folder: "Add Tag Data Elements",
-    iterationData: yamlObj.dataElements,
+    iterationData: yamlObj.import.dataElements,
     reporters: REPORTERS,
     reporter: {
       'html': { export: reportersDir+reportName+".html" },
@@ -361,8 +357,8 @@ function importDataElements(yamlObj, callback){
  *  - recursion breaks when all rules are deleted
  */
 function importRules(yamlObj, callback){
-  var ruleName = Object.keys(yamlObj.rules)[0];
-  var ruleCmps = Object.values(yamlObj.rules)[0];
+  var ruleName = Object.keys(yamlObj.import.rules)[0];
+  var ruleCmps = Object.values(yamlObj.import.rules)[0];
   const name = ruleName;
   const reportName = TIMESTAMP +"-"+ name + "-Report";
 
@@ -371,7 +367,7 @@ function importRules(yamlObj, callback){
     callback(null, yamlObj);
   } else {
     //remove rule from yamlObj
-    delete yamlObj.rules[ruleName];
+    delete yamlObj.import.rules[ruleName];
 
     //run newman to create new rule
     newman.run({
