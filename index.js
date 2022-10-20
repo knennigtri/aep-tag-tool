@@ -4,11 +4,11 @@ const fs = require('fs');
 var minimist = require("minimist");
 var args = minimist(process.argv.slice(2));
 var path = require("path");
-var debug = require("debug")("index");
+var debug = require("debug");
+const { json } = require('stream/consumers');
+var debugIndex = require("debug")("index");
 var debugConfig = require("debug")("index:config");
 var debugNewman = require("debug")("index:newman");
-
-
 
 var REPORTERS = ['emojitrain','junit', 'html'];
 
@@ -27,7 +27,25 @@ EXPORT_COLLECTION = "https://www.getpostman.com/collections/55520565b0f9933b5cf8
 let TIMESTAMP = formatDateTime();
 let reportersDir = "newman/";
 
-var init = function(mode, exportsParam, envParam, globalsParam){
+/**
+ * CMD export
+ * require pid (cli -p, --pid | file.exportPropID)
+ * require environment (cli -e | file.environment)
+ * 
+ * CMD import
+ * require environment (cli -e | file.environment)
+ * require -f, --file
+ * file.propertyName
+ * file.extensions
+ * file.dataElements
+ * file.rules.{rule1, rule2}
+ * 
+ * CMD delete
+ * require searchStr (cli -s, --search | file.deleteSearchStr)
+ * require environment (cli -e | file.environment)
+ */
+
+var init = function(mode, configParam, envParam, globalsParam, pidParam, searchStrParam){
 /** CLI arguments
  * -f json/yml file
  * --[import | export | delete STR] modes this tool uses
@@ -40,70 +58,147 @@ var init = function(mode, exportsParam, envParam, globalsParam){
 //TODO implement debugging
 //TODO implement lint
 
-  const configFile = exportsParam || args.f;
-  if(!configFile){
-    console.log("No file specified");
-    //TODO add help
+  const modes = {
+    export: "export",
+    import: "import",
+    delete: "delete"
+  }
+
+  const config = configParam || args.f;
+  let argsEnv = envParam || args.e;
+  let argsGlobals = globalsParam || args.g;
+  const argsPID = pidParam || args.p || args.pid;
+  const argsSearch = searchStrParam || args.s || args.search
+  const argsVersion = args.v || args.version;
+  const argsHelp =  args.h || args.help;
+  let argsMode = "";
+
+  argsEnv = getData(argsEnv, "./");
+  argsGlobals = getData(argsGlobals, "./");
+  
+  if((mode && mode.toLowerCase() == modes.export) ||  args.export){
+    argsMode = modes.export;
+  } else if((mode && mode.toLowerCase() == modes.import) ||  args.import){
+    argsMode = modes.import;
+  } else if((mode && mode.toLowerCase() == modes.delete) ||  args.delete){
+    argsMode = modes.delete;
+  }
+
+  
+  //Read the config file or assign the object for parsing
+  let configContents;
+  let configFileDir;
+  if(typeof config == "string"){
+    configContents = fs.readFileSync(config, 'utf8');
+    configFileDir = path.dirname(path.resolve(config));
+  } else {
+    configContents = config;
+    configFileDir = "./";
+  }
+  reportersDir = configFileDir + "/" + reportersDir;
+
+  //Parse the config for YAML/JSON
+  let jsonObj = {};
+  if(config){
+    try {
+      //Attempt to read the YAML and output JSON
+      let data = yaml.loadAll(configContents,"json");
+      let yamlContents = JSON.stringify(data[0], null, 2);
+      jsonObj = JSON.parse(yamlContents);
+    } catch {
+      console.log("Could not read YAML, attemping JSON");
+      try {
+        //Attempt to read JSON
+        jsonObj = JSON.parse(configContents);
+      } catch(e){
+        console.log("File does not contain valid YAML or JSON content.");
+        throw e;
+      }
+    }
+  }
+  if(!jsonObj) return; //TODO help screen... might not be needed.
+
+  //TODO Import Mode
+  // if(!jsonObj.propertyName) return; //TODO help screen
+  // debugConfig("Name: " + jsonObj.propertyName);
+
+  if(!jsonObj.export) jsonObj.export = {};
+  jsonObj.export.propID = argsPID || jsonObj.export.propID;
+  if(!jsonObj.delete) jsonObj.delete = {};
+  jsonObj.delete.searchStr = argsSearch || jsonObj.delete.searchStr;
+  
+  
+  //setup the data with ABS paths if they aren't objects
+  let env = getData(jsonObj.environment, configFileDir);
+  jsonObj.environment = argsEnv || env;
+  let g = getData(jsonObj.globals, configFileDir);
+  jsonObj.globals = argsGlobals || g;
+
+  if(!jsonObj.import) jsonObj.import = {};
+  let ext = getData(jsonObj.import.extensions, configFileDir);
+  jsonObj.import.extensions = ext;
+  let de = getData(jsonObj.import.dataElements, configFileDir);
+  jsonObj.import.dataElements = de;
+  for (rule in jsonObj.import.rules){
+    let ruleCmps = getData(jsonObj.import.rules[rule], configFileDir);
+    jsonObj.import.rules[rule] = ruleCmps;
+  }
+  
+  /** All Modes require an environment (cli -e | file.environment) */
+  if(!jsonObj.environment){
+    console.log("No environment specified");
+    //TODO help 
     return;
   }
 
-  var fileContents = fs.readFileSync(configFile, 'utf8');
-  var jsonObj = "";
-  try {
-    //Attempt to read the YAML and output JSON
-    var data = yaml.loadAll(fileContents,"json");
-    var yamlContents = JSON.stringify(data[0], null, 2);
-    jsonObj = JSON.parse(yamlContents);
-  } catch {
-    console.log("Could not read YAML, attemping JSON");
-    try {
-      //Attempt to read JSON
-      jsonObj = JSON.parse(fileContents);
-    } catch(e){
-      console.log("File does not contain valid YAML or JSON content.");
-      throw e;
-    }
-  }
-  if(!jsonObj.propertyName) return; //TODO help screen
-  debugConfig("Name: " + jsonObj.propertyName);
-
-  //Set function params or cli params for the environment and the globals file
-  let argsE = getData(args.e, "./")
-  jsonObj.environment = envParam || argsE || jsonObj.environment;
-  let argsG = getData(args.g, "./")
-  jsonObj.globals = globalsParam || argsG || jsonObj.globals;
-
-  
-  var configFileDir = path.dirname(path.resolve(configFile));
-  reportersDir = configFileDir + "/" + reportersDir;
-  //setup the data with ABS paths if they aren't objects
-  let env = getData(jsonObj.environment, configFileDir);
-  jsonObj.environment = env;
-  let g = getData(jsonObj.globals, configFileDir);
-  jsonObj.globals = g;
-  let ext = getData(jsonObj.extensions, configFileDir);
-  jsonObj.extensions = ext;
-  let de = getData(jsonObj.dataElements, configFileDir);
-  jsonObj.dataElements = de;
-  for (rule in jsonObj.rules){
-    let ruleCmps = getData(jsonObj.rules[rule], configFileDir);
-    jsonObj.rules[rule] = ruleCmps;
-  }
   debugConfig(JSON.stringify(jsonObj, null, 2));
-  
+  if(debug.enabled('index:config')){
+    return;
+  }
+
   // First authenticate before running and mode
   authenicateAIO(jsonObj, function(err, yamlObj){
     if(err) throw err;
     console.log('Connected to AIO');
     
-
-    if(args.export || mode == 'export'){ // EXPORT mode
+    //Export Mode
+    //requires pid (cli -p, --pid | file.export.propID)
+    if(argsMode == modes.export){
+      if(!jsonObj.export || !jsonObj.export.propID){
+        console.log("Export mode must have a propertyID to export from the environment");
+        //TODO help
+        return;
+      }
+      console.log("PropID: "+jsonObj.export.propID);
+      return; //TODO remove
       exportTag(yamlObj, configFileDir, function(err, yamlObj){
         if(err) throw err;
         console.log('Exported Tag property!');
       });
 
-    } else if(args.import || mode == 'import'){ // IMPORT mode
+      //IMPORT mode
+      //Requires -f, --file
+      // file.propertyName
+      // file.extensions
+      // file.dataElements
+      // file.rules.{rule1, rule2}
+    } else if(argsMode == modes.import){ // IMPORT mode
+      if(!config){
+        console.log("Configuration file/object is missing for import");
+        //TODO help
+        return;
+      }
+      if(!jsonObj.import ||
+        !jsonObj.import.propertyName ||
+        !jsonObj.import.extensions ||
+        !jsonObj.import.dataElements ||
+        !jsonObj.import.rules){
+          console.log("Import mode is missing values to import");
+          //TODO help
+          return;
+        }
+      //TODO put requirements in
+      return; //TODO remove
       createProperty(yamlObj, function(err, yamlObj){
         if(err) throw err;
         console.log('Created Tag Property!');
@@ -130,18 +225,23 @@ var init = function(mode, exportsParam, envParam, globalsParam){
         });
       });
 
-    } else if(args.delete || mode == 'delete'){ // DELETE mode
-      var deletePropStr = "";
-      if(typeof args.delete == "boolean") deletePropStr = "2022";
-      else deletePropStr = args.delete;
-      console.log("Time to delete tags that contain: " + deletePropStr);
-      deleteTags(yamlObj, deletePropStr, function(err, results){
+      //DELETE mode
+      //Requires searchStr (cli -s, --search | file.delete.searchStr)
+    } else if(argsMode == modes.delete){
+      if(!jsonObj.delete || !jsonObj.delete.searchStr){
+        console.log("Delete mode must have a search string");
+        //TODO help
+        return;
+      }
+      console.log("SearchStr: " + jsonObj.delete.searchStr);
+      return; //TODO remove
+      deleteTags(yamlObj, yamlObj.delete.searchStr, function(err, results){
         if(err) throw err;
         console.log("All tag propertys deleted with: " + deletePropStr);
       });
     } else {
       console.log("No mode selected");
-      //TODO add help
+      //TODO help
     }
 
   });
@@ -326,7 +426,7 @@ function publishLibrary(yamlObj, callback){
   });
 }
 
-function deleteTags(yamlObj, str, callback){
+function deleteTags(yamlObj, searchStr, callback){
   const name = "deleteTags";
   const reportName = TIMESTAMP +"-"+ name + "-Report";
   newman.run({
@@ -334,7 +434,7 @@ function deleteTags(yamlObj, str, callback){
     environment: yamlObj.environment,
     envVar: [{
       "key": "tagNameIncludes",
-      "value": str
+      "value": searchStr
     }],
     reporters: REPORTERS,
     reporter: {
@@ -359,7 +459,7 @@ function exportTag(yamlObj, workingDir, callback){
     environment: yamlObj.environment,
     envVar: [{
       "key": "propID",
-      "value": yamlObj.exportPropID
+      "value": yamlObj.export.propID
     }],
     reporters: REPORTERS,
     reporter: {
@@ -369,22 +469,24 @@ function exportTag(yamlObj, workingDir, callback){
     if (err) { throw err; }
     if(summary.run.failures == ""){
       let tagExport = {};
-      tagExport.extensions = getEnvironmentValue(summary.environment, "exportExtensions");
-      tagExport.dataElements = getEnvironmentValue(summary.environment, "exportDataElements");
-      tagExport.ruleNames = getEnvironmentValue(summary.environment, "exportRules");
+      tagExport.import = {}
+      tagExport.import.extensions = getEnvironmentValue(summary.environment, "exportExtensions");
+      tagExport.import.dataElements = getEnvironmentValue(summary.environment, "exportDataElements");
+      tagExport.import.ruleNames = getEnvironmentValue(summary.environment, "exportRules");
       // fs.writeFileSync('./env.json', JSON.stringify(summary.environment, null, 2) , 'utf-8');
-      tagExport.rules = {};
-      for(var element in tagExport.ruleNames){
-        let ruleName = tagExport.ruleNames[element].attributes.name
-        // console.log(tagExport.ruleNames[element].attributes.name);
-        tagExport.rules[ruleName] = getEnvironmentValue(summary.environment, "exportRuleCmps-"+element);
+      tagExport.import.rules = {};
+      for(var element in tagExport.import.ruleNames){
+        let ruleName = tagExport.import.ruleNames[element].attributes.name
+        // console.log(tagExport.import.ruleNames[element].attributes.name);
+        tagExport.import.rules[ruleName] = getEnvironmentValue(summary.environment, "exportRuleCmps-"+element);
       }
 
       //TODO pull out propertyName from Export to write
-      propertyName = "export";
+      propName = "export";
+      tagExport.import.propertyName = propName;
       //Write to a file
-      fs.writeFileSync(workingDir+"/"+propertyName+".json", JSON.stringify(tagExport,null,2));
-      fs.writeFileSync(workingDir+"/"+propertyName+".yml", yaml.dump(tagExport));
+      fs.writeFileSync(workingDir+"/"+propName+".json", JSON.stringify(tagExport,null,2));
+      fs.writeFileSync(workingDir+"/"+propName+".yml", yaml.dump(tagExport));
 
 
       callback(null, yamlObj, summary);
