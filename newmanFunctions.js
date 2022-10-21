@@ -2,8 +2,6 @@ const newman = require("newman");
 const fs = require("fs");
 var debug = require("debug")("index");
 
-//TODO move newman functions here!
-
 var REPORTERS = ["emojitrain","junit", "html"];
 var IO_COLLECTION = "https://www.getpostman.com/collections/c962d6b3b81776a4c4bf";
 var EXPORT_COLLECTION = "https://www.getpostman.com/collections/e8287cbeae23e348a791";

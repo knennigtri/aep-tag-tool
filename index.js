@@ -10,39 +10,17 @@ var debugConfig = require("debug")("index:config");
 var debugNewman = require("debug")("index:newman");
 
 
-
-
-
-/**
- * CMD export
- * require pid (cli -p, --pid | file.exportPropID)
- * require environment (cli -e | file.environment)
- * 
- * CMD import
- * require environment (cli -e | file.environment)
- * require -f, --file
- * file.propertyName
- * file.extensions
- * file.dataElements
- * file.rules.{rule1, rule2}
- * 
- * CMD delete
- * require searchStr (cli -s, --search | file.deleteSearchStr)
- * require environment (cli -e | file.environment)
- */
-
 var init = function(mode, configParam, envParam, globalsParam, pidParam, searchStrParam){
 /** CLI arguments
  * -f json/yml file
- * --[import | export | delete STR] modes this tool uses
- *     STR - string value that should be searched in the property titles for deletion
- * //TODO -e specify an environment file
- * //TODO -g specify a global file
+ * --[import | export | delete] modes this tool uses
+ * -e specify an environment file
+ * -g specify a global file
+ * -p, --pid property ID. Req for export mode
+ * -s, --search search string for properties to delete. Reg for delete mode
  * //TODO -h, --help
  * //TODO -v, --version
  */
-  //TODO implement debugging
-  //TODO implement lint
 
   const modes = {
     export: "export",
@@ -81,8 +59,6 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     configContents = config;
     configFileDir = "./";
   }
-  //TODO move to newmanTF
-  var reportersDir = configFileDir + "/newman/" + reportersDir;
 
   //Parse the config for YAML/JSON
   let jsonObj = {};
@@ -104,10 +80,6 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     }
   }
   if(!jsonObj) return; //TODO help screen... might not be needed.
-
-  //TODO Import Mode
-  // if(!jsonObj.propertyName) return; //TODO help screen
-  // debugConfig("Name: " + jsonObj.propertyName);
 
   if(!jsonObj.export) jsonObj.export = {};
   jsonObj.export.propID = argsPID || jsonObj.export.propID;
