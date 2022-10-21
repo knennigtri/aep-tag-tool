@@ -184,7 +184,6 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
         if(resultObj) console.log("Successfully created tag property: " + resultObj.propertyName);
       });
     
-
     //DELETE mode
     //Requires searchStr (cli -s, --search | file.delete.searchStr)
   } else if(argsMode == modes.delete){
@@ -205,8 +204,6 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   
 }
 
-
-
 function getData(data, rootDir){
   if(typeof data == "string"){
     let absPath = path.resolve(rootDir, data);
@@ -221,6 +218,5 @@ function getData(data, rootDir){
     return data;
   }
 }
-
 
 exports.run = init;
