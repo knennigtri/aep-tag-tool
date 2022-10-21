@@ -1,5 +1,4 @@
 const newmanTF = require("./newmanFunctions.js");
-const newman = require("newman");
 const yaml = require("js-yaml");
 const fs = require("fs");
 var minimist = require("minimist");
@@ -127,7 +126,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   jsonObj.import.extensions = ext;
   let de = getData(jsonObj.import.dataElements, configFileDir);
   jsonObj.import.dataElements = de;
-  for (rule in jsonObj.import.rules){
+  for (let rule in jsonObj.import.rules){
     let ruleCmps = getData(jsonObj.import.rules[rule], configFileDir);
     jsonObj.import.rules[rule] = ruleCmps;
   }

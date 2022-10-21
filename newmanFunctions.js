@@ -1,6 +1,5 @@
 const newman = require("newman");
 const fs = require("fs");
-const yaml = require("js-yaml");
 var debug = require("debug")("index");
 
 //TODO move newman functions here!
@@ -134,7 +133,7 @@ function createProperty(propertyObj, callback){
   newman.run({
     collection: IMPORT_COLLECTION,
     environment: propertyObj.environment,
-    folder: "Create Tag Property",
+    folder: folder,
     envVar: [{
       "key": "propName",
       "value": propertyObj.import.propertyName
@@ -166,7 +165,7 @@ function installExtension(extensionsObj, callback){
     collection: IMPORT_COLLECTION,
     environment: extensionsObj.environment,
     globals: extensionsObj.globals,
-    folder: "Add Tag Extensions",
+    folder: folder,
     iterationData: extensionsObj.import.extensions,
     reporters: REPORTERS,
     reporter: {
@@ -238,7 +237,7 @@ function importRules(rulesObj, callback){
       collection: IMPORT_COLLECTION,
       environment: rulesObj.environment,
       globals: rulesObj.globals,
-      folder: "Add Tag Rule and CMPs",
+      folder: folder,
       envVar: [{
         "key": "ruleName",
         "value": ruleName
@@ -272,7 +271,7 @@ function publishLibrary(publishObj, callback){
     collection: IMPORT_COLLECTION,
     environment: publishObj.environment,
     globals: publishObj.globals,
-    folder: "Publish Tag Library",
+    folder: folder,
     reporters: REPORTERS,
     reporter: {
       "html": { export: reportersDir+reportName+".html" },
@@ -323,7 +322,6 @@ function formatDateTime() {
   var date = d.getDate();
   var hour = d.getHours();
   var min = (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
-  var sec = (d.getSeconds() < 10 ? "0" : "") + d.getSeconds();
   var time = year + "-" + month + "-" + date + "-" + hour + ":" + min;
   return time;
 }
