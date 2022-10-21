@@ -1,11 +1,11 @@
-const newman = require('newman');
-const fs = require('fs');
-const yaml = require('js-yaml');
+const newman = require("newman");
+const fs = require("fs");
+const yaml = require("js-yaml");
 var debug = require("debug")("index");
 
 //TODO move newman functions here!
 
-var REPORTERS = ['emojitrain','junit', 'html'];
+var REPORTERS = ["emojitrain","junit", "html"];
 var IO_COLLECTION = "https://www.getpostman.com/collections/c962d6b3b81776a4c4bf";
 var EXPORT_COLLECTION = "https://www.getpostman.com/collections/e8287cbeae23e348a791";
 var IMPORT_COLLECTION = "https://www.getpostman.com/collections/c0c463dbe2f98d3b354a";
@@ -34,25 +34,25 @@ exports.exportTag = function exportTag(configObj, workingDir, callback){
       }],
       reporters: REPORTERS,
       reporter: {
-        'html': { export: reportersDir+reportName+".html" },
-        'junit': { export: reportersDir+reportName+".xml" }}
-    }).on('done', function (err, summary) {
+        "html": { export: reportersDir+reportName+".html" },
+        "junit": { export: reportersDir+reportName+".xml" }}
+    }).on("done", function (err, summary) {
       if (err) { throw err; }
       if(summary.run.failures == ""){
         let tagExport = {};
-        tagExport.import = {}
+        tagExport.import = {};
         tagExport.import.propertyName = getEnvironmentValue(summary.environment, "exportPropName");
         tagExport.import.extensions = getEnvironmentValue(summary.environment, "exportExtensions");
         tagExport.import.dataElements = getEnvironmentValue(summary.environment, "exportDataElements");
         tagExport.import.ruleNames = getEnvironmentValue(summary.environment, "exportRules");
         tagExport.import.rules = {};
         for(var element in tagExport.import.ruleNames){
-          let ruleName = tagExport.import.ruleNames[element].attributes.name
+          let ruleName = tagExport.import.ruleNames[element].attributes.name;
           tagExport.import.rules[ruleName] = getEnvironmentValue(summary.environment, "exportRuleCmps-"+element);
         }
 
         //Write to a file
-        var propName = tagExport.import.propertyName.replace(/\s+/g, '-').toLowerCase();
+        var propName = tagExport.import.propertyName.replace(/\s+/g, "-").toLowerCase();
         fs.writeFileSync(workingDir+"/"+propName+".json", JSON.stringify(tagExport,null,2));
         // fs.writeFileSync(workingDir+"/"+propName+".yml", yaml.dump(tagExport));
 
@@ -62,7 +62,7 @@ exports.exportTag = function exportTag(configObj, workingDir, callback){
       }
     });
   });
-}
+};
 
 exports.importTag = function importTag(configObj, callback){
   authenicateAIO(configObj, function(err, importObj){
@@ -94,7 +94,7 @@ exports.importTag = function importTag(configObj, callback){
       });
     });
   });
-}
+};
 
 exports.deleteTags = function deleteTags(configObj, searchStr, callback){
   const name = "deleteTags";
@@ -111,9 +111,9 @@ exports.deleteTags = function deleteTags(configObj, searchStr, callback){
       }],
       reporters: REPORTERS,
       reporter: {
-        'html': { export: reportersDir+reportName+".html" },
-        'junit': { export: reportersDir+reportName+".xml" }}
-    }).on('done', function (err, summary) {
+        "html": { export: reportersDir+reportName+".html" },
+        "junit": { export: reportersDir+reportName+".xml" }}
+    }).on("done", function (err, summary) {
       if (err) { throw err; }
       if(summary.run.failures == ""){
         console.log("All tag propertys deleted with: " + deleteObj.delete.searchStr);
@@ -123,7 +123,7 @@ exports.deleteTags = function deleteTags(configObj, searchStr, callback){
       }
     });
   });
-}
+};
 
 // Runs the Import Tag collection folder "Create Tag Property"
 function createProperty(propertyObj, callback){
@@ -141,14 +141,14 @@ function createProperty(propertyObj, callback){
     }],
     reporters: REPORTERS,
     reporter: {
-      'html': { export: reportersDir+reportName+".html" },
-      'junit': { export: reportersDir+reportName+".xml" }}
-  }).on('done', function (err, summary) {
+      "html": { export: reportersDir+reportName+".html" },
+      "junit": { export: reportersDir+reportName+".xml" }}
+  }).on("done", function (err, summary) {
     if (err) { throw err; }
     
     propertyObj.environment = summary.environment; // Update with propID
     if(summary.run.failures == ""){
-      console.log('Created Tag Property! PropID='+getEnvironmentValue(summary.environment, "propID"));
+      console.log("Created Tag Property! PropID="+getEnvironmentValue(summary.environment, "propID"));
       callback(null, propertyObj, summary);
     } else {
       callback(summary.run.failures[0].error.stack, null, null);
@@ -170,12 +170,12 @@ function installExtension(extensionsObj, callback){
     iterationData: extensionsObj.import.extensions,
     reporters: REPORTERS,
     reporter: {
-      'html': { export: reportersDir+reportName+".html" },
-      'junit': { export: reportersDir+reportName+".xml" }}
-  }).on('done', function (err, summary) {
+      "html": { export: reportersDir+reportName+".html" },
+      "junit": { export: reportersDir+reportName+".xml" }}
+  }).on("done", function (err, summary) {
     if (err) { throw err; }
     if(summary.run.failures == ""){
-      console.log('Installed Extensions!');
+      console.log("Installed Extensions!");
       callback(null, extensionsObj, summary);
     } else {
       callback(summary.run.failures[0].error.stack, null, null);
@@ -198,13 +198,13 @@ function importDataElements(dataElementsObj, callback){
     iterationData: dataElementsObj.import.dataElements,
     reporters: REPORTERS,
     reporter: {
-      'html': { export: reportersDir+reportName+".html" },
-      'junit': { export: reportersDir+reportName+".xml" }}
-  }).on('done', function (err, summary) {
+      "html": { export: reportersDir+reportName+".html" },
+      "junit": { export: reportersDir+reportName+".xml" }}
+  }).on("done", function (err, summary) {
     if (err) { throw err; }
     
     if(summary.run.failures == ""){
-      console.log('Imported Data Elements!');
+      console.log("Imported Data Elements!");
       callback(null, dataElementsObj, summary);
     } else {
       callback(summary.run.failures[0].error.stack, null, null);
@@ -246,13 +246,13 @@ function importRules(rulesObj, callback){
       iterationData: ruleCmps,
       reporters: REPORTERS,
       reporter: {
-      'html': { export: reportersDir+reportName+".html" },
-      'junit': { export: reportersDir+reportName+".xml" }}
-    }).on('done', function (err, summary) {
+        "html": { export: reportersDir+reportName+".html" },
+        "junit": { export: reportersDir+reportName+".xml" }}
+    }).on("done", function (err, summary) {
       if (err) { throw err; }
       
       if(summary.run.failures == ""){
-        console.log('Imported Rule: ' + ruleName);
+        console.log("Imported Rule: " + ruleName);
       } else {
         callback(summary.run.failures[0].error.stack, null, null);
       }
@@ -275,9 +275,9 @@ function publishLibrary(publishObj, callback){
     folder: "Publish Tag Library",
     reporters: REPORTERS,
     reporter: {
-      'html': { export: reportersDir+reportName+".html" },
-      'junit': { export: reportersDir+reportName+".xml" }}
-  }).on('done', function (err, summary) {
+      "html": { export: reportersDir+reportName+".html" },
+      "junit": { export: reportersDir+reportName+".xml" }}
+  }).on("done", function (err, summary) {
     if (err) { throw err; }
 
     if(summary.run.failures == ""){
@@ -299,14 +299,14 @@ function authenicateAIO(yamlObj, callback){
     environment: yamlObj.environment,
     reporters: REPORTERS,
     reporter: {
-      'html': { export: reportersDir+reportName+".html" },
-      'junit': { export: reportersDir+reportName+".xml" }}
-  }).on('done', function (err, summary) {
-    if (err) { callback(err, false) }
+      "html": { export: reportersDir+reportName+".html" },
+      "junit": { export: reportersDir+reportName+".xml" }}
+  }).on("done", function (err, summary) {
+    if (err) { callback(err, false); }
     
     yamlObj.environment = summary.environment; // Update with AIO token
     if(summary.run.failures == ""){
-      console.log('Connected to AIO');
+      console.log("Connected to AIO");
       callback(null, yamlObj, summary);
     } else {
       callback(summary.run.failures[0].error.stack, null, null);
@@ -322,9 +322,9 @@ function formatDateTime() {
   var month = d.getMonth() + 1;
   var date = d.getDate();
   var hour = d.getHours();
-  var min = (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
-  var sec = (d.getSeconds() < 10 ? '0' : '') + d.getSeconds();
-  var time = year + "-" + month + "-" + date + "-" + hour + ':' + min;
+  var min = (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
+  var sec = (d.getSeconds() < 10 ? "0" : "") + d.getSeconds();
+  var time = year + "-" + month + "-" + date + "-" + hour + ":" + min;
   return time;
 }
 

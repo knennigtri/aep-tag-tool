@@ -1,7 +1,7 @@
-const newmanTF = require('./newmanFunctions.js');
-const newman = require('newman');
-const yaml = require('js-yaml');
-const fs = require('fs');
+const newmanTF = require("./newmanFunctions.js");
+const newman = require("newman");
+const yaml = require("js-yaml");
+const fs = require("fs");
 var minimist = require("minimist");
 var args = minimist(process.argv.slice(2));
 var path = require("path");
@@ -42,20 +42,20 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
  * //TODO -h, --help
  * //TODO -v, --version
  */
-//TODO implement debugging
-//TODO implement lint
+  //TODO implement debugging
+  //TODO implement lint
 
   const modes = {
     export: "export",
     import: "import",
     delete: "delete"
-  }
+  };
 
   const config = configParam || args.f;
   let argsEnv = envParam || args.e;
   let argsGlobals = globalsParam || args.g;
   const argsPID = pidParam || args.p || args.pid;
-  const argsSearch = searchStrParam || args.s || args.search
+  const argsSearch = searchStrParam || args.s || args.search;
   const argsVersion = args.v || args.version;
   const argsHelp =  args.h || args.help;
   let argsMode = "";
@@ -76,7 +76,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   let configContents;
   let configFileDir;
   if(typeof config == "string"){
-    configContents = fs.readFileSync(config, 'utf8');
+    configContents = fs.readFileSync(config, "utf8");
     configFileDir = path.dirname(path.resolve(config));
   } else {
     configContents = config;
@@ -140,7 +140,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   }
 
   debugConfig(JSON.stringify(jsonObj, null, 2));
-  if(debug.enabled('index:config')){
+  if(debug.enabled("index:config")){
     return;
   }
     
@@ -155,7 +155,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     console.log("PropID: "+jsonObj.export.propID);
     newmanTF.exportTag(jsonObj, configFileDir, function(err, resultObj){
       if(err) throw err;
-      if(resultObj) console.log('Exported Tag property!');
+      if(resultObj) console.log("Exported Tag property!");
     });
 
     //IMPORT mode
@@ -175,14 +175,14 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
       !jsonObj.import.extensions ||
       !jsonObj.import.dataElements ||
       !jsonObj.import.rules){
-        console.log("Import mode is missing values to import");
-        //TODO help
-        return;
-      }
-      newmanTF.importTag(jsonObj, function(err, resultObj){
-        if(err) throw err;
-        if(resultObj) console.log("Successfully created tag property: " + resultObj.propertyName);
-      });
+      console.log("Import mode is missing values to import");
+      //TODO help
+      return;
+    }
+    newmanTF.importTag(jsonObj, function(err, resultObj){
+      if(err) throw err;
+      if(resultObj) console.log("Successfully created tag property: " + resultObj.propertyName);
+    });
     
     //DELETE mode
     //Requires searchStr (cli -s, --search | file.delete.searchStr)
@@ -202,7 +202,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     //TODO help
   }
   
-}
+};
 
 function getData(data, rootDir){
   if(typeof data == "string"){
