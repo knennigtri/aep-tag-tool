@@ -5,7 +5,6 @@ var minimist = require("minimist");
 var args = minimist(process.argv.slice(2));
 var path = require("path");
 var debug = require("debug");
-const { json } = require('stream/consumers');
 var debugIndex = require("debug")("index");
 var debugConfig = require("debug")("index:config");
 var debugNewman = require("debug")("index:newman");
@@ -19,9 +18,9 @@ var IMPORT_COLLECTION = "https://www.getpostman.com/collections/c0c463dbe2f98d3b
 var DELETE_PROPS = "https://www.getpostman.com/collections/dc9e91b64f454a9b1bac";
 
 //Development commands
-IMPORT_COLLECTION = "https://www.getpostman.com/collections/2f3dc4c81eb464c21693";
-DELETE_PROPS = "https://www.getpostman.com/collections/357a7d9bea644bfc5b46";
-EXPORT_COLLECTION = "https://www.getpostman.com/collections/55520565b0f9933b5cf8";
+// IMPORT_COLLECTION = "https://www.getpostman.com/collections/2f3dc4c81eb464c21693";
+// DELETE_PROPS = "https://www.getpostman.com/collections/357a7d9bea644bfc5b46";
+// EXPORT_COLLECTION = "https://www.getpostman.com/collections/55520565b0f9933b5cf8";
 // REPORTERS = ['cli','junit', 'html'];
 
 let TIMESTAMP = formatDateTime();
