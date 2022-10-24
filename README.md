@@ -51,29 +51,94 @@ Usage: aep-tag-tool [ARGS]
                delete               how to use delete mode
     -v, --version                   Displays version of this package
 ```
-## Export Tag collection
+## Export a Tag
+//TODO give an explaination of the mode
+Export mode requires:
+ -e  <postman_environment.json>  specify an environment file
+ -p, --pid  <pid>                property ID. Req for export mode
 
-The Export tag collection can be used one of two ways:
+```bash
+  aep-tag-tool --export -e myEnvironment.postman_environment.json -p PR12345678901234567890
+```
 
+These values can alternatively be set in the config file:
+   configFile.environment
+   configfile.export.propID
 
-Other options for using the Export Collection:
+```bash
+  aep-tag-tool --export -f myConfig.json
+```
+myConfig.json
+```json
+{
+  "environment": "path/to/myEnvironment.postman_environment.json",
+  "export": {
+    "propID": "PR12345678901234567890"
+  }
+}
+```
+
+### Using only the [Export Collection](collections/Export%20Tag%20Property.postman_collection.json):
 * Using Postman collection runner on folders - [Learn how to use the Export Tag collection](exportTagCollection.md)
 * Using Newman to run the collection folders - See [example export bash script](example-venia-tag/export-tag.sh)
 
-Running through the requests of this collection will create responses that need to be saved to use for Importing into other organizations. You will end up with `1` **extensions.json**, `1` **data-elements.json**, and `n` **rulecmp-json** files where `n` is the number of rules in your property
+> Running through the requests of this collection will create responses that need to be saved to use for Importing into other organizations. You will end up with `1` **extensions.json**, `1` **data-elements.json**, and `n` **rulecmp-json** files where `n` is the number of rules in your property
 
-## Import Tag collection
+## Import a Tag
+//TODO give an explaination of the mode
+Import mode requires:
+ -e  <postman_environment.json>  specify an environment file
+ -f  <file>                      configuration [json | yml] file
 
-The Import tag collection can be used one of two ways:
+  The config file requires:
+    configFile.import.extensions
+    configFile.import.dataElements
+    configFile.import.rules.[rules]
 
+### Using only the [Import Collection](collections/Import%20Tag%20Property.postman_collection.json):
 * Using Postman collection runner on folders - [Learn how to use the Import Tag collection](importTagCollection.md)
-* Using Newman to run the collection folders - See [example import bash script](example-venia-tag/import-venia-tag.sh)
-
-Once you have the json responses from the original tag property, importing these values into a new organization can be done in less than 5 minutes. 
+* Using Newman to run the collection folders - See [example import bash script](example-venia-tag/import-venia-tag.sh) 
 
 ## Delete tag properties that contain a specific string
+//TODO give an explaination of the mode
+Delete mode requires:
+ -e  <postman_environment.json>  specify an environment file
+ -s, --search  <str>             search string for properties to delete. Reg for delete mode
+  
+  These values can alternatively be set in the config file:
+    configFile.environment
+    configfile.delete.searchStr
 
-//TODO
+```bash
+  aep-tag-tool --delete -e myEnvironment.postman_environment.json -s 2022
+```
+
+These values can alternatively be set in the config file:
+   configFile.environment
+   configfile.delete.searchStr
+
+```bash
+  aep-tag-tool --export -f myConfig.json
+```
+myConfig.json
+```json
+{
+  "environment": "path/to/myEnvironment.postman_environment.json",
+  "delete": {
+    "searchStr": "PR12345678901234567890"
+  }
+}
+```
+
+## Customize Settings for the Import
+//TODO document custom settings
+
+### Extensions
+
+### Data Elements
+
+### Rules
+In this release there is no ability to customize rule settings. If this is a needed feature, fill out a git issue.
 
 ## Postman Collections and Objects
 
@@ -81,8 +146,8 @@ Once you have the json responses from the original tag property, importing these
 * [Export Tag Collection](collections/Export%20Tag%20Property.postman_collection.json)
 * [Import Tag Collection](collections/Import%20Tag%20Property.postman_collection.json)
 * [Delete Tags Collection](collections/Delete%20Properties.postman_collection.json)
-* [Example Environment](example.postman_environment.json)
+* [Example Environment](docs/example.postman_environment.json)
   * See configuration instructions: [docs/environment.md](docs/environment.md) 
-* [Example Globals](example.postman-globals.json)
+* [Example Globals](docs/example.postman-globals.json)
   * Used to customize a tag import into a different organization. Updating the configurations on an extension that's specific to the new orangization.
   * See configuration instructions: [docs/globals.md](docs/globals.md) 

@@ -31,7 +31,7 @@ In order to use the Tag API, you need to authenticate through Adobe IO using Ado
 ## Create the postman environment JSON
 ### Create the JSON
 
- 1. Copy the [example.postman_environment.json](example.postman_environment.json) file in this folder.
+ 1. Copy the [docs/example.postman_environment.json](docs/example.postman_environment.json) file in this folder.
  2. Rename it so it's unique to you.
 
 ### Add IMS values to the JSON
