@@ -1,0 +1,281 @@
+{
+	"info": {
+		"_postman_id": "275f3fe8-1bc3-41d8-8d07-19d1fc9257ea",
+		"name": "Delete Properties",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Company",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var resp = JSON.parse(responseBody);",
+							"",
+							"pm.collectionVariables.set(\"companyID\", resp.data[0].id);",
+							"",
+							"pm.test(\"Company ID:\" + resp.data[0].id, function () {",
+							"  pm.response.to.have.status(200);",
+							"  pm.expect(resp.data[0].id).to.be.not.empty;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.clear();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{access_token}}",
+						"type": "text"
+					},
+					{
+						"key": "x-api-key",
+						"value": "{{CLIENT_ID}}",
+						"type": "text"
+					},
+					{
+						"key": "X-Gw-Ims-Org-Id",
+						"value": "{{ORG_ID}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.api+json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/vnd.api+json;revision=1",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{HOST}}/companies",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"companies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save Properties",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = JSON.parse(responseBody);",
+							"",
+							"array = []",
+							"",
+							"var includeStr = pm.variables.get(\"tagNameIncludes\");",
+							"console.log(\"String: \" + includeStr);",
+							"",
+							"for(var obj of res.data){",
+							"    if(obj.attributes.name.includes(includeStr)){",
+							"        console.log(\"Deleting: \" + obj.attributes.name);",
+							"        array.push(obj);",
+							"    }",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"delProps\", array);",
+							"",
+							"pm.test(\"PropIDs to delete saved.\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{access_token}}",
+						"type": "text"
+					},
+					{
+						"key": "x-api-key",
+						"value": "{{CLIENT_ID}}",
+						"type": "text"
+					},
+					{
+						"key": "X-Gw-Ims-Org-Id",
+						"value": "{{ORG_ID}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.api+json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/vnd.api+json;revision=1",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{HOST}}/companies/{{companyID}}/properties",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"companies",
+						"{{companyID}}",
+						"properties"
+					]
+				},
+				"description": "Saves all extension IDs in this tag property.\n\n### Variables saved:\n\n*   `extID_< name >`\n    \n\nWhere `< name >` is derived from the response: `data.attributes.name`"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Property",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var count = pm.variables.get(\"count\");",
+							"var delProps = pm.variables.get(\"delProps\");",
+							"",
+							"if(delProps && delProps[count]){",
+							"    console.log(\"Property Deleted: \" + delProps[count].attributes.name);",
+							"",
+							"    pm.test(\"Property Deleted: \" + delProps[count].attributes.name, function () {",
+							"        pm.response.to.have.status(204);",
+							"    });",
+							"",
+							"    if(count < (delProps.length-1)){",
+							"        count = count + 1;",
+							"        pm.collectionVariables.set(\"count\", count);",
+							"        postman.setNextRequest(\"Delete Property\");",
+							"    }",
+							"} else console.log(\"No Properties to Delete\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var delProps = pm.variables.get(\"delProps\");",
+							"var count;",
+							"if (!pm.variables.has(\"count\") || (pm.variables.get(\"count\") === \"\")){",
+							"    count = 0;",
+							"    pm.collectionVariables.set(\"count\", count);",
+							"} else {",
+							"    count = pm.variables.get(\"count\");",
+							"}",
+							"",
+							"if(delProps[count]){",
+							"    pm.collectionVariables.set(\"delPropID\", delProps[count].id);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{access_token}}",
+						"type": "text"
+					},
+					{
+						"key": "x-api-key",
+						"value": "{{CLIENT_ID}}",
+						"type": "text"
+					},
+					{
+						"key": "X-Gw-Ims-Org-Id",
+						"value": "{{ORG_ID}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.api+json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/vnd.api+json;revision=1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{HOST}}/properties/{{delPropID}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"properties",
+						"{{delPropID}}"
+					]
+				},
+				"description": "Property name is based on the local variable **propName**. This is set initially in the **Create Property folder > Pre-request script**.\n\n### Collection Variable Naming:\n\n*   `propID` - property ID of the created property"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var tagNameIncludes = pm.variables.get(\"tagNameIncludes\");",
+					"if (tagNameIncludes == null){",
+					"    pm.collectionVariables.set(\"tagNameIncludes\",\"2022\");",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
