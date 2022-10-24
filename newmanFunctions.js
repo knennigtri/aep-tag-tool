@@ -1,18 +1,26 @@
 const newman = require("newman");
 const fs = require("fs");
-var debug = require("debug")("index");
+const debug = require("debug");
+const debugNewman = require("debug")("newmanTF");
+const debugCollections = require("debug")("newmanTF:collections");
+// let IO_COLLECTION = require("./collections/Adobe IO Token.postman_collection.json")
 
-var REPORTERS = ["emojitrain","junit", "html"];
-var IO_COLLECTION = "https://www.getpostman.com/collections/c962d6b3b81776a4c4bf";
-var EXPORT_COLLECTION = "https://www.getpostman.com/collections/e8287cbeae23e348a791";
-var IMPORT_COLLECTION = "https://www.getpostman.com/collections/c0c463dbe2f98d3b354a";
-var DELETE_PROPS = "https://www.getpostman.com/collections/dc9e91b64f454a9b1bac";
+let REPORTERS = ["emojitrain","junit", "html"];
+let IO_COLLECTION = require("./collections/Adobe IO Token.postman_collection.json");
+let EXPORT_COLLECTION = require("./collections/Export Tag Property.postman_collection.json");
+let IMPORT_COLLECTION = require("./collections/Import Tag Property.postman_collection.json");
+let DELETE_PROPS = require("./collections/Delete Properties.postman_collection.json");
 
 //Development commands
-// IMPORT_COLLECTION = "https://www.getpostman.com/collections/2f3dc4c81eb464c21693";
-// DELETE_PROPS = "https://www.getpostman.com/collections/357a7d9bea644bfc5b46";
-EXPORT_COLLECTION = "https://www.getpostman.com/collections/55520565b0f9933b5cf8";
-// REPORTERS = ['cli','junit', 'html'];
+if(debug.enabled("newmanTF:collections")){
+  debugCollections("Using Postman Collections");
+  IO_COLLECTION = require("https://www.getpostman.com/collections/6ad99074fc75d564ac8a");
+  IMPORT_COLLECTION = require("https://www.getpostman.com/collections/2f3dc4c81eb464c21693");
+  DELETE_PROPS = require("https://www.getpostman.com/collections/357a7d9bea644bfc5b46");
+  EXPORT_COLLECTION = require("https://www.getpostman.com/collections/55520565b0f9933b5cf8");
+  // REPORTERS = ['cli','junit', 'html'];
+}
+
 let TIMESTAMP = formatDateTime();
 let reportersDir = "newman/";
 
