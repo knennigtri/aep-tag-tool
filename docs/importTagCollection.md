@@ -3,7 +3,6 @@
 Prerequisites:
 
 * Postman_environment.json file is configured and imported into postman
-* You are using the latest Import Tag collection (See README.md)
 
 ## Import process
 
