@@ -10,9 +10,6 @@ var debugIndex = require("debug")("index");
 var debugConfig = require("debug")("index:config");
 var debugNewman = require("debug")("index:newman");
 
-//TODO Create github action for publishing
-//TODO formalize the package.json
-
 var init = function(mode, configParam, envParam, globalsParam, pidParam, searchStrParam){
   const HELP_F = "-f  <file>                      configuration [json | yml] file";
   const HELP_E = "-e  <postman_environment.json>  specify an environment file";
@@ -91,7 +88,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     delete: "delete"
   };
 
-  const config = configParam || args.f;
+  let config = configParam || args.f;
   let argsEnv = envParam || args.e;
   let argsGlobals = globalsParam || args.g;
   const argsPID = pidParam || args.p || args.pid;
@@ -135,7 +132,8 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   let configFileDir;
   if(typeof config == "string"){
     configContents = fs.readFileSync(config, "utf8");
-    configFileDir = path.dirname(path.resolve(config));
+    config = path.resolve(config);
+    configFileDir = path.dirname(config);
   } else {
     configContents = config;
     configFileDir = "./";
@@ -143,7 +141,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
 
   //Parse the config for YAML/JSON
   let jsonObj = {};
-  if(config){
+  if(fs.lstatSync(config).isFile()){
     try {
       //Attempt to read the YAML and output JSON
       let data = yaml.loadAll(configContents,"json");
@@ -159,7 +157,10 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
         throw e;
       }
     }
+  } else if(typeof config  === 'object' && config !== null) {
+    jsonObj = config;
   }
+
   if(!jsonObj) return; //TODO help screen... might not be needed.
 
   if(!jsonObj.export) jsonObj.export = {};
