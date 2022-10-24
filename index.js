@@ -1,4 +1,5 @@
 const newmanTF = require("./newmanFunctions.js");
+var packageInfo = require("./package.json");
 const yaml = require("js-yaml");
 const fs = require("fs");
 var minimist = require("minimist");
@@ -9,18 +10,80 @@ var debugIndex = require("debug")("index");
 var debugConfig = require("debug")("index:config");
 var debugNewman = require("debug")("index:newman");
 
+//TODO Create github action for publishing
+//TODO formalize the package.json
 
 var init = function(mode, configParam, envParam, globalsParam, pidParam, searchStrParam){
-/** CLI arguments
- * -f json/yml file
- * --[import | export | delete] modes this tool uses
- * -e specify an environment file
- * -g specify a global file
- * -p, --pid property ID. Req for export mode
- * -s, --search search string for properties to delete. Reg for delete mode
- * //TODO -h, --help
- * //TODO -v, --version
- */
+  const HELP_F = "-f  <file>                      configuration [json | yml] file";
+  const HELP_E = "-e  <postman_environment.json>  specify an environment file";
+  const HELP_P = "-p, --pid  <pid>                property ID. Req for export mode";
+  const HELP_S = "-s, --search  <str>             search string for properties to delete. Reg for delete mode";
+  const MSG_HELP = `Usage: `+ packageInfo.name.replace("@knennigtri/", "") + ` [ARGS]
+ Arguments:
+    --export                        Mode to export a given property ID
+    --import                        Mode to import a property given a config file
+    --delete                        Mode to delete properties containing a specific string
+    ` + HELP_F + `
+    ` + HELP_E + `
+    -g  <postman_globals.json>      specify a global file
+    ` + HELP_P + `
+    ` + HELP_S + `
+    -h, --help
+               configfile           config file format
+               export               how to use export mode
+               import               how to use import mode
+               delete               how to use delete mode
+    -v, --version                   Displays version of this package
+ `;
+  const CONFIGFILE_EXAMPLE = 
+ `---
+ globals: postman-globals.json
+ environment: postman_environment.json
+ export:
+   propID: PR123455678901234556789012345567890
+ delete:
+   searchStr: 2022-08
+ import:
+   propertyName: Venia2
+   extensions: object | string.json
+   dataElements: object | string.json
+   rules:
+     "RuleTitle": object | string.json
+     "RuleTitle": object | string.json
+     "RuleTitle": object | string.json
+     "RuleTitle": object | string.json
+  ---`;
+  const MSG_HELP_CONFIGFILE = `Create the config file: 
+ Option 1: `+ packageInfo.name.replace("@knennigtri/", "") + ` --export -e <environmentFile> --p <pid>
+  Automatically creates the config file and adds the export objects
+ Option 2: Manually create the file.[yml | json]
+  `+CONFIGFILE_EXAMPLE+`
+ `;
+  const MSG_HELP_EXPORT = `Export mode requires:
+ ` + HELP_E + `
+ ` + HELP_P + `
+ 
+ These values can alternatively be set in the config file:
+   configFile.environment
+   configfile.export.propID
+`;
+  const MSG_HELP_IMPORT = `Import mode requires:
+ ` + HELP_E + `
+ ` + HELP_F + `
+
+  The config file requires:
+    configFile.import.extensions
+    configFile.import.dataElements
+    configFile.import.rules.[rules]
+ `; //TODO
+  const MSG_HELP_DELETE = `Delete mode requires:
+ ` + HELP_E + `
+ ` + HELP_S + `
+  
+  These values can alternatively be set in the config file:
+    configFile.environment
+    configfile.delete.searchStr
+ `;
 
   const modes = {
     export: "export",
@@ -48,7 +111,25 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     argsMode = modes.delete;
   }
 
-  
+  // Show CLI help
+  if (argsHelp) {
+    if(argsHelp == true){
+      console.log(MSG_HELP);
+    } else {
+      if(argsHelp.toLowerCase() == "configfile") console.log(MSG_HELP_CONFIGFILE);
+      if(argsHelp.toLowerCase() == "export") console.log(MSG_HELP_EXPORT);
+      if(argsHelp.toLowerCase() == "import") console.log(MSG_HELP_IMPORT);
+      if(argsHelp.toLowerCase() == "delete") console.log(MSG_HELP_DELETE);
+    }
+    return;
+  }
+
+  // Show version
+  if (argsVersion) {
+    console.log(packageInfo.version);
+    return;
+  }
+
   //Read the config file or assign the object for parsing
   let configContents;
   let configFileDir;
@@ -152,7 +233,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     }
     newmanTF.importTag(jsonObj, function(err, resultObj){
       if(err) throw err;
-      if(resultObj) console.log("Successfully created tag property: " + resultObj.propertyName);
+      if(resultObj) console.log("Successfully created tag property: " + resultObj.import.propertyName);
     });
     
     //DELETE mode
