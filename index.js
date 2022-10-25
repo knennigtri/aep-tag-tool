@@ -69,10 +69,11 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
  ` + HELP_F + `
 
   The config file requires:
+    configFile.import.propName
     configFile.import.extensions
     configFile.import.dataElements
     configFile.import.rules.[rules]
- `; //TODO
+ `;
   const MSG_HELP_DELETE = `Delete mode requires:
  ` + HELP_E + `
  ` + HELP_S + `
@@ -138,7 +139,8 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
       configContents = fs.readFileSync(config, "utf8");
       configFileDir = path.dirname(config);
       } else {
-        //TODO help -f is not a file
+        console.log("-f parameter is not a file.")
+        console.log(MSG_HELP);
         return;
       }
     } else if(typeof config  === 'object' && config !== null) {
@@ -191,8 +193,8 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   
   /** All Modes require an environment (cli -e | file.environment) */
   if(!jsonObj.environment){
-    console.log("No environment specified");
-    //TODO help 
+    console.log("No environment Specified.");
+    console.log(MSG_HELP);
     return;
   }
 
@@ -205,8 +207,8 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   //requires pid (cli -p, --pid | file.export.propID)
   if(argsMode == modes.export){
     if(!jsonObj.export || !jsonObj.export.propID){
-      console.log("Export mode must have a propertyID to export from the environment");
-      //TODO help
+      console.log("Export mode must have a property ID specified");
+      console.log(MSG_HELP);
       return;
     }
     console.log("PropID: "+jsonObj.export.propID);
@@ -224,7 +226,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   } else if(argsMode == modes.import){ // IMPORT mode
     if(!config){
       console.log("Configuration file/object is missing for import");
-      //TODO help
+      console.log(MSG_HELP);
       return;
     }
     if(!jsonObj.import ||
@@ -233,7 +235,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
       !jsonObj.import.dataElements ||
       !jsonObj.import.rules){
       console.log("Import mode is missing values to import");
-      //TODO help
+      console.log(MSG_HELP);
       return;
     }
     newmanTF.importTag(jsonObj, function(err, resultObj){
@@ -250,8 +252,8 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     //Requires searchStr (cli -s, --search | file.delete.searchStr)
   } else if(argsMode == modes.delete){
     if(!jsonObj.delete || !jsonObj.delete.searchStr){
-      console.log("Delete mode must have a search string");
-      //TODO help
+      console.log("Delete mode must have a search string specified");
+      console.log(MSG_HELP);
       return;
     }
     console.log("SearchStr: " + jsonObj.delete.searchStr);
@@ -261,7 +263,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     });
   } else {
     console.log("No mode selected");
-    //TODO help
+    console.log(MSG_HELP);
   }
   
 };
