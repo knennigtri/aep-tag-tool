@@ -19,6 +19,10 @@
     "lint:fix": "npm run lint -- --fix",
     "build": "npm run readmeTOC && npm ci && npm i --package-lock-only && depcheck ./",
     "readmeTOC": "doctoc README.md --github --title='# Contents'",
+    "release:bugfix": "npm version patch && publish:bugfix",
+    "publish:bugfix": "npm publish --tag bugfix",
+    "release:beta": "npm version patch && publish:beta",
+    "publish:beta": "npm publish --tag beta",
     "test": "node tests/tests.js",
     "test:noLogs": "node tests/tests.js -- --hideconsole"
   },
