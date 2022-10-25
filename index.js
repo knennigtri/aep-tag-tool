@@ -238,7 +238,12 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     }
     newmanTF.importTag(jsonObj, function(err, resultObj){
       if(err) throw err;
-      if(resultObj) console.log("Successfully created tag property: " + resultObj.import.propertyName);
+      if(resultObj) {
+        console.log("Successfully created tag property: " + resultObj.import.propertyName);
+        console.log("Production embed code: ");
+        console.log("<script src='"+resultObj.prodArtifactURL+"' async></script>")
+      }
+
     });
     
     //DELETE mode

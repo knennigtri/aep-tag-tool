@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "dcd9a145-2ce0-48a5-bf96-7bc06b83891d",
+		"_postman_id": "16b3208e-e7e6-4c39-82d3-22947673adb0",
 		"name": "Import Tag Property",
 		"description": "All calculated variables needed for this collection are stored as Collection Variables. These variables should not be manually changed since all IDs are set based on the responses from previous requests.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -458,9 +458,15 @@
 								"exec": [
 									"var res = JSON.parse(responseBody);",
 									"",
+									"var exts = {}",
 									"for(const package of res.data){",
 									"    pm.variables.set(\"extPackageID_\"+package.attributes.name, package.id);",
+									"    exts[package.attributes.name] = {",
+									"        \"description\": package.attributes.description,",
+									"        \"display_name\": package.attributes.display_name",
+									"    };",
 									"}",
+									"console.log(JSON.stringify(exts, null, 2));",
 									"",
 									"pm.test(\"Extension Package IDs saved.\", function () {",
 									"  pm.response.to.have.status(200);",
@@ -1882,6 +1888,13 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"var resp = JSON.parse(responseBody);",
+									"",
+									"if(resp.data && resp.data.meta){",
+									"    console.log(\"Artifact URL: \" + resp.data.meta.artifact_url);",
+									"    pm.environment.set(\"prodArtifactURL\", resp.data.meta.artifact_url);",
+									"}",
+									"",
 									"pm.test(\"Library is published\", function () {",
 									"  pm.response.to.have.status(201);",
 									"});",
