@@ -52,7 +52,12 @@ Usage: aep-tag-tool [ARGS]
     -v, --version                   Displays version of this package
 ```
 ## Export a Tag
-//TODO give an explaination of the mode
+Export mode allows for a web property from AEP Tags to be exported as JSON. Exporting a tag will:
+ * create a configuration file with the same name as the property
+ * export extensions
+ * export data elements
+ * export rules and their rule components
+
 Export mode requires:
  -e  <postman_environment.json>  specify an environment file
  -p, --pid  <pid>                property ID. Req for export mode
@@ -61,7 +66,7 @@ Export mode requires:
   aep-tag-tool --export -e myEnvironment.postman_environment.json -p PR12345678901234567890
 ```
 
-These values can alternatively be set in the config file:
+These values can alternatively be set in a config file:
    configFile.environment
    configfile.export.propID
 
@@ -85,7 +90,16 @@ myConfig.json
 > Running through the requests of this collection will create responses that need to be saved to use for Importing into other organizations. You will end up with `1` **extensions.json**, `1` **data-elements.json**, and `n` **rulecmp-json** files where `n` is the number of rules in your property
 
 ## Import a Tag
-//TODO give an explaination of the mode
+Import mode allows for an exported web property from AEP Tags to be imported into an Adobe organization. Import mode will:
+ * Create a new web property (`configFile.propName`)
+   * Create a Host adn dev/stage/prod environments
+ * Add imported extensions (`configFile.extensions`)
+ * Create imported data elements (`configFile.dataElements`)
+ * Create imported rules (`configFile.rules.*`)
+ * Create a Library and publish it
+
+Importing into a different Adobe organization should be used with caution since many extension settings are specific to the Adobe organization they are exported from. These can be updated with a postman_globals.json file if needed. See [Customize Settings for the the import](#customize-settings-for-the-import).
+
 Import mode requires:
  -e  <postman_environment.json>  specify an environment file
  -f  <file>                      configuration [json | yml] file
