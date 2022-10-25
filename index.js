@@ -127,21 +127,26 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     return;
   }
 
-  //Read the config file or assign the object for parsing
-  let configContents;
+  //Read the config file or assign the object
   let configFileDir;
-  if(typeof config == "string"){
-    configContents = fs.readFileSync(config, "utf8");
-    config = path.resolve(config);
-    configFileDir = path.dirname(config);
-  } else {
-    configContents = config;
-    configFileDir = "./";
-  }
-
-  //Parse the config for YAML/JSON
   let jsonObj = {};
-  if(fs.lstatSync(config).isFile()){
+  if(config){   //Check if there is a config file/object
+    let configContents;
+    if(typeof config == "string"){
+    if(fs.lstatSync(config).isFile()){
+      config = path.resolve(config);
+      configContents = fs.readFileSync(config, "utf8");
+      configFileDir = path.dirname(config);
+      } else {
+        //TODO help -f is not a file
+        return;
+      }
+    } else if(typeof config  === 'object' && config !== null) {
+      configContents = config;
+      configFileDir = "./";
+    } 
+
+    // Parse the configContents from YAML or JSON
     try {
       //Attempt to read the YAML and output JSON
       let data = yaml.loadAll(configContents,"json");
@@ -157,11 +162,10 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
         throw e;
       }
     }
-  } else if(typeof config  === 'object' && config !== null) {
-    jsonObj = config;
+  } else {
+    jsonObj = {};
+    configFileDir = "./";
   }
-
-  if(!jsonObj) return; //TODO help screen... might not be needed.
 
   if(!jsonObj.export) jsonObj.export = {};
   jsonObj.export.propID = argsPID || jsonObj.export.propID;
