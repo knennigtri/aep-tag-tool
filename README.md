@@ -114,7 +114,8 @@ Import mode requires:
 * Using Newman to run the collection folders - See [example import bash script](example-venia-tag/import-venia-tag.sh) 
 
 ## Delete tag properties that contain a specific string
-//TODO give an explaination of the mode
+Quickly delete web properties that might have been created with this tool. Delete mode allows you to search for web properties in an Adobe organization based on a search string. If any web properties contain the search string, they are deleted. This is particularly useful if you are developing your own property to import/export since all properties end with a timestamp. Searching (-s) for `2022-10-25` would delete `MyProperty 2022-10-25T20:57:42.049Z`, `MyProperty 2022-10-25T21:57:42.049Z`, and `MyProperty 2022-10-25T20:58:42.049Z`.
+
 Delete mode requires:
  -e  <postman_environment.json>  specify an environment file
  -s, --search  <str>             search string for properties to delete. Reg for delete mode
