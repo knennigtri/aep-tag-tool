@@ -1,8 +1,9 @@
-# launch-api-automation
+# AEP Tag Tool
+Import, Export, and Delete web properties from Adobe Expience Platform Tags, previously known as Launch.
 
 ## Overview
 
-This is a project to automate import/export of Adobe Experience Platform Tags, previously known as Launch, using the [Reactor API](https://www.adobe.io/experience-platform-apis/references/reactor/). This project is to make it easier to quickly import a Tag property into a new IMS Org for demo purposes or if you are using the same Tag property across organizations. The collections are generic enough to run with without modifications. 
+This is a project to automates postman collections using the [Reactor API](https://www.adobe.io/experience-platform-apis/references/reactor/). This project makes it easier to quickly import a Tag property into an Adobe Organization for demo purposes or if you are using the same Tag property across organizations. The collections are generic enough to run with without modifications. 
 
 <!-- START doctoc -->
 <!-- END doctoc -->
