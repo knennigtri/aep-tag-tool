@@ -3,7 +3,6 @@ const fs = require("fs");
 const debug = require("debug");
 const debugNewman = require("debug")("newmanTF");
 const debugCollections = require("debug")("newmanTF:collections");
-// let IO_COLLECTION = require("./collections/Adobe IO Token.postman_collection.json")
 
 let REPORTERS = ["emojitrain","junit", "html"];
 let IO_COLLECTION = require("./collections/Adobe IO Token.postman_collection.json");
@@ -14,10 +13,10 @@ let DELETE_PROPS = require("./collections/Delete Properties.postman_collection.j
 //Development commands
 if(debug.enabled("newmanTF:collections")){
   debugCollections("Using Postman Collections");
-  IO_COLLECTION = require("https://www.getpostman.com/collections/6ad99074fc75d564ac8a");
-  IMPORT_COLLECTION = require("https://www.getpostman.com/collections/2f3dc4c81eb464c21693");
-  DELETE_PROPS = require("https://www.getpostman.com/collections/357a7d9bea644bfc5b46");
-  EXPORT_COLLECTION = require("https://www.getpostman.com/collections/55520565b0f9933b5cf8");
+  IO_COLLECTION = "https://www.getpostman.com/collections/6ad99074fc75d564ac8a";
+  IMPORT_COLLECTION = "https://www.getpostman.com/collections/2f3dc4c81eb464c21693";
+  DELETE_PROPS = "https://www.getpostman.com/collections/357a7d9bea644bfc5b46";
+  EXPORT_COLLECTION = "https://www.getpostman.com/collections/55520565b0f9933b5cf8";
   // REPORTERS = ['cli','junit', 'html'];
 }
 
@@ -61,9 +60,10 @@ exports.exportTag = function exportTag(configObj, workingDir, callback){
         fs.writeFileSync(workingDir+"/"+propName+".json", JSON.stringify(tagExport,null,2));
         // fs.writeFileSync(workingDir+"/"+propName+".yml", yaml.dump(tagExport));
 
-        callback(null, exportObj, summary);
+        exportObj.environment = summary.environment; // Pass along updated environment
+        callback(null, exportObj);
       } else {
-        callback(summary.run.failures[0].error.stack, null, null);
+        callback(summary.run.failures[0].error.stack, null);
       }
     });
   });
@@ -91,7 +91,7 @@ exports.importTag = function importTag(configObj, callback){
             debug("Continuing to publishLibrary...");
             publishLibrary(importObj, function(err, importObj){
               if(err) throw err;
-              
+              importObj.prodArtifactURL = getEnvironmentValue(importObj.environment, "prodArtifactURL");
               callback(null, importObj);
             });
           });
@@ -120,11 +120,13 @@ exports.deleteTags = function deleteTags(configObj, searchStr, callback){
         "junit": { export: reportersDir+reportName+".xml" }}
     }).on("done", function (err, summary) {
       if (err) { throw err; }
+
       if(summary.run.failures == ""){
+        deleteObj.environment = summary.environment;  // Pass along updated environment
         console.log("All tag propertys deleted with: " + deleteObj.delete.searchStr);
-        callback(null, deleteObj, summary);
+        callback(null, deleteObj);
       } else {
-        callback(summary.run.failures[0].error.stack, null, null);
+        callback(summary.run.failures[0].error.stack, null);
       }
     });
   });
@@ -151,12 +153,12 @@ function createProperty(propertyObj, callback){
   }).on("done", function (err, summary) {
     if (err) { throw err; }
     
-    propertyObj.environment = summary.environment; // Update with propID
     if(summary.run.failures == ""){
+      propertyObj.environment = summary.environment;  // Pass along updated environment
       console.log("Created Tag Property! PropID="+getEnvironmentValue(summary.environment, "propID"));
-      callback(null, propertyObj, summary);
+      callback(null, propertyObj);
     } else {
-      callback(summary.run.failures[0].error.stack, null, null);
+      callback(summary.run.failures[0].error.stack, null);
     }
   });
 }
@@ -180,10 +182,11 @@ function installExtension(extensionsObj, callback){
   }).on("done", function (err, summary) {
     if (err) { throw err; }
     if(summary.run.failures == ""){
+      extensionsObj.environment = summary.environment;  // Pass along updated environment
       console.log("Installed Extensions!");
-      callback(null, extensionsObj, summary);
+      callback(null, extensionsObj);
     } else {
-      callback(summary.run.failures[0].error.stack, null, null);
+      callback(summary.run.failures[0].error.stack, null);
     }
     
   });
@@ -209,10 +212,11 @@ function importDataElements(dataElementsObj, callback){
     if (err) { throw err; }
     
     if(summary.run.failures == ""){
+      dataElementsObj.environment = summary.environment;  // Pass along updated environment
       console.log("Imported Data Elements!");
-      callback(null, dataElementsObj, summary);
+      callback(null, dataElementsObj);
     } else {
-      callback(summary.run.failures[0].error.stack, null, null);
+      callback(summary.run.failures[0].error.stack, null);
     }
 
   });
@@ -259,8 +263,9 @@ function importRules(rulesObj, callback){
       if(summary.run.failures == ""){
         console.log("Imported Rule: " + ruleName);
       } else {
-        callback(summary.run.failures[0].error.stack, null, null);
+        callback(summary.run.failures[0].error.stack, null);
       }
+      rulesObj.environment = summary.environment;  // Pass along updated environment
       //recurse to the next rule
       importRules(rulesObj, callback);
     });
@@ -285,11 +290,12 @@ function publishLibrary(publishObj, callback){
   }).on("done", function (err, summary) {
     if (err) { throw err; }
 
+    publishObj.environment = summary.environment; // Pass along updated environment
     if(summary.run.failures == ""){
       console.log("Tag Property published successfully!");
-      callback(null, publishObj, summary);
+      callback(null, publishObj);
     } else {
-      callback(summary.run.failures[0].error.stack, null, null);
+      callback(summary.run.failures[0].error.stack, null);
     }
   });
 }
@@ -309,12 +315,12 @@ function authenicateAIO(yamlObj, callback){
   }).on("done", function (err, summary) {
     if (err) { callback(err, false); }
     
-    yamlObj.environment = summary.environment; // Update with AIO token
+    yamlObj.environment = summary.environment; // Pass along updated environment
     if(summary.run.failures == ""){
       console.log("Connected to AIO");
-      callback(null, yamlObj, summary);
+      callback(null, yamlObj);
     } else {
-      callback(summary.run.failures[0].error.stack, null, null);
+      callback(summary.run.failures[0].error.stack, null);
     }
   });
 }
