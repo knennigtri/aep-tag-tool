@@ -1,5 +1,5 @@
 "use strict";
-var tagTool = require("../index.js");
+// var tagTool = require("../index.js");
 var minimist = require("minimist");
 var args = minimist(process.argv.slice(3));
 
@@ -18,7 +18,6 @@ async function test(hideconsole){
   }
 
   //TODO Write Tests
-  var mode = tagTool.modes.import;
   /*
   tagTool.run(tagTool.modes.import, 
     "tests/venia-tag/venia-config.yml", 
