@@ -18,13 +18,19 @@
     "lint": "eslint '**/*.js?(x)'",
     "lint:fix": "npm run lint -- --fix",
     "build": "npm run readmeTOC && npm ci && npm i --package-lock-only && depcheck ./",
-    "readmeTOC": "doctoc README.md --github --title='# Contents'",
+    "updateTOCs": "doctoc . --github --notitle",
     "release:bugfix": "npm version patch && publish:bugfix",
     "publish:bugfix": "npm publish --tag bugfix",
     "release:beta": "npm version patch && publish:beta",
     "publish:beta": "npm publish --tag beta",
     "test": "node tests/tests.js",
-    "test:noLogs": "node tests/tests.js -- --hideconsole"
+    "test:noLogs": "node tests/tests.js -- --hideconsole",
+    "test-delete": "aep-tag-tool -e environments/vLab7.postman_environment.json --delete -s 2022",
+    "test-venia-import": "aep-tag-tool -e environments/vLab7.postman_environment.json -g environments/vLab7-venia.postman-globals.json -f tests/venia-tag/venia-config.yml --import",
+    "test-tutorial-import": "aep-tag-tool -e environments/vLab7.postman_environment.json -g environments/vLab7-tutorial.postman-globals.json -f tests/tutorial-tag/tutorial-config.yml --import",
+    "test-script-export": "cd docs/examples && ./export-tag.sh ../../environments/vLab7.postman_environment.json",
+    "test-script-venia-import": "cd tests/venia-tag && ./import-tag-venia.sh ../../environments/vLab7.postman_environment.json",
+    "test-script-tutorial-import": "cd tests/tutorial-tag && ./import-tag-tutorial.sh ../../environments/vLab7.postman_environment.json"
   },
   "keywords": [
     "aep",
