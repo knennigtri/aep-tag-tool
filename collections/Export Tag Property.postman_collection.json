@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3f0d5e1f-e31a-46e9-967e-ab01ddc65149",
+		"_postman_id": "9ff2adee-f781-4d43-a4a9-f764204ba85c",
 		"name": "Export Tag Property",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -329,7 +329,7 @@
 							"console.log(JSON.stringify(resp));",
 							"pm.environment.set(\"exportRuleCmps-\"+ruleCount, resp.data);",
 							"",
-							"pm.test(rules[ruleCount].attributes.name + \" has \" +resp.data.length+ \" Rule Components found.\", function () {",
+							"pm.test(\" Rule: \" + rules[ruleCount].attributes.name + \" ........ components found: \" +resp.data.length, function () {",
 							"  pm.response.to.have.status(200);",
 							"  pm.expect(rules[ruleCount].id).to.be.not.empty;",
 							"});",
@@ -427,6 +427,13 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "propID",
+			"value": "",
+			"type": "string"
 		}
 	]
 }
