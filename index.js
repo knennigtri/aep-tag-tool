@@ -176,10 +176,8 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   
   
   //setup the data with ABS paths if they aren't objects
-  let env = getData(jsonObj.environment, configFileDir);
-  jsonObj.environment = argsEnv || env;
-  let g = getData(jsonObj.globals, configFileDir);
-  jsonObj.globals = argsGlobals || g;
+  jsonObj.environment = argsEnv || getData(jsonObj.environment, configFileDir);
+  jsonObj.globals = argsGlobals || getData(jsonObj.globals, configFileDir);
 
   if(!jsonObj.import) jsonObj.import = {};
   let ext = getData(jsonObj.import.extensions, configFileDir);
