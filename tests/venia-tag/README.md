@@ -1,6 +1,16 @@
 # Venia Tag
 This folder represents a sample tag property for the Adobe eCommerce website called [Venia](https://github.com/adobe/aem-cif-guides-venia) for Adobe Experience Manager. This sample tag has data elements and rules for [Target](https://exchange.adobe.com/apps/ec/102722/adobe-target-v2-launch-extension), [Analytics](#), [ECID](https://exchange.adobe.com/apps/ec/100160/adobe-experience-cloud-id-launch-extension), and [Adobe Client Data Layer](https://exchange.adobe.com/apps/ec/104231).
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Prework](#prework)
+- [Using aep-tag-tool](#using-aep-tag-tool)
+- [Using Newman bash scripts](#using-newman-bash-scripts)
+- [Using Postman](#using-postman)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Prework
 1. Create your [postman_environment.json](../../docs/environment.md) for the Adobe organization you will be using
 2. Update [venia.postman_globals.json](venia.postman-globals.json) unqiue to your environment. In this file search for `update` and update those values unique to your organization. These are values such as:
@@ -10,13 +20,20 @@ This folder represents a sample tag property for the Adobe eCommerce website cal
    4. Audience Manager tracking servers
 
 ## Using aep-tag-tool
+Learn more about aep-tag-tool in the [README.md](../../README.md)
+
 ```bash
  aep-tag-tool -e example.postman_environment.json -f venia-config.yml --import
  aep-tag-tool -e example.postman_environment.json -f venia-config.yml --export
 ```
-> Learn more about aep-tag-tool in the [README.md](../../README.md)
+
 
 ## Using Newman bash scripts
+
+Learn more about using newman in
+ * [import-using-newman.md](../../docs/import-using-newman.md)
+ * [export-using-newman.md](../../docs/export-using-newman.md)
+
 Make sure to have [Newman](https://www.npmjs.com/package/newman) installed first!
 ```bash
  npm install -g newman
@@ -31,11 +48,14 @@ Make sure to have [Newman](https://www.npmjs.com/package/newman) installed first
 ```bash
  ./export-tag.sh myEnv.postman_environment.json
 ```
-> Learn more about using newman in
->  * [import-using-newman.md](../../docs/import-using-newman.md)
->  * [export-using-newman.md](../../docs/export-using-newman.md)
 
 ## Using Postman
+Learn more about using Postman in
+ * [import-using-postman.md](../../docs/import-using-postman.md)
+ * [export-using-postman.md](../../docs/export-using-postman.md)
+
+Steps to Import using Postman
+
 1. Upload your postman_environment.json to Postman
 2. Upload all the collections from [collections](../../collections/) to Postman
 3. Run the **Adobe IO Token** collection
