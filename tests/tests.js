@@ -18,10 +18,13 @@ async function test(hideconsole){
   }
 
   //TODO Write Tests
+  var mode = tagTool.modes.import;
+  /*
   tagTool.run(tagTool.modes.import, 
     "tests/venia-tag/venia-config.yml", 
     "environments/vLab7.postman_environment.json", 
     "environments/vLab7-tutorial.postman-globals.json", 
     "PR000000000", 
     "2022");
+    */
 }
