@@ -5,8 +5,24 @@ Import, Export, and Delete web properties from Adobe Expience Platform Tags, pre
 
 This is a project to automates postman collections using the [Reactor API](https://www.adobe.io/experience-platform-apis/references/reactor/). This project makes it easier to quickly import a Tag property into an Adobe Organization for demo purposes or if you are using the same Tag property across organizations. The collections are generic enough to run with without modifications. 
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Installation](#installation)
+- [Command Line Tool](#command-line-tool)
+- [Usage](#usage)
+- [Export a Tag](#export-a-tag)
+  - [Using only the Export Collection:](#using-only-the-export-collection)
+- [Import a Tag](#import-a-tag)
+  - [Using only the Import Collection:](#using-only-the-import-collection)
+- [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
+- [Customize Settings for the Import](#customize-settings-for-the-import)
+  - [Extensions](#extensions)
+  - [Data Elements](#data-elements)
+  - [Rules](#rules)
+- [Postman Collections](#postman-collections)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Installation
 To install the command line tool globally, run:
@@ -156,14 +172,7 @@ myConfig.json
 ### Rules
 In this release there is no ability to customize rule settings. If this is a needed feature, fill out a git issue.
 
-## Postman Collections and Objects
-
-* [Adobe IO token Collection](collections/Adobe%20IO%20Token.postman_collection.json)
-* [Export Tag Collection](collections/Export%20Tag%20Property.postman_collection.json)
-* [Import Tag Collection](collections/Import%20Tag%20Property.postman_collection.json)
-* [Delete Tags Collection](collections/Delete%20Properties.postman_collection.json)
+## Postman Collections
+The Postman collections apart of this tool can also be used with [Postman](https://www.postman.com/) or [npm newman](https://www.npmjs.com/package/newman). See the [collection docs](docs/README.md) to learn more.
 * [Example Environment](docs/example.postman_environment.json)
-  * See configuration instructions: [docs/environment.md](docs/environment.md) 
-* [Example Globals](docs/example.postman-globals.json)
-  * Used to customize a tag import into a different organization. Updating the configurations on an extension that's specific to the new orangization.
-  * See configuration instructions: [docs/globals.md](docs/globals.md) 
+  * See configuration instructions: [docs/environment.md](docs/environment.md)
