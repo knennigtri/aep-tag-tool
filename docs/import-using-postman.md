@@ -5,15 +5,12 @@
 
   - [Prerequisites](#prerequisites)
   - [Importing to a different Adobe Organization](#importing-to-a-different-adobe-organization)
-- [Import a Tag using Postman](#import-a-tag-using-postman)
-    - [Prerequisites](#prerequisites)
-    - [Importing to a different Adobe Organization](#importing-to-a-different-adobe-organization)
-  - [Import process](#import-process)
-    - [Create the initial property](#create-the-initial-property)
-    - [Add Extensions to the property](#add-extensions-to-the-property)
-    - [Add Data Elements to the property](#add-data-elements-to-the-property)
-    - [Add rules with rule components to the property](#add-rules-with-rule-components-to-the-property)
-    - [Publish the property to production](#publish-the-property-to-production)
+- [Import process](#import-process)
+  - [Create the initial property](#create-the-initial-property)
+  - [Add Extensions to the property](#add-extensions-to-the-property)
+  - [Add Data Elements to the property](#add-data-elements-to-the-property)
+  - [Add rules with rule components to the property](#add-rules-with-rule-components-to-the-property)
+  - [Publish the property to production](#publish-the-property-to-production)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

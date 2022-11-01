@@ -4,11 +4,10 @@ In order to use the Reactor API (AEP Tags), you need to authenticate through Ado
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Create a Postman Environment file](#create-a-postman-environment-file)
-  - [Create an IO project](#create-an-io-project)
-  - [Create the postman environment JSON](#create-the-postman-environment-json)
-    - [Create the JSON](#create-the-json)
-    - [Add IMS values to the JSON](#add-ims-values-to-the-json)
+- [Create an IO project](#create-an-io-project)
+- [Create the postman environment JSON](#create-the-postman-environment-json)
+  - [Create the JSON](#create-the-json)
+  - [Add IMS values to the JSON](#add-ims-values-to-the-json)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

@@ -4,10 +4,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
   - [Prerequisites](#prerequisites)
-- [Export a tag using Postman](#export-a-tag-using-postman)
-    - [Prerequisites](#prerequisites)
-  - [Export Process](#export-process)
-  - [Successful output](#successful-output)
+- [Export Process](#export-process)
+- [Successful output](#successful-output)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

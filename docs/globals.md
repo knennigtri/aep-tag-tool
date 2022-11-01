@@ -1,3 +1,13 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Add unique configuration values for Extensions](#add-unique-configuration-values-for-extensions)
+  - [Experience Cloud ID Extension](#experience-cloud-id-extension)
+  - [Target Extension](#target-extension)
+  - [Analytics Extension](#analytics-extension)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 //TODO Review and Document
 
 ### Add unique configuration values for Extensions
