@@ -1,12 +1,12 @@
 ---
-globals: vLab7-venia.postman-globals.json
-environment: ../../environments/vLab7.postman_environment.json
+globals: venia.postman-globals.json
+environment: ../../docs/example.postman_environment.json
 export:
  propID: PR6e367f5e04584d84974fcb82d8b1d705
 delete:
- searchStr: VeniaIMPORTED
+ searchStr: Venia 2022
 import:
- propertyName: Venia2
+ propertyName: Venia
  extensions: json-exports/venia-extensions.json
  dataElements: json-exports/venia-data-elements.json
  rules:

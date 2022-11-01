@@ -8,7 +8,7 @@
             "enabled": true,
             "key": "SETTINGS_EXT_adobe-mcid",
             "value": {
-                "orgId": "test@AdobeOrg"
+                "orgId": "updateOrgID@AdobeOrg"
             }
         },
         {
@@ -20,7 +20,7 @@
                     "authoringScriptUrl": "//cdn.tt.omtrdc.net/cdn/target-vec.js",
                     "bodyHiddenStyle": "body {opacity: 0}",
                     "bodyHidingEnabled": true,
-                    "clientCode": "adobevlab7us",
+                    "clientCode": "updateClientCode",
                     "decisioningMethod": "server-side",
                     "defaultContentHiddenStyle": "visibility: hidden;",
                     "defaultContentVisibleStyle": "visibility: visible;",
@@ -28,7 +28,7 @@
                     "enabled": true,
                     "endpoint": "/rest/v1/delivery",
                     "globalMboxName": "target-global-mbox",
-                    "imsOrgId": "test@AdobeOrg",
+                    "imsOrgId": "updateOrgID@AdobeOrg",
                     "optinEnabled": false,
                     "optoutEnabled": false,
                     "overrideMboxEdgeServer": false,
@@ -36,7 +36,7 @@
                     "pageLoadEnabled": true,
                     "secureOnly": false,
                     "selectorsPollingTimeout": 5000,
-                    "serverDomain": "adobevlab7us.tt.omtrdc.net",
+                    "serverDomain": "updateDomain",
                     "serverState": {},
                     "sessionIdLifetime": 1860000,
                     "supplementalDataIdParamTimeout": 30,
@@ -55,22 +55,22 @@
                 "libraryCode": {
                     "accounts": {
                         "development": [
-                            "vlab7dev"
+                            "updateDev"
                         ],
                         "production": [
-                            "vlab7prod"
+                            "updateprod"
                         ],
                         "staging": [
-                            "vlab7stage"
+                            "updatestage"
                         ]
                     },
-                    "company": "adobev12",
+                    "company": "updateCompany",
                     "type": "managed"
                 },
-                "orgId": "test@AdobeOrg",
+                "orgId": "updateOrgID@AdobeOrg",
                 "trackerProperties": {
-                    "trackingServer": "acs7-us.sc.omtrdc.net",
-                    "trackingServerSecure": "acs7-us.sc.omtrdc.net"
+                    "trackingServer": "updateTrackingServer",
+                    "trackingServerSecure": "UpateTrackingServer"
                 }
             }
         },
@@ -78,7 +78,7 @@
             "enabled": true,
             "key": "SETTINGS_DE_aemPublish_cookieDomain",
             "value": {
-                "value": "test.adobeaemcloud.com"
+                "value": "updateAEMpublishDomain"
             }
         }
     ]

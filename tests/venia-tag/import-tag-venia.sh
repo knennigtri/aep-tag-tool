@@ -5,7 +5,7 @@
 # Name of Tag property
 PROPNAME="Venia"
 
-GLOBALS="settings.postman-globals.json"
+GLOBALS="venia.postman-globals.json"
 
 # JSON files for all extensions and data elements
 EXT_JSON="json-exports/venia-extensions.json"
@@ -21,14 +21,13 @@ RULECMP_JSONS[2]="json-exports/venia-rulecmp-send-beacon.json"
 RULENAMES[3]="[10] ECID Authentication"
 RULECMP_JSONS[3]="json-exports/venia-rulecmp-ecid.json"
 
-IO_COLLECTION=https://www.getpostman.com/collections/c962d6b3b81776a4c4bf
-IMPORT_COLLECTION=https://www.getpostman.com/collections/c0c463dbe2f98d3b354a
-#IMPORT_COLLECTION=https://www.getpostman.com/collections/2f3dc4c81eb464c21693
+IO_COLLECTION="../../collections/Adobe IO Token.postman_collection.json"
+IMPORT_COLLECTION="../../collections/Import Tag Property.postman_collection.json"
 
 
 # Manually set the postman environment
-ENVIRONMENT=example.postman_environment.json
-# Alternatively add the file to the command: $ ./run-venia-tag myEnv.postman_environment.json
+ENVIRONMENT="docs/examples/example.postman_environment.json"
+# Alternatively add the file to the command: $ ./import-tag-venia.sh myEnv.postman_environment.json
 ENVIRONMENT=$1
 
 #Adobe IO
