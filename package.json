@@ -17,7 +17,7 @@
     "postversion": "git push --follow-tags",
     "lint": "eslint '**/*.js?(x)'",
     "lint:fix": "npm run lint -- --fix",
-    "build": "npm run readmeTOC && npm ci && npm i --package-lock-only && depcheck ./",
+    "build": "npm run updateTOCs && npm ci && npm i --package-lock-only && depcheck ./",
     "updateTOCs": "doctoc . --github --notitle",
     "release:bugfix": "npm version patch && publish:bugfix",
     "publish:bugfix": "npm publish --tag bugfix",
