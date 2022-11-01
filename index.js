@@ -6,16 +6,18 @@ var minimist = require("minimist");
 var args = minimist(process.argv.slice(2));
 var path = require("path");
 var debug = require("debug");
-var debugIndex = require("debug")("index");
 var debugConfig = require("debug")("index:config");
-var debugNewman = require("debug")("index:newman");
+const modes = {
+  export: "export",
+  import: "import",
+  delete: "delete"
+};
 
-var init = function(mode, configParam, envParam, globalsParam, pidParam, searchStrParam){
-  const HELP_F = "-f  <file>                      configuration [json | yml] file";
-  const HELP_E = "-e  <postman_environment.json>  specify an environment file";
-  const HELP_P = "-p, --pid  <pid>                property ID. Req for export mode";
-  const HELP_S = "-s, --search  <str>             search string for properties to delete. Reg for delete mode";
-  const MSG_HELP = `Usage: `+ packageInfo.name.replace("@knennigtri/", "") + ` [ARGS]
+const HELP_F = "-f  <file>                      configuration [json | yml] file";
+const HELP_E = "-e  <postman_environment.json>  specify an environment file";
+const HELP_P = "-p, --pid  <pid>                property ID. Req for export mode";
+const HELP_S = "-s, --search  <str>             search string for properties to delete. Reg for delete mode";
+const MSG_HELP = "Usage: "+ packageInfo.name.replace("@knennigtri/", "") + ` [ARGS]
  Arguments:
     --export                        Mode to export a given property ID
     --import                        Mode to import a property given a config file
@@ -32,7 +34,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
                delete               how to use delete mode
     -v, --version                   Displays version of this package
  `;
-  const CONFIGFILE_EXAMPLE = 
+const CONFIGFILE_EXAMPLE = 
  `---
  globals: postman-globals.json
  environment: postman_environment.json
@@ -50,13 +52,13 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
      "RuleTitle": object | string.json
      "RuleTitle": object | string.json
   ---`;
-  const MSG_HELP_CONFIGFILE = `Create the config file: 
+const MSG_HELP_CONFIGFILE = `Create the config file: 
  Option 1: `+ packageInfo.name.replace("@knennigtri/", "") + ` --export -e <environmentFile> --p <pid>
   Automatically creates the config file and adds the export objects
  Option 2: Manually create the file.[yml | json]
   `+CONFIGFILE_EXAMPLE+`
  `;
-  const MSG_HELP_EXPORT = `Export mode requires:
+const MSG_HELP_EXPORT = `Export mode requires:
  ` + HELP_E + `
  ` + HELP_P + `
  
@@ -64,7 +66,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
    configFile.environment
    configfile.export.propID
 `;
-  const MSG_HELP_IMPORT = `Import mode requires:
+const MSG_HELP_IMPORT = `Import mode requires:
  ` + HELP_E + `
  ` + HELP_F + `
 
@@ -74,7 +76,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     configFile.import.dataElements
     configFile.import.rules.[rules]
  `;
-  const MSG_HELP_DELETE = `Delete mode requires:
+const MSG_HELP_DELETE = `Delete mode requires:
  ` + HELP_E + `
  ` + HELP_S + `
   
@@ -83,12 +85,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     configfile.delete.searchStr
  `;
 
-  const modes = {
-    export: "export",
-    import: "import",
-    delete: "delete"
-  };
-
+var init = function(mode, configParam, envParam, globalsParam, pidParam, searchStrParam){
   let config = configParam || args.f;
   let argsEnv = envParam || args.e;
   let argsGlobals = globalsParam || args.g;
@@ -134,16 +131,16 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   if(config){   //Check if there is a config file/object
     let configContents;
     if(typeof config == "string"){
-    if(fs.lstatSync(config).isFile()){
-      config = path.resolve(config);
-      configContents = fs.readFileSync(config, "utf8");
-      configFileDir = path.dirname(config);
+      if(fs.lstatSync(config).isFile()){
+        config = path.resolve(config);
+        configContents = fs.readFileSync(config, "utf8");
+        configFileDir = path.dirname(config);
       } else {
-        console.log("-f parameter is not a file.")
+        console.log("-f parameter is not a file.");
         console.log(MSG_HELP);
         return;
       }
-    } else if(typeof config  === 'object' && config !== null) {
+    } else if(typeof config  === "object" && config !== null) {
       configContents = config;
       configFileDir = "./";
     } 
@@ -241,7 +238,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
       if(resultObj) {
         console.log("Successfully created tag property: " + resultObj.import.propertyName);
         console.log("Production embed code: ");
-        console.log("<script src='"+resultObj.prodArtifactURL+"' async></script>")
+        console.log("<script src='"+resultObj.prodArtifactURL+"' async></script>");
       }
 
     });
@@ -282,3 +279,4 @@ function getData(data, rootDir){
 }
 
 exports.run = init;
+exports.modes = modes;

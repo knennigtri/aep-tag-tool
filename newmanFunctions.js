@@ -1,7 +1,6 @@
 const newman = require("newman");
 const fs = require("fs");
 const debug = require("debug");
-const debugNewman = require("debug")("newmanTF");
 const debugCollections = require("debug")("newmanTF:collections");
 
 let REPORTERS = ["emojitrain","junit", "html"];
