@@ -1,7 +1,8 @@
 const newman = require("newman");
 const fs = require("fs");
 const debug = require("debug");
-const debugCollections = require("debug")("newmanTF:collections");
+const debugCollections = require("debug")("collections");
+const debugImport = require("debug")("import");
 
 let REPORTERS = ["emojitrain", "junit", "html"];
 let IO_COLLECTION = require("./collections/Adobe IO Token.postman_collection.json");
@@ -54,21 +55,68 @@ exports.exportTag = function exportTag(configObj, workingDir, callback) {
   .catch(err => callback(err, null));
 };
 
-exports.importTag = function importTag(configObj, callback) {
+exports.importTag = function importTag(configObj, args, callback) {
+  let actions = [];
+  if(args.C || args.E || args.D || args.R || args.P){
+    if(args.C) actions.push("C");
+    if(args.E) actions.push("E");
+    if(args.D) actions.push("D");
+    if(args.R) actions.push("R");
+    if(args.P) actions.push("P");
+  } else { // create and import everything
+    actions = ["C", "E", "D", "R", "P"];
+  }
+  debugImport(actions);
+  
   authenicateAIO(configObj.environment, configObj)
-    .then((resultEnv) => createProperty(resultEnv, configObj))
-    .then((resultEnv) => installExtensions(resultEnv, configObj))
-    .then((resultEnv) => importDataElements(resultEnv, configObj))
-    .then((resultEnv) => importRules(resultEnv, configObj))
-    .then((resultEnv) => publishLibrary(resultEnv, configObj))
-    .then( function(resultEnv){
-      let prodArtifactURL = getEnvironmentValue(resultEnv, "prodArtifactURL");
-      console.log("Prod Library embed code: ");
-      console.log("<script src='"+prodArtifactURL+"' async></script>");
+      .then(function(resultEnv){ //Add propID if importing to an existing property
+        return new Promise(function (resolve,reject){
+          if(actions[0] != "C"){
+            if(configObj.propID){
+              let env = setEnvironmentValue(resultEnv, "propID", configObj.propID);
+              if(env) resolve(env);
+              else reject(new Error("Cannot update environment"));
+            } else {
+              reject(new Error("No propID specified to import into an existing property"));
+            }
+          } else resolve(resultEnv);
+        });
+      })  
+    .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
+    .then(function(resultEnv){
       callback(null, resultEnv);
     })
-    .catch(err => console.error(err));
+    .catch(err => callback(err, null));
 };
+
+function recurseImportChain(actions, environment, configObj){
+  const nextAction = actions.shift();
+  if(nextAction){
+      if(nextAction === "C"){
+        return createProperty(environment, configObj)
+          .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
+      } else if(nextAction === "E"){
+        return installExtensions(environment, configObj)
+          .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
+      } else if(nextAction === "D"){
+        return importDataElements(environment, configObj)
+          .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
+      } else if(nextAction === "R"){
+        return importRules(environment, configObj)
+          .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
+      } else if(nextAction === "P"){
+        return publishLibrary(environment, configObj)
+          .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
+          .then(function (resultEnv){
+            let prodArtifactURL = getEnvironmentValue(resultEnv, "prodArtifactURL");
+            console.log("Prod Library embed code: ");
+            console.log("<script src='"+prodArtifactURL+"' async></script>");
+          });
+      } else Promise.resolve(environment);
+  }else{
+      return Promise.resolve(environment);
+  }
+}
 
 exports.deleteTags = function deleteTags(configObj, searchStr, callback) {
   authenicateAIO(configObj.environment, configObj)
@@ -147,7 +195,6 @@ function publishLibrary(environment, configObj) {
 
 function newmanRun(cmdName, env, globals, collection, folder, data, envVar){
   const reportName = TIMESTAMP + "-" + cmdName + "-Report";
-  // const folder = "Add Tag Rule and CMPs";
   if(folder && folder != ""){
     console.log("Running: " + folder + " for: " + cmdName)
   } else { 
@@ -196,9 +243,35 @@ function getEnvironmentValue(envObj, key) {
   let envVals = JSON.parse(JSON.stringify(envObj.values));
   for (var element of envVals) {
     if (element.key == key) {
-      // console.log(element.value);
       return element.value;
     }
   }
   return "";
+}
+
+function setEnvironmentValue(envObj, key, value){
+  envObj = JSON.parse(JSON.stringify(envObj));
+  let addVal = true;
+  let envVal = {};
+  if(envObj && envObj.values){
+    for(let i = 0; i < envObj.values.length; i++){
+      envVal = envObj.values[i];
+      if(envVal.key == key){
+        addVal = false;
+        envVal.value = value;
+        envObj.values[i] = envVal;
+        i = envObj.values.length;
+      }
+    }
+    if(addVal){
+      envVal = {
+        "type": "any",
+        "value": value,
+        "key": key
+      };
+      envObj.values.push(envVal);
+    }
+    return envObj;
+  }
+  return null;
 }
