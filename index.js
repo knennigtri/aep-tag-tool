@@ -38,8 +38,7 @@ const CONFIGFILE_EXAMPLE =
  `---
  globals: postman-globals.json
  environment: postman_environment.json
- export:
-   propID: PR123455678901234556789012345567890
+ propID: PR123455678901234556789012345567890
  delete:
    searchStr: 2022-08
  import:
@@ -64,7 +63,7 @@ const MSG_HELP_EXPORT = `Export mode requires:
  
  These values can alternatively be set in the config file:
    configFile.environment
-   configfile.export.propID
+   configfile.propID
 `;
 const MSG_HELP_IMPORT = `Import mode requires:
  ` + HELP_E + `
@@ -166,8 +165,8 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     configFileDir = "./";
   }
 
-  if(!jsonObj.export) jsonObj.export = {};
-  jsonObj.export.propID = argsPID || jsonObj.export.propID;
+  //set PID and searchStr values
+  jsonObj.propID = argsPID || jsonObj.propID;
   if(!jsonObj.delete) jsonObj.delete = {};
   jsonObj.delete.searchStr = argsSearch || jsonObj.delete.searchStr;
   
@@ -199,14 +198,14 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   }
     
   //Export Mode
-  //requires pid (cli -p, --pid | file.export.propID)
+  //requires pid (cli -p, --pid | file.propID)
   if(argsMode == modes.export){
-    if(!jsonObj.export || !jsonObj.export.propID){
+    if(!jsonObj.propID){
       console.log("Export mode must have a property ID specified");
       console.log(MSG_HELP);
       return;
     }
-    console.log("PropID: "+jsonObj.export.propID);
+    console.log("PropID: "+jsonObj.propID);
     newmanTF.exportTag(jsonObj, configFileDir, function(err, resultObj){
       if(err) throw err;
       if(resultObj) console.log("Exported Tag property!");
@@ -224,24 +223,29 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
       console.log(MSG_HELP);
       return;
     }
-    if(!jsonObj.import ||
-      !jsonObj.import.propertyName ||
-      !jsonObj.import.extensions ||
-      !jsonObj.import.dataElements ||
-      !jsonObj.import.rules){
+    if(!jsonObj.import){
       console.log("Import mode is missing values to import");
       console.log(MSG_HELP);
       return;
     }
-    newmanTF.importTag(jsonObj, function(err, resultObj){
-      if(err) throw err;
-      if(resultObj) {
-        console.log("Successfully created tag property: " + resultObj.import.propertyName);
-        console.log("Production embed code: ");
-        console.log("<script src='"+resultObj.prodArtifactURL+"' async></script>");
-      }
+    if(args.C || args.E || args.D || args.R || args.P){
+      if(args.C && jsonObj.import.propertyName){
+        console.log("creating new property");
+      } else if(jsonObj.propID){
+        console.log("Importing to an existing property");
 
-    });
+      } else {
+        console.log("must Specify a propID since one isn't being created");
+      }
+    } else {
+      console.log("Normal import");
+      newmanTF.importTag(jsonObj, function(err, resultObj){
+        if(err) throw err;
+        if(resultObj) {
+          console.log("Complete. Check logs for any issues.");
+        }
+      });
+    }
     
     //DELETE mode
     //Requires searchStr (cli -s, --search | file.delete.searchStr)
