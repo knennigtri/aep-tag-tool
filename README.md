@@ -8,19 +8,21 @@ This is a project to automates postman collections using the [Reactor API](https
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Installation](#installation)
-- [Command Line Tool](#command-line-tool)
-- [Usage](#usage)
-- [Export a Tag](#export-a-tag)
-  - [Using only the Export Collection:](#using-only-the-export-collection)
-- [Import a Tag](#import-a-tag)
-  - [Using only the Import Collection:](#using-only-the-import-collection)
-- [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
-- [Customize Settings for the Import](#customize-settings-for-the-import)
-  - [Extensions](#extensions)
-  - [Data Elements](#data-elements)
-  - [Rules](#rules)
-- [Postman Collections](#postman-collections)
+- [AEP Tag Tool](#aep-tag-tool)
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Command Line Tool](#command-line-tool)
+  - [Usage](#usage)
+  - [Export a Tag](#export-a-tag)
+    - [Using only the Export Collection:](#using-only-the-export-collection)
+  - [Import a Tag](#import-a-tag)
+    - [Using only the Import Collection:](#using-only-the-import-collection)
+  - [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
+  - [Customize Settings for the Import](#customize-settings-for-the-import)
+    - [Extensions](#extensions)
+    - [Data Elements](#data-elements)
+    - [Rules](#rules)
+  - [Postman Collections](#postman-collections)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -49,6 +51,7 @@ Delete a tag properties that contain 2022 in the title
 ```
 
 ## Usage
+//TODO Add -CEDRP
 ```bash
 aep-tag-tool -h
 Usage: aep-tag-tool [ARGS]
@@ -107,6 +110,7 @@ myConfig.json
 > Running through the requests of this collection will create responses that need to be saved to use for Importing into other organizations. You will end up with `1` **extensions.json**, `1` **data-elements.json**, and `n` **rulecmp-json** files where `n` is the number of rules in your property
 
 ## Import a Tag
+//TODO Add -CEDRP
 Import mode allows for an exported web property from AEP Tags to be imported into an Adobe organization. Import mode will:
  * Create a new web property (`configFile.propName`)
    * Create a Host adn dev/stage/prod environments

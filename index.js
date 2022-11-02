@@ -17,6 +17,7 @@ const HELP_F = "-f  <file>                      configuration [json | yml] file"
 const HELP_E = "-e  <postman_environment.json>  specify an environment file";
 const HELP_P = "-p, --pid  <pid>                property ID. Req for export mode";
 const HELP_S = "-s, --search  <str>             search string for properties to delete. Reg for delete mode";
+//TODO Add -CEDRP
 const MSG_HELP = "Usage: "+ packageInfo.name.replace("@knennigtri/", "") + ` [ARGS]
  Arguments:
     --export                        Mode to export a given property ID
@@ -107,6 +108,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
 
   // Show CLI help
   if (argsHelp) {
+    //TODO Add -CEDRP
     if(argsHelp == true){
       console.log(MSG_HELP);
     } else {
@@ -123,6 +125,12 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     console.log(packageInfo.version);
     return;
   }
+
+  //TODO Remove
+  // console.log(args);
+  // console.log(args.K);
+  // return "" ;
+
 
   //Read the config file or assign the object
   let configFileDir;
@@ -207,8 +215,13 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     }
     console.log("PropID: "+jsonObj.propID);
     newmanTF.exportTag(jsonObj, configFileDir, function(err, resultObj){
-      if(err) throw err;
-      if(resultObj) console.log("Exported Tag property!");
+      if(err){
+        console.error(err);
+        console.log(MSG_HELP);
+      }
+      if(resultObj) {
+        console.log("Complete. Check logs for any issues.");
+      }
     });
 
     //IMPORT mode
@@ -228,24 +241,15 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
       console.log(MSG_HELP);
       return;
     }
-    if(args.C || args.E || args.D || args.R || args.P){
-      if(args.C && jsonObj.import.propertyName){
-        console.log("creating new property");
-      } else if(jsonObj.propID){
-        console.log("Importing to an existing property");
-
-      } else {
-        console.log("must Specify a propID since one isn't being created");
+    newmanTF.importTag(jsonObj, args, function(err, resultObj){
+      if(err){
+        console.error(err);
+        console.log(MSG_HELP);
       }
-    } else {
-      console.log("Normal import");
-      newmanTF.importTag(jsonObj, function(err, resultObj){
-        if(err) throw err;
-        if(resultObj) {
-          console.log("Complete. Check logs for any issues.");
-        }
-      });
-    }
+      if(resultObj) {
+        console.log("Complete. Check logs for any issues.");
+      }
+    });
     
     //DELETE mode
     //Requires searchStr (cli -s, --search | file.delete.searchStr)
@@ -257,8 +261,13 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     }
     console.log("SearchStr: " + jsonObj.delete.searchStr);
     newmanTF.deleteTags(jsonObj, jsonObj.delete.searchStr, function(err, resultObj){
-      if(err) throw err;
-      if(resultObj) console.log("All tag propertys deleted with: " + resultObj.delete.searchStr);
+      if(err){
+        console.error(err);
+        console.log(MSG_HELP);
+      }
+      if(resultObj) {
+        console.log("Complete. Check logs for any issues.");
+      }
     });
   } else {
     console.log("No mode selected");
