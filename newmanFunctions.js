@@ -25,34 +25,34 @@ let reportersDir = "newman/";
 
 exports.exportTag = function exportTag(configObj, workingDir, callback) {
   authenicateAIO(configObj.environment, configObj)
-  .then((resultEnv) => newmanRun("exportTag", 
+    .then((resultEnv) => newmanRun("exportTag", 
       resultEnv, configObj.globals, 
       EXPORT_COLLECTION, "", 
       "", [{
         "key": "propID",
         "value": configObj.propID
       }])
-  )
-  .then(function(resultEnv){
-    let tagExport = {};
-    tagExport.propID = configObj.propID;
-    tagExport.import = {};
-    tagExport.import.propertyName = getEnvironmentValue(resultEnv, "exportPropName");
-    tagExport.import.extensions = getEnvironmentValue(resultEnv, "exportExtensions");
-    tagExport.import.dataElements = getEnvironmentValue(resultEnv, "exportDataElements");
-    tagExport.import.ruleNames = getEnvironmentValue(resultEnv, "exportRules");
-    tagExport.import.rules = {};
-    for (var element in tagExport.import.ruleNames) {
-      let ruleName = tagExport.import.ruleNames[element].attributes.name;
-      tagExport.import.rules[ruleName] = getEnvironmentValue(resultEnv, "exportRuleCmps-" + element);
-    }
-    //Write to a file
-    var propName = tagExport.import.propertyName.replace(/\s+/g, "-").toLowerCase();
-    fs.writeFileSync(workingDir + "/" + propName + ".json", JSON.stringify(tagExport, null, 2));
+    )
+    .then(function(resultEnv){
+      let tagExport = {};
+      tagExport.propID = configObj.propID;
+      tagExport.import = {};
+      tagExport.import.propertyName = getEnvironmentValue(resultEnv, "exportPropName");
+      tagExport.import.extensions = getEnvironmentValue(resultEnv, "exportExtensions");
+      tagExport.import.dataElements = getEnvironmentValue(resultEnv, "exportDataElements");
+      tagExport.import.ruleNames = getEnvironmentValue(resultEnv, "exportRules");
+      tagExport.import.rules = {};
+      for (var element in tagExport.import.ruleNames) {
+        let ruleName = tagExport.import.ruleNames[element].attributes.name;
+        tagExport.import.rules[ruleName] = getEnvironmentValue(resultEnv, "exportRuleCmps-" + element);
+      }
+      //Write to a file
+      var propName = tagExport.import.propertyName.replace(/\s+/g, "-").toLowerCase();
+      fs.writeFileSync(workingDir + "/" + propName + ".json", JSON.stringify(tagExport, null, 2));
     // fs.writeFileSync(workingDir+"/"+propName+".yml", yaml.dump(tagExport));
-  })
-  .then((resultEnv) => callback(null, resultEnv))
-  .catch(err => callback(err, null));
+    })
+    .then((resultEnv) => callback(null, resultEnv))
+    .catch(err => callback(err, null));
 };
 
 exports.importTag = function importTag(configObj, args, callback) {
@@ -69,19 +69,19 @@ exports.importTag = function importTag(configObj, args, callback) {
   debugImport(actions);
   
   authenicateAIO(configObj.environment, configObj)
-      .then(function(resultEnv){ //Add propID if importing to an existing property
-        return new Promise(function (resolve,reject){
-          if(actions[0] != "C"){
-            if(configObj.propID){
-              let env = setEnvironmentValue(resultEnv, "propID", configObj.propID);
-              if(env) resolve(env);
-              else reject(new Error("Cannot update environment"));
-            } else {
-              reject(new Error("No propID specified to import into an existing property"));
-            }
-          } else resolve(resultEnv);
-        });
-      })  
+    .then(function(resultEnv){ //Add propID if importing to an existing property
+      return new Promise(function (resolve,reject){
+        if(actions[0] != "C"){
+          if(configObj.propID){
+            let env = setEnvironmentValue(resultEnv, "propID", configObj.propID);
+            if(env) resolve(env);
+            else reject(new Error("Cannot update environment"));
+          } else {
+            reject(new Error("No propID specified to import into an existing property"));
+          }
+        } else resolve(resultEnv);
+      });
+    })  
     .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
     .then(function(resultEnv){
       callback(null, resultEnv);
@@ -92,41 +92,41 @@ exports.importTag = function importTag(configObj, args, callback) {
 function recurseImportChain(actions, environment, configObj){
   const nextAction = actions.shift();
   if(nextAction){
-      if(nextAction === "C"){
-        return createProperty(environment, configObj)
-          .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
-      } else if(nextAction === "E"){
-        return installExtensions(environment, configObj)
-          .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
-      } else if(nextAction === "D"){
-        return importDataElements(environment, configObj)
-          .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
-      } else if(nextAction === "R"){
-        return importRules(environment, configObj)
-          .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
-      } else if(nextAction === "P"){
-        return publishLibrary(environment, configObj)
-          .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
-          .then(function (resultEnv){
-            let prodArtifactURL = getEnvironmentValue(resultEnv, "prodArtifactURL");
-            console.log("Prod Library embed code: ");
-            console.log("<script src='"+prodArtifactURL+"' async></script>");
-          });
-      } else Promise.resolve(environment);
+    if(nextAction === "C"){
+      return createProperty(environment, configObj)
+        .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj));
+    } else if(nextAction === "E"){
+      return installExtensions(environment, configObj)
+        .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj));
+    } else if(nextAction === "D"){
+      return importDataElements(environment, configObj)
+        .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj));
+    } else if(nextAction === "R"){
+      return importRules(environment, configObj)
+        .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj));
+    } else if(nextAction === "P"){
+      return publishLibrary(environment, configObj)
+        .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
+        .then(function (resultEnv){
+          let prodArtifactURL = getEnvironmentValue(resultEnv, "prodArtifactURL");
+          console.log("Prod Library embed code: ");
+          console.log("<script src='"+prodArtifactURL+"' async></script>");
+        });
+    } else Promise.resolve(environment);
   }else{
-      return Promise.resolve(environment);
+    return Promise.resolve(environment);
   }
 }
 
 exports.deleteTags = function deleteTags(configObj, searchStr, callback) {
   authenicateAIO(configObj.environment, configObj)
     .then((resultEnv) => newmanRun("deleteTags", 
-        resultEnv, configObj.globals, 
-        DELETE_PROPS, "", 
-        "", [{
-          "key": "tagNameIncludes",
-          "value": searchStr
-        }])
+      resultEnv, configObj.globals, 
+      DELETE_PROPS, "", 
+      "", [{
+        "key": "tagNameIncludes",
+        "value": searchStr
+      }])
     )
     .then((resultEnv) => callback(null, resultEnv))
     .catch(err => callback(err, null));
@@ -135,9 +135,9 @@ exports.deleteTags = function deleteTags(configObj, searchStr, callback) {
 // Runs the Adobe IO Token collection
 function authenicateAIO(environment, configObj) {
   return newmanRun("auth", 
-      environment, configObj.globals, 
-      IO_COLLECTION, "", 
-      "", "");
+    environment, configObj.globals, 
+    IO_COLLECTION, "", 
+    "", "");
 }
 
 // Runs the Import Tag collection folder "Create Tag Property"
@@ -154,17 +154,17 @@ function createProperty(environment, configObj) {
 // Runs the Import Tag collection folder "Add Tag Extensions"
 function installExtensions(environment, configObj) {
   return newmanRun("installExts", 
-      environment, configObj.globals, 
-      IMPORT_COLLECTION, "Add Tag Extensions", 
-      configObj.import.extensions, "");
+    environment, configObj.globals, 
+    IMPORT_COLLECTION, "Add Tag Extensions", 
+    configObj.import.extensions, "");
 }
 
 // Runs the Import Tag collection folder "Add Tag Data Elements"
 function importDataElements(environment, configObj) {
   return newmanRun("installDataElements", 
-      environment, configObj.globals, 
-      IMPORT_COLLECTION, "Add Tag Data Elements", 
-      configObj.import.dataElements, "");
+    environment, configObj.globals, 
+    IMPORT_COLLECTION, "Add Tag Data Elements", 
+    configObj.import.dataElements, "");
 }
 
 async function importRules(environment, configObj){
@@ -176,9 +176,9 @@ async function importRules(environment, configObj){
       "Add Tag Rule and CMPs", 
       configObj.import.rules[rule], 
       [{
-      "key": "ruleName",
-      "value": rule
-    }]);
+        "key": "ruleName",
+        "value": rule
+      }]);
   }
   return environment;
 }
@@ -186,9 +186,9 @@ async function importRules(environment, configObj){
 // Runs the Import Tag collection folder "Publish Tag Library"
 function publishLibrary(environment, configObj) {
   return newmanRun("publishLib", 
-      environment, configObj.globals, 
-      IMPORT_COLLECTION, "Publish Tag Library", 
-      "", "");
+    environment, configObj.globals, 
+    IMPORT_COLLECTION, "Publish Tag Library", 
+    "", "");
 }
 
 /******* Helper Functions ******/
@@ -196,7 +196,7 @@ function publishLibrary(environment, configObj) {
 function newmanRun(cmdName, env, globals, collection, folder, data, envVar){
   const reportName = TIMESTAMP + "-" + cmdName + "-Report";
   if(folder && folder != ""){
-    console.log("Running: " + folder + " for: " + cmdName)
+    console.log("Running: " + folder + " for: " + cmdName);
   } else { 
     console.log("Running: " + cmdName);
   }
