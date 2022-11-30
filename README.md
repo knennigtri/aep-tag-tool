@@ -88,7 +88,7 @@ Export mode requires:
 
 These values can alternatively be set in a config file:
    configFile.environment
-   configfile.export.propID
+   configfile.propID
 
 ```bash
   aep-tag-tool --export -f myConfig.json
@@ -97,9 +97,7 @@ myConfig.json
 ```json
 {
   "environment": "path/to/myEnvironment.postman_environment.json",
-  "export": {
-    "propID": "PR12345678901234567890"
-  }
+  "propID": "PR12345678901234567890"
 }
 ```
 
