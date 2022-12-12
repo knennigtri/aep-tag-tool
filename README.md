@@ -16,6 +16,7 @@ This is a project to automates postman collections using the [Reactor API](https
   - [Export a Tag](#export-a-tag)
     - [Using only the Export Collection:](#using-only-the-export-collection)
   - [Import a Tag](#import-a-tag)
+    - [CEDRP params](#cedrp-params)
     - [Using only the Import Collection:](#using-only-the-import-collection)
   - [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
   - [Customize Settings for the Import](#customize-settings-for-the-import)
@@ -51,13 +52,13 @@ Delete a tag properties that contain 2022 in the title
 ```
 
 ## Usage
-//TODO Add -CEDRP
 ```bash
 aep-tag-tool -h
 Usage: aep-tag-tool [ARGS]
  Arguments:
     --export                        Mode to export a given property ID
     --import                        Mode to import a property given a config file
+    -C,-E,-D,-R,-P                  Options to partially import. See -h import
     --delete                        Mode to delete properties containing a specific string
     -f  <file>                      configuration [json | yml] file
     -e  <postman_environment.json>  specify an environment file
@@ -108,7 +109,6 @@ myConfig.json
 > Running through the requests of this collection will create responses that need to be saved to use for Importing into other organizations. You will end up with `1` **extensions.json**, `1` **data-elements.json**, and `n` **rulecmp-json** files where `n` is the number of rules in your property
 
 ## Import a Tag
-//TODO Add -CEDRP
 Import mode allows for an exported web property from AEP Tags to be imported into an Adobe organization. Import mode will:
  * Create a new web property (`configFile.propName`)
    * Create a Host adn dev/stage/prod environments
@@ -116,6 +116,8 @@ Import mode allows for an exported web property from AEP Tags to be imported int
  * Create imported data elements (`configFile.dataElements`)
  * Create imported rules (`configFile.rules.*`)
  * Create a Library and publish it
+
+> You can optionally specify what to create/import/publish with the [CEDRP parameters](#cedrp-params). 
 
 Importing into a different Adobe organization should be used with caution since many extension settings are specific to the Adobe organization they are exported from. These can be updated with a postman_globals.json file if needed. See [Customize Settings for the the import](#customize-settings-for-the-import).
 
@@ -127,6 +129,17 @@ Import mode requires:
     configFile.import.extensions
     configFile.import.dataElements
     configFile.import.rules.[rules]
+
+### CEDRP params
+You can specify exactly what you want to create/import/publish with these params. No matter the parameter order, they will always execute in the order below.
+
+-C  Creates a new property. `configFile.import.propertyName` is optional.
+
+If -C is not used with the remaining parameters, `propID` is required.
+-E  Imports extensions. `configFile.import.extensions` is required.
+-D  Imports data elements. `configFile.import.dataElement` is required.
+-R  Imports rule components. `configFile.import.rules.[rules]` is required.
+-P  Publishes the library.
 
 ### Using only the [Import Collection](collections/Import%20Tag%20Property.postman_collection.json):
 * Using Postman collection runner on folders - [Learn how to use the Import Tag collection](importTagCollection.md)

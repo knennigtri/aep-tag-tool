@@ -13,15 +13,16 @@ const modes = {
   delete: "delete"
 };
 
-const HELP_F = "-f  <file>                      configuration [json | yml] file";
+const HELP_F = "-f  <file>                      configuration file [json | yml]. See -h configFile" ;
 const HELP_E = "-e  <postman_environment.json>  specify an environment file";
 const HELP_P = "-p, --pid  <pid>                property ID. Req for export mode";
 const HELP_S = "-s, --search  <str>             search string for properties to delete. Reg for delete mode";
-//TODO Add -CEDRP
+const HELP_CEDRP = "-C,-E,-D,-R,-P                  Options to partially import. See -h import";
 const MSG_HELP = "Usage: "+ packageInfo.name.replace("@knennigtri/", "") + ` [ARGS]
  Arguments:
     --export                        Mode to export a given property ID
     --import                        Mode to import a property given a config file
+    ` + HELP_CEDRP + `
     --delete                        Mode to delete properties containing a specific string
     ` + HELP_F + `
     ` + HELP_E + `
@@ -70,12 +71,22 @@ const MSG_HELP_IMPORT = `Import mode requires:
  ` + HELP_E + `
  ` + HELP_F + `
 
-  The config file requires:
-    configFile.import.propName
-    configFile.import.extensions
-    configFile.import.dataElements
-    configFile.import.rules.[rules]
- `;
+The config file requires:
+  configFile.import.propName
+  configFile.import.extensions
+  configFile.import.dataElements
+  configFile.import.rules.[rules]
+
+You can specify exactly what you want to create/import with these params. 
+No matter the parameter order, they will always execute in the order below.
+  -C  Creates a new property. configFile.import.propertyName is optional.
+
+If -C is not used with the remaining parameters, propID is required.
+  -E  Imports extensions. configFile.import.extensions is required.
+  -D  Imports data elements. configFile.import.dataElement is required.
+  -R  Imports rule components. configFile.import.rules.[rules] is required.
+  -P  Publishes the library.
+  `;
 const MSG_HELP_DELETE = `Delete mode requires:
  ` + HELP_E + `
  ` + HELP_S + `
@@ -83,7 +94,8 @@ const MSG_HELP_DELETE = `Delete mode requires:
   These values can alternatively be set in the config file:
     configFile.environment
     configfile.delete.searchStr
- `;
+ 
+    `;
 
 var init = function(mode, configParam, envParam, globalsParam, pidParam, searchStrParam){
   let config = configParam || args.f;
@@ -125,12 +137,6 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     console.log(packageInfo.version);
     return;
   }
-
-  //TODO Remove
-  // console.log(args);
-  // console.log(args.K);
-  // return "" ;
-
 
   //Read the config file or assign the object
   let configFileDir;
