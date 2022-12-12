@@ -1,6 +1,6 @@
 {
   "name": "@knennigtri/aep-tag-tool",
-  "version": "0.0.6",
+  "version": "0.0.5",
   "description": "Export and Import Adobe Experience Platform Tags (previously Launch) with optional variable updates based on Organzations",
   "repository": {
     "type": "git",
@@ -12,7 +12,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "preversion": "git fetch --tags && npm run lint && npm run test:noLogs && rm -r newman",
+    "preversion": "git fetch --tags && npm run lint && npm run test:noLogs",
     "version": "npm run build",
     "postversion": "git push --follow-tags",
     "lint": "eslint '**/*.js?(x)'",
