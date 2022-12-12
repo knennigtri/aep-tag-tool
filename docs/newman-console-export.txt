@@ -1,0 +1,350 @@
+./export-tag.sh ../../environments/vLab7.postman_environment.json 
+newman
+
+Adobe IO Token
+
+→ INIT: Load Crypto Library for RS256
+  GET http://kjur.github.io/jsrsasign/jsrsasign-latest-all-min.js [200 OK, 89.75kB, 236ms]
+  ✓  Status code is 200
+
+→ IMS: JWT Generate + Auth
+  POST https://ims-na1.adobelogin.com/ims/exchange/jwt/ [200 OK, 2.12kB, 233ms]
+  ✓  Status code is 200
+
+→ IMS: Get Profile
+  GET https://ims-na1.adobelogin.com/ims/profile/v1 [200 OK, 6.47kB, 70ms]
+  ✓  Status code is 200
+
+┌─────────────────────────┬────────────────────┬───────────────────┐
+│                         │           executed │            failed │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│              iterations │                  1 │                 0 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│                requests │                  3 │                 0 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│            test-scripts │                  3 │                 0 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│      prerequest-scripts │                  1 │                 0 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│              assertions │                  3 │                 0 │
+├─────────────────────────┴────────────────────┴───────────────────┤
+│ total run duration: 796ms                                        │
+├──────────────────────────────────────────────────────────────────┤
+│ total data received: 95.9kB (approx)                             │
+├──────────────────────────────────────────────────────────────────┤
+│ average response time: 179ms [min: 70ms, max: 236ms, s.d.: 77ms] │
+└──────────────────────────────────────────────────────────────────┘
+Enter the ID of the property you would like export:
+^C
+(base) MacBook-Pro-3:examples nennig$ ./export-tag.sh ../../environments/vLab7.postman_environment.json 
+newman
+
+Adobe IO Token
+
+→ INIT: Load Crypto Library for RS256
+  GET http://kjur.github.io/jsrsasign/jsrsasign-latest-all-min.js [200 OK, 89.75kB, 216ms]
+  ✓  Status code is 200
+
+→ IMS: JWT Generate + Auth
+  POST https://ims-na1.adobelogin.com/ims/exchange/jwt/ [200 OK, 2.12kB, 212ms]
+  ✓  Status code is 200
+
+→ IMS: Get Profile
+  GET https://ims-na1.adobelogin.com/ims/profile/v1 [200 OK, 6.47kB, 67ms]
+  ✓  Status code is 200
+
+┌─────────────────────────┬────────────────────┬───────────────────┐
+│                         │           executed │            failed │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│              iterations │                  1 │                 0 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│                requests │                  3 │                 0 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│            test-scripts │                  3 │                 0 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│      prerequest-scripts │                  1 │                 0 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│              assertions │                  3 │                 0 │
+├─────────────────────────┴────────────────────┴───────────────────┤
+│ total run duration: 737ms                                        │
+├──────────────────────────────────────────────────────────────────┤
+│ total data received: 95.9kB (approx)                             │
+├──────────────────────────────────────────────────────────────────┤
+│ average response time: 165ms [min: 67ms, max: 216ms, s.d.: 69ms] │
+└──────────────────────────────────────────────────────────────────┘
+Enter the ID of the property you would like export:
+PR0d42d6a73e07437da2fc4760a02a7850
+newman
+
+Export Tag Property
+
+→ Get Property
+  GET https://reactor.adobe.io/properties/PR0d42d6a73e07437da2fc4760a02a7850 [200 OK, 3.37kB, 606ms]
+  ✓  Property found: ExL Tutorial 2022-11-01T17:29:33.914Z.
+
+→ List Extensions
+  GET https://reactor.adobe.io/properties/PR0d42d6a73e07437da2fc4760a02a7850/extensions [200 OK, 6.86kB, 124ms]
+  ┌
+  │ 'Save the data array below to a JSON file:'
+  │ '{"data":[{"id":"EX1b7db7f249534be5b77629c529e6b227","type":"extensions","attributes":{"created_at":"2022-11-01T17:29:35.92
+  │ 6Z","deleted_at":null,"dirty":false,"enabled":true,"name":"adobe-target-v2","published":true,"published_at":null,"revision_numbe
+  │ r":0,"updated_at":"2022-11-01T17:29:35.926Z","created_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","creat
+  │ ed_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7
+  │ fab1a3@techacct.adobe.com","updated_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","delegate_descrip
+  │ tor_id":"adobe-target-v2::extensionConfiguration::config","display_name":"Adobe Target v2","review_status":"unsubmitted","versio
+  │ n":"0.19.0","settings":"{\\"targetSettings\\":{\\"enabled\\":true,\\"timeout\\":3000,\\"version\\":\\"2.7.0\\",\\"endpoint\\":\\
+  │ "/rest/v1/delivery\\",\\"imsOrgId\\":\\"B4AB28AE56D80CAF7F000101@AdobeOrg\\",\\"clientCode\\":\\"adobevlab7us\\",\\"secureOnly\\
+  │ ":false,\\"serverState\\":{},\\"optinEnabled\\":false,\\"serverDomain\\":\\"adobevlab7us.tt.omtrdc.net\\",\\"urlSizeLimit\\":204
+  │ 8,\\"viewsEnabled\\":true,\\"optoutEnabled\\":false,\\"globalMboxName\\":\\"target-global-mbox\\",\\"bodyHiddenStyle\\":\\"body 
+  │ {opacity: 0}\\",\\"pageLoadEnabled\\":true,\\"analyticsLogging\\":\\"server_side\\",\\"deviceIdLifetime\\":63244800000,\\"bodyHi
+  │ dingEnabled\\":true,\\"decisioningMethod\\":\\"server-side\\",\\"sessionIdLifetime\\":1860000,\\"visitorApiTimeout\\":2000,\\"au
+  │ thoringScriptUrl\\":\\"//cdn.tt.omtrdc.net/cdn/target-vec.js\\",\\"overrideMboxEdgeServer\\":false,\\"selectorsPollingTimeout\\"
+  │ :5000,\\"defaultContentHiddenStyle\\":\\"visibility: hidden;\\",\\"defaultContentVisibleStyle\\":\\"visibility: visible;\\",\\"o
+  │ verrideMboxEdgeServerTimeout\\":1860000,\\"supplementalDataIdParamTimeout\\":30}}"},"relationships":{"libraries":{"links":{"rela
+  │ ted":"https://reactor.adobe.io/extensions/EX1b7db7f249534be5b77629c529e6b227/libraries"}},"revisions":{"links":{"related":"https
+  │ ://reactor.adobe.io/extensions/EX1b7db7f249534be5b77629c529e6b227/revisions"}},"notes":{"links":{"related":"https://reactor.adob
+  │ e.io/extensions/EX1b7db7f249534be5b77629c529e6b227/notes"}},"property":{"links":{"related":"https://reactor.adobe.io/extensions/
+  │ EX1b7db7f249534be5b77629c529e6b227/property"},"data":{"id":"PR0d42d6a73e07437da2fc4760a02a7850","type":"properties"}},"origin":{
+  │ "links":{"related":"https://reactor.adobe.io/extensions/EX1b7db7f249534be5b77629c529e6b227/origin"},"data":{"id":"EX1b7db7f24953
+  │ 4be5b77629c529e6b227","type":"extensions"}},"updated_with_extension_package":{"links":{"related":"https://reactor.adobe.io/exten
+  │ sions/EX1b7db7f249534be5b77629c529e6b227/updated_with_extension_package"},"data":{"id":"EPe3384852cb1e4c17ab224c76e035052e","typ
+  │ e":"extension_packages"}},"extension_package":{"links":{"related":"https://reactor.adobe.io/extensions/EX1b7db7f249534be5b77629c
+  │ 529e6b227/extension_package"},"data":{"id":"EPe3384852cb1e4c17ab224c76e035052e","type":"extension_packages"}}},"links":{"propert
+  │ y":"https://reactor.adobe.io/properties/PR0d42d6a73e07437da2fc4760a02a7850","origin":"https://reactor.adobe.io/extensions/EX1b7d
+  │ b7f249534be5b77629c529e6b227","self":"https://reactor.adobe.io/extensions/EX1b7db7f249534be5b77629c529e6b227","extension_package
+  │ ":"https://reactor.adobe.io/extension_packages/EPe3384852cb1e4c17ab224c76e035052e","latest_extension_package":"https://reactor.a
+  │ dobe.io/extension_packages/EPe3384852cb1e4c17ab224c76e035052e"},"meta":{"latest_revision_number":1}},{"id":"EX0aed505bc5204803bc
+  │ 0b0c60794b4525","type":"extensions","attributes":{"created_at":"2022-11-01T17:29:34.099Z","deleted_at":null,"dirty":false,"enabl
+  │ ed":true,"name":"core","published":true,"published_at":null,"revision_number":0,"updated_at":"2022-11-01T17:29:34.099Z","created
+  │ _by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","created_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fa
+  │ b1a3@techacct.adobe.com","updated_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_display_name":
+  │ "a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","delegate_descriptor_id":"core::extensionConfiguration::config","displ
+  │ ay_name":"Core","review_status":"unsubmitted","version":"3.3.0","settings":"{}"},"relationships":{"libraries":{"links":{"related
+  │ ":"https://reactor.adobe.io/extensions/EX0aed505bc5204803bc0b0c60794b4525/libraries"}},"revisions":{"links":{"related":"https://
+  │ reactor.adobe.io/extensions/EX0aed505bc5204803bc0b0c60794b4525/revisions"}},"notes":{"links":{"related":"https://reactor.adobe.i
+  │ o/extensions/EX0aed505bc5204803bc0b0c60794b4525/notes"}},"property":{"links":{"related":"https://reactor.adobe.io/extensions/EX0
+  │ aed505bc5204803bc0b0c60794b4525/property"},"data":{"id":"PR0d42d6a73e07437da2fc4760a02a7850","type":"properties"}},"origin":{"li
+  │ nks":{"related":"https://reactor.adobe.io/extensions/EX0aed505bc5204803bc0b0c60794b4525/origin"},"data":{"id":"EX0aed505bc520480
+  │ 3bc0b0c60794b4525","type":"extensions"}},"updated_with_extension_package":{"links":{"related":"https://reactor.adobe.io/extensio
+  │ ns/EX0aed505bc5204803bc0b0c60794b4525/updated_with_extension_package"},"data":{"id":"EPd22815afd48447aa955be6a3a012e3b5","type":
+  │ "extension_packages"}},"extension_package":{"links":{"related":"https://reactor.adobe.io/extensions/EX0aed505bc5204803bc0b0c6079
+  │ 4b4525/extension_package"},"data":{"id":"EPd22815afd48447aa955be6a3a012e3b5","type":"extension_packages"}}},"links":{"property":
+  │ "https://reactor.adobe.io/properties/PR0d42d6a73e07437da2fc4760a02a7850","origin":"https://reactor.adobe.io/extensions/EX0aed505
+  │ bc5204803bc0b0c60794b4525","self":"https://reactor.adobe.io/extensions/EX0aed505bc5204803bc0b0c60794b4525","extension_package":"
+  │ https://reactor.adobe.io/extension_packages/EPd22815afd48447aa955be6a3a012e3b5","latest_extension_package":"https://reactor.adob
+  │ e.io/extension_packages/EPd22815afd48447aa955be6a3a012e3b5"},"meta":{"latest_revision_number":1}}],"meta":{"pagination":{"curren
+  │ t_page":1,"next_page":null,"prev_page":null,"total_pages":1,"total_count":2}}}'
+  │ 'Extension names:'
+  │ '1. adobe-target-v2'
+  │ '2. core'
+  └
+  ✓  Extensions found: 2.
+
+→ List Data Elements
+  GET https://reactor.adobe.io/properties/PR0d42d6a73e07437da2fc4760a02a7850/data_elements?page[size]=100 [200 OK, 11.76kB, 165ms]
+  ┌
+  │ 'Save the data array below to a JSON file:'
+  │ `{"data":[{"id":"DEb52a2acdd8f94b78b01f80af55dcd95b","type":"data_elements","attributes":{"created_at":"2022-11-01T17:29:37
+  │ .595Z","deleted_at":null,"dirty":false,"enabled":true,"name":"aemPublish_cookieDomain","published":true,"published_at":null,"rev
+  │ ision_number":0,"updated_at":"2022-11-01T17:29:37.595Z","created_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.
+  │ com","created_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_email":"a11eba16-8ed1-4f5d-
+  │ 8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","clean
+  │ _text":false,"default_value":null,"delegate_descriptor_id":"core::dataElements::constant","force_lower_case":false,"review_statu
+  │ s":"unsubmitted","storage_duration":null,"settings":"{\\"value\\":\\"publish-p50203-e282782.adobeaemcloud.com\\"}"},"relationshi
+  │ ps":{"libraries":{"links":{"related":"https://reactor.adobe.io/data_elements/DEb52a2acdd8f94b78b01f80af55dcd95b/libraries"}},"re
+  │ visions":{"links":{"related":"https://reactor.adobe.io/data_elements/DEb52a2acdd8f94b78b01f80af55dcd95b/revisions"}},"notes":{"l
+  │ inks":{"related":"https://reactor.adobe.io/data_elements/DEb52a2acdd8f94b78b01f80af55dcd95b/notes"}},"property":{"links":{"relat
+  │ ed":"https://reactor.adobe.io/data_elements/DEb52a2acdd8f94b78b01f80af55dcd95b/property"},"data":{"id":"PR0d42d6a73e07437da2fc47
+  │ 60a02a7850","type":"properties"}},"origin":{"links":{"related":"https://reactor.adobe.io/data_elements/DEb52a2acdd8f94b78b01f80a
+  │ f55dcd95b/origin"},"data":{"id":"DEb52a2acdd8f94b78b01f80af55dcd95b","type":"data_elements"}},"extension":{"links":{"related":"h
+  │ ttps://reactor.adobe.io/data_elements/DEb52a2acdd8f94b78b01f80af55dcd95b/extension"},"data":{"id":"EX0aed505bc5204803bc0b0c60794
+  │ b4525","type":"extensions"}},"updated_with_extension_package":{"links":{"related":"https://reactor.adobe.io/data_elements/DEb52a
+  │ 2acdd8f94b78b01f80af55dcd95b/updated_with_extension_package"},"data":{"id":"EPd22815afd48447aa955be6a3a012e3b5","type":"extensio
+  │ n_packages"}},"updated_with_extension":{"links":{"related":"https://reactor.adobe.io/data_elements/DEb52a2acdd8f94b78b01f80af55d
+  │ cd95b/updated_with_extension"},"data":{"id":"EXf638b0a0b2314749a2ce273c6cf98765","type":"extensions"}}},"links":{"property":"htt
+  │ ps://reactor.adobe.io/properties/PR0d42d6a73e07437da2fc4760a02a7850","origin":"https://reactor.adobe.io/data_elements/DEb52a2acd
+  │ d8f94b78b01f80af55dcd95b","self":"https://reactor.adobe.io/data_elements/DEb52a2acdd8f94b78b01f80af55dcd95b","extension":"https:
+  │ //reactor.adobe.io/extensions/EX0aed505bc5204803bc0b0c60794b4525"},"meta":{"latest_revision_number":1}},{"id":"DE700513a5dc294fa
+  │ 6828468000c6aa2c5","type":"data_elements","attributes":{"created_at":"2022-11-01T17:29:38.011Z","deleted_at":null,"dirty":false,
+  │ "enabled":true,"name":"pageid","published":true,"published_at":null,"revision_number":0,"updated_at":"2022-11-01T17:29:38.011Z",
+  │ "created_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","created_by_display_name":"a11eba16-8ed1-4f5d-8d3a-
+  │ f2e2a7fab1a3@techacct.adobe.com","updated_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_displa
+  │ y_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","clean_text":false,"default_value":null,"delegate_descriptor_i
+  │ d":"core::dataElements::custom-code","force_lower_case":false,"review_status":"unsubmitted","storage_duration":null,"settings":"
+  │ {\\"source\\":\\"if(event \\\\u0026\\\\u0026 event.id) {\\\\n    return event.id;\\\\n}\\"}"},"relationships":{"libraries":{"lin
+  │ ks":{"related":"https://reactor.adobe.io/data_elements/DE700513a5dc294fa6828468000c6aa2c5/libraries"}},"revisions":{"links":{"re
+  │ lated":"https://reactor.adobe.io/data_elements/DE700513a5dc294fa6828468000c6aa2c5/revisions"}},"notes":{"links":{"related":"http
+  │ s://reactor.adobe.io/data_elements/DE700513a5dc294fa6828468000c6aa2c5/notes"}},"property":{"links":{"related":"https://reactor.a
+  │ dobe.io/data_elements/DE700513a5dc294fa6828468000c6aa2c5/property"},"data":{"id":"PR0d42d6a73e07437da2fc4760a02a7850","type":"pr
+  │ operties"}},"origin":{"links":{"related":"https://reactor.adobe.io/data_elements/DE700513a5dc294fa6828468000c6aa2c5/origin"},"da
+  │ ta":{"id":"DE700513a5dc294fa6828468000c6aa2c5","type":"data_elements"}},"extension":{"links":{"related":"https://reactor.adobe.i
+  │ o/data_elements/DE700513a5dc294fa6828468000c6aa2c5/extension"},"data":{"id":"EX0aed505bc5204803bc0b0c60794b4525","type":"extensi
+  │ ons"}},"updated_with_extension_package":{"links":{"related":"https://reactor.adobe.io/data_elements/DE700513a5dc294fa6828468000c
+  │ 6aa2c5/updated_with_extension_package"},"data":{"id":"EPd22815afd48447aa955be6a3a012e3b5","type":"extension_packages"}},"updated
+  │ _with_extension":{"links":{"related":"https://reactor.adobe.io/data_elements/DE700513a5dc294fa6828468000c6aa2c5/updated_with_ext
+  │ ension"},"data":{"id":"EXf638b0a0b2314749a2ce273c6cf98765","type":"extensions"}}},"links":{"property":"https://reactor.adobe.io/
+  │ properties/PR0d42d6a73e07437da2fc4760a02a7850","origin":"https://reactor.adobe.io/data_elements/DE700513a5dc294fa6828468000c6aa2
+  │ c5","self":"https://reactor.adobe.io/data_elements/DE700513a5dc294fa6828468000c6aa2c5","extension":"https://reactor.adobe.io/ext
+  │ ensions/EX0aed505bc5204803bc0b0c60794b4525"},"meta":{"latest_revision_number":1}},{"id":"DEb3d6f224cc0d49f6b7052ccafd51e648","ty
+  │ pe":"data_elements","attributes":{"created_at":"2022-11-01T17:29:38.379Z","deleted_at":null,"dirty":false,"enabled":true,"name":
+  │ "pagepath","published":true,"published_at":null,"revision_number":0,"updated_at":"2022-11-01T17:29:38.379Z","created_by_email":"
+  │ a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","created_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacc
+  │ t.adobe.com","updated_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_display_name":"a11eba16-8e
+  │ d1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","clean_text":false,"default_value":null,"delegate_descriptor_id":"core::dataElemen
+  │ ts::custom-code","force_lower_case":false,"review_status":"unsubmitted","storage_duration":null,"settings":"{\\"source\\":\\"if(
+  │ event \\\\u0026\\\\u0026 event.component \\\\u0026\\\\u0026 event.component.hasOwnProperty('repo:path')) {\\\\n    return event.
+  │ component['repo:path'];\\\\n}\\"}"},"relationships":{"libraries":{"links":{"related":"https://reactor.adobe.io/data_elements/DEb
+  │ 3d6f224cc0d49f6b7052ccafd51e648/libraries"}},"revisions":{"links":{"related":"https://reactor.adobe.io/data_elements/DEb3d6f224c
+  │ c0d49f6b7052ccafd51e648/revisions"}},"notes":{"links":{"related":"https://reactor.adobe.io/data_elements/DEb3d6f224cc0d49f6b7052
+  │ ccafd51e648/notes"}},"property":{"links":{"related":"https://reactor.adobe.io/data_elements/DEb3d6f224cc0d49f6b7052ccafd51e648/p
+  │ roperty"},"data":{"id":"PR0d42d6a73e07437da2fc4760a02a7850","type":"properties"}},"origin":{"links":{"related":"https://reactor.
+  │ adobe.io/data_elements/DEb3d6f224cc0d49f6b7052ccafd51e648/origin"},"data":{"id":"DEb3d6f224cc0d49f6b7052ccafd51e648","type":"dat
+  │ a_elements"}},"extension":{"links":{"related":"https://reactor.adobe.io/data_elements/DEb3d6f224cc0d49f6b7052ccafd51e648/extensi
+  │ on"},"data":{"id":"EX0aed505bc5204803bc0b0c60794b4525","type":"extensions"}},"updated_with_extension_package":{"links":{"related
+  │ ":"https://reactor.adobe.io/data_elements/DEb3d6f224cc0d49f6b7052ccafd51e648/updated_with_extension_package"},"data":{"id":"EPd2
+  │ 2815afd48447aa955be6a3a012e3b5","type":"extension_packages"}},"updated_with_extension":{"links":{"related":"https://reactor.adob
+  │ e.io/data_elements/DEb3d6f224cc0d49f6b7052ccafd51e648/updated_with_extension"},"data":{"id":"EXf638b0a0b2314749a2ce273c6cf98765"
+  │ ,"type":"extensions"}}},"links":{"property":"https://reactor.adobe.io/properties/PR0d42d6a73e07437da2fc4760a02a7850","origin":"h
+  │ ttps://reactor.adobe.io/data_elements/DEb3d6f224cc0d49f6b7052ccafd51e648","self":"https://reactor.adobe.io/data_elements/DEb3d6f
+  │ 224cc0d49f6b7052ccafd51e648","extension":"https://reactor.adobe.io/extensions/EX0aed505bc5204803bc0b0c60794b4525"},"meta":{"late
+  │ st_revision_number":1}},{"id":"DE09bbeb2e87ed40a78ec1ad2c4ad3e8a0","type":"data_elements","attributes":{"created_at":"2022-11-01
+  │ T17:29:38.748Z","deleted_at":null,"dirty":false,"enabled":true,"name":"pagetitle","published":true,"published_at":null,"revision
+  │ _number":0,"updated_at":"2022-11-01T17:29:38.748Z","created_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com",
+  │ "created_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_email":"a11eba16-8ed1-4f5d-8d3a-
+  │ f2e2a7fab1a3@techacct.adobe.com","updated_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","clean_text
+  │ ":false,"default_value":null,"delegate_descriptor_id":"core::dataElements::custom-code","force_lower_case":false,"review_status"
+  │ :"unsubmitted","storage_duration":null,"settings":"{\\"source\\":\\"if(event \\\\u0026\\\\u0026 event.component \\\\u0026\\\\u00
+  │ 26 event.component.hasOwnProperty('dc:title')) {\\\\n    return event.component['dc:title'];\\\\n}\\"}"},"relationships":{"libra
+  │ ries":{"links":{"related":"https://reactor.adobe.io/data_elements/DE09bbeb2e87ed40a78ec1ad2c4ad3e8a0/libraries"}},"revisions":{"
+  │ links":{"related":"https://reactor.adobe.io/data_elements/DE09bbeb2e87ed40a78ec1ad2c4ad3e8a0/revisions"}},"notes":{"links":{"rel
+  │ ated":"https://reactor.adobe.io/data_elements/DE09bbeb2e87ed40a78ec1ad2c4ad3e8a0/notes"}},"property":{"links":{"related":"https:
+  │ //reactor.adobe.io/data_elements/DE09bbeb2e87ed40a78ec1ad2c4ad3e8a0/property"},"data":{"id":"PR0d42d6a73e07437da2fc4760a02a7850"
+  │ ,"type":"properties"}},"origin":{"links":{"related":"https://reactor.adobe.io/data_elements/DE09bbeb2e87ed40a78ec1ad2c4ad3e8a0/o
+  │ rigin"},"data":{"id":"DE09bbeb2e87ed40a78ec1ad2c4ad3e8a0","type":"data_elements"}},"extension":{"links":{"related":"https://reac
+  │ tor.adobe.io/data_elements/DE09bbeb2e87ed40a78ec1ad2c4ad3e8a0/extension"},"data":{"id":"EX0aed505bc5204803bc0b0c60794b4525","typ
+  │ e":"extensions"}},"updated_with_extension_package":{"links":{"related"`... 899 more characters
+  │ 'Data Element names:'
+  │ '1. aemPublish_cookieDomain'
+  │ '2. pageid'
+  │ '3. pagepath'
+  │ '4. pagetitle'
+  └
+  ✓  Data Elements found: 4.
+
+→ List Rules
+  GET https://reactor.adobe.io/properties/PR0d42d6a73e07437da2fc4760a02a7850/rules?page[size]=100 [200 OK, 2.81kB, 112ms]
+  ┌
+  │ 'Rule names:'
+  │ '1. [10] Target'
+  └
+  ✓  Rules found: 1.
+
+→ List Rule Components
+  ┌
+  │ 'Rule components for: [10] Target'
+  └
+  GET https://reactor.adobe.io/rules/RLda695431fa1844a8adfc05938c1ed36e/rule_components [200 OK, 17.78kB, 174ms]
+  ┌
+  │ 'Save the rule components data array below to a JSON file for the `[10] Target` rule:'
+  │ '{"data":[{"id":"RC6b52889559ac459ea2dde083064c233f","type":"rule_components","attributes":{"created_at":"2022-11-01T17:29:
+  │ 39.894Z","delegate_descriptor_id":"core::events::library-loaded","deleted_at":null,"dirty":false,"name":"Core - Library Loaded (
+  │ Page Top)","negate":false,"order":0,"rule_order":50,"timeout":2000,"delay_next":true,"published":true,"published_at":null,"revis
+  │ ion_number":0,"updated_at":"2022-11-01T17:29:39.894Z","created_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.co
+  │ m","created_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_email":"a11eba16-8ed1-4f5d-8d
+  │ 3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","setting
+  │ s":"{}"},"relationships":{"updated_with_extension_package":{"links":{"related":"https://reactor.adobe.io/rule_components/RC6b528
+  │ 89559ac459ea2dde083064c233f/updated_with_extension_package"},"data":{"id":"EPd22815afd48447aa955be6a3a012e3b5","type":"extension
+  │ _packages"}},"updated_with_extension":{"links":{"related":"https://reactor.adobe.io/rule_components/RC6b52889559ac459ea2dde08306
+  │ 4c233f/updated_with_extension"},"data":{"id":"EXf638b0a0b2314749a2ce273c6cf98765","type":"extensions"}},"extension":{"links":{"r
+  │ elated":"https://reactor.adobe.io/rule_components/RC6b52889559ac459ea2dde083064c233f/extension"},"data":{"id":"EX0aed505bc520480
+  │ 3bc0b0c60794b4525","type":"extensions"}},"notes":{"links":{"related":"https://reactor.adobe.io/rule_components/RC6b52889559ac459
+  │ ea2dde083064c233f/notes"}},"origin":{"links":{"related":"https://reactor.adobe.io/rule_components/RC6b52889559ac459ea2dde083064c
+  │ 233f/origin"},"data":{"id":"RC6b52889559ac459ea2dde083064c233f","type":"rule_components"}},"property":{"links":{"related":"https
+  │ ://reactor.adobe.io/properties/PR0d42d6a73e07437da2fc4760a02a7850"},"data":{"id":"PR0d42d6a73e07437da2fc4760a02a7850","type":"pr
+  │ operties"}},"rules":{"links":{"related":"https://reactor.adobe.io/rule_components/RC6b52889559ac459ea2dde083064c233f/rules"}}},"
+  │ links":{"extension":"https://reactor.adobe.io/extensions/EX0aed505bc5204803bc0b0c60794b4525","origin":"https://reactor.adobe.io/
+  │ rule_components/RC6b52889559ac459ea2dde083064c233f","rules":"https://reactor.adobe.io/rule_components/RC6b52889559ac459ea2dde083
+  │ 064c233f/rules","self":"https://reactor.adobe.io/rule_components/RC6b52889559ac459ea2dde083064c233f"},"meta":{"latest_revision_n
+  │ umber":1}},{"id":"RC87b37e07f8e449f9996c9d841e481422","type":"rule_components","attributes":{"created_at":"2022-11-01T17:29:39.5
+  │ 18Z","delegate_descriptor_id":"core::actions::custom-code","deleted_at":null,"dirty":false,"name":"Core - cookieDomain","negate"
+  │ :false,"order":0,"rule_order":50,"timeout":2000,"delay_next":true,"published":true,"published_at":null,"revision_number":0,"upda
+  │ ted_at":"2022-11-01T17:29:39.518Z","created_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","created_by_disp
+  │ lay_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@tec
+  │ hacct.adobe.com","updated_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","settings":"{\\"source\\":\
+  │ \"window.targetGlobalSettings = {  \\\\n   cookieDomain: \'{{aemPublish_cookieDomain}}\' //set the cookie directly on this subdo
+  │ main \\\\n};\\",\\"language\\":\\"javascript\\"}"},"relationships":{"updated_with_extension_package":{"links":{"related":"https:
+  │ //reactor.adobe.io/rule_components/RC87b37e07f8e449f9996c9d841e481422/updated_with_extension_package"},"data":{"id":"EPd22815afd
+  │ 48447aa955be6a3a012e3b5","type":"extension_packages"}},"updated_with_extension":{"links":{"related":"https://reactor.adobe.io/ru
+  │ le_components/RC87b37e07f8e449f9996c9d841e481422/updated_with_extension"},"data":{"id":"EXf638b0a0b2314749a2ce273c6cf98765","typ
+  │ e":"extensions"}},"extension":{"links":{"related":"https://reactor.adobe.io/rule_components/RC87b37e07f8e449f9996c9d841e481422/e
+  │ xtension"},"data":{"id":"EX0aed505bc5204803bc0b0c60794b4525","type":"extensions"}},"notes":{"links":{"related":"https://reactor.
+  │ adobe.io/rule_components/RC87b37e07f8e449f9996c9d841e481422/notes"}},"origin":{"links":{"related":"https://reactor.adobe.io/rule
+  │ _components/RC87b37e07f8e449f9996c9d841e481422/origin"},"data":{"id":"RC87b37e07f8e449f9996c9d841e481422","type":"rule_component
+  │ s"}},"property":{"links":{"related":"https://reactor.adobe.io/properties/PR0d42d6a73e07437da2fc4760a02a7850"},"data":{"id":"PR0d
+  │ 42d6a73e07437da2fc4760a02a7850","type":"properties"}},"rules":{"links":{"related":"https://reactor.adobe.io/rule_components/RC87
+  │ b37e07f8e449f9996c9d841e481422/rules"}}},"links":{"extension":"https://reactor.adobe.io/extensions/EX0aed505bc5204803bc0b0c60794
+  │ b4525","origin":"https://reactor.adobe.io/rule_components/RC87b37e07f8e449f9996c9d841e481422","rules":"https://reactor.adobe.io/
+  │ rule_components/RC87b37e07f8e449f9996c9d841e481422/rules","self":"https://reactor.adobe.io/rule_components/RC87b37e07f8e449f9996
+  │ c9d841e481422"},"meta":{"latest_revision_number":1}},{"id":"RC31bd5aab718b4485877610fc47e8c9c7","type":"rule_components","attrib
+  │ utes":{"created_at":"2022-11-01T17:29:40.700Z","delegate_descriptor_id":"core::events::custom-code","deleted_at":null,"dirty":fa
+  │ lse,"name":"Page Show Event Handler","negate":false,"order":1,"rule_order":50,"timeout":2000,"delay_next":true,"published":true,
+  │ "published_at":null,"revision_number":0,"updated_at":"2022-11-01T17:29:40.700Z","created_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2
+  │ a7fab1a3@techacct.adobe.com","created_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_ema
+  │ il":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@te
+  │ chacct.adobe.com","settings":"{\\"source\\":\\"// Define the event handler function\\\\nvar pageShownEventHandler = function(cor
+  │ eComponentEvent) {\\\\n\\\\n    // Check to ensure event trigger via AEM Core Components is shaped correctly\\\\n    if (coreCom
+  │ ponentEvent.hasOwnProperty(\\\\\\"eventInfo\\\\\\") \\\\u0026\\\\u0026 \\\\n        coreComponentEvent.eventInfo.hasOwnProperty(
+  │ \\\\\\"path\\\\\\")) {\\\\n    \\\\n        // Debug the AEM Component path the show event is associated with\\\\n        consol
+  │ e.debug(\\\\\\"cmp:show event: \\\\\\" + coreComponentEvent.eventInfo.path);\\\\n\\\\n        // Create the Launch Event object\
+  │ \\\n        var launchEvent = {\\\\n            // Include the ID of the AEM Component that triggered the event\\\\n            
+  │ id: coreComponentEvent.eventInfo.path,\\\\n            // Get the state of the AEM Component that triggered the event           
+  │ \\\\n            component: window.adobeDataLayer.getState(coreComponentEvent.eventInfo.path)\\\\n        };\\\\n\\\\n        //
+  │ Trigger the Launch Rule, passing in the new `event` object\\\\n        // the `event` obj can now be referenced by the reserved 
+  │ name `event` by other Launch data elements\\\\n        // i.e `event.component[\'someKey\']`\\\\n        trigger(launchEvent);\\
+  │ \\n   }\\\\n}\\\\n\\\\n// With the AEM Core Component event handler, that proxies the event and relevant information to Adobe La
+  │ unch, defined above...\\\\n\\\\n// Initialize the adobeDataLayer global object in a safe way\\\\nwindow.adobeDataLayer = window.
+  │ adobeDataLayer || [];\\\\n\\\\n// Push the event custom listener onto the Adobe Data Layer\\\\nwindow.adobeDataLayer.push(functi
+  │ on (dataLayer) {\\\\n   // Add event listener for the `cmp:show` event, and the custom `pageShownEventHandler` function as the c
+  │ allback\\\\n   dataLayer.addEventListener(\\\\\\"cmp:show\\\\\\", pageShownEventHandler);\\\\n});\\\\n\\"}"},"relationships":{"u
+  │ pdated_with_extension_package":{"links":{"related":"https://reactor.adobe.io/rule_components/RC31bd5aab718b4485877610fc47e8c9c7/
+  │ updated_with_extension_package"},"data":{"id":"EPd22815afd48447aa955be6a3a012e3b5","type":"extension_packages"}},"updated_with_e
+  │ xtension":{"links":{"related":"https://reactor.adobe.io/rule_components/RC31bd5aab718b4485877610fc47e8c9c7/updated_with_extensio
+  │ n"},"data":{"id":"EXf638b0a0b2314749a2ce273c6cf98765","type":"extensions"}},"extension":{"links":{"related":"https://reactor.ado
+  │ be.io/rule_components/RC31bd5aab718b4485877610fc47e8c9c7/extension"},"data":{"id":"EX0aed505bc5204803bc0b0c60794b4525","type":"e
+  │ xtensions"}},"notes":{"links":{"related":"https://reactor.adobe.io/rule_components/RC31bd5aab718b4485877610fc47e8c9c7/notes"}},"
+  │ origin":{"links":{"related":"https://reactor.adobe.io/rule_components/RC31bd5aab718b4485877610fc47e8c9c7/origin"},"data":{"id":"
+  │ RC31bd5aab718b4485877610fc47e8c9c7","type":"rule_components"}},"property":{"links":{"related":"https://reactor.adobe.io/properti
+  │ es/PR0d42d6a73e07437da2fc4760a02a7850"},"data":{"id":"PR0d42d6a73e07437da2fc4760a02a7850","type":"properties"}},"rules":{"links"
+  │ :{"related":"https://reactor.adobe.io/rule_components/RC31bd5aab718b4485877610fc47e8c9c7/rules"}}},"links":{"extension":"https:/
+  │ /reactor.adobe.io/extensions/EX0aed505bc5204803bc0b0c60794b4525","origin":"https://reactor.adobe.io/rule_components/RC31bd5aab71
+  │ 8b4485877610fc47e8c9c7","rules":"https://reactor.adobe.io/rule_components/RC31bd5aab718b4485877610fc47e8c9c7/rules","self":"http
+  │ s://reactor.adobe.io/rule_components/RC31bd5aab718b4485877610fc47e8c9c7"},"meta":{"latest_revision_number":1}},{"id":"RC3fa77aee
+  │ 18e04bc9b1d2258d89d2a700","type":"rule_components","attributes":{"created_at":"2022-11-01T17:29:40.264Z","delegate_descriptor_id
+  │ ":"adobe-target-v2::actions::load-target","deleted_at":null,"dirty":false,"name":"Adobe Target v2 - Load Target","negate":false,
+  │ "order":1,"rule_order":50,"timeout":2000,"delay_next":true,"published":true,"published_at":null,"revision_number":0,"updated_at"
+  │ :"2022-11-01T17:29:40.264Z","created_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","created_by_display_nam
+  │ e":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","updated_by_email":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.a
+  │ dobe.com","updated_by_display_name":"a11eba16-8ed1-4f5d-8d3a-f2e2a7fab1a3@techacct.adobe.com","settings":"{}"},"relationships":{
+  │ "updated_wit'... 6908 more characters
+  └
+  ✓  [10] Target has 6 Rule Components found.
+
+┌─────────────────────────┬─────────────────────┬────────────────────┐
+│                         │            executed │             failed │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│              iterations │                   1 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│                requests │                   5 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│            test-scripts │                  10 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│      prerequest-scripts │                   7 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│              assertions │                   5 │                  0 │
+├─────────────────────────┴─────────────────────┴────────────────────┤
+│ total run duration: 1436ms                                         │
+├────────────────────────────────────────────────────────────────────┤
+│ total data received: 38.29kB (approx)                              │
+├────────────────────────────────────────────────────────────────────┤
+│ average response time: 236ms [min: 112ms, max: 606ms, s.d.: 186ms] │
+└────────────────────────────────────────────────────────────────────┘

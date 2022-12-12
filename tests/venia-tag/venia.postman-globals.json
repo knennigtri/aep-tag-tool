@@ -6,6 +6,13 @@
     "values": [
         {
             "enabled": true,
+            "key": "SETTINGS_EXT_adobe-mcid",
+            "value": {
+                "orgId": "updateOrgID@AdobeOrg"
+            }
+        },
+        {
+            "enabled": true,
             "key": "SETTINGS_EXT_adobe-target-v2",
             "value": {
                 "targetSettings": {
@@ -13,7 +20,7 @@
                     "authoringScriptUrl": "//cdn.tt.omtrdc.net/cdn/target-vec.js",
                     "bodyHiddenStyle": "body {opacity: 0}",
                     "bodyHidingEnabled": true,
-                    "clientCode": "adobevlab7us",
+                    "clientCode": "updateClientCode",
                     "decisioningMethod": "server-side",
                     "defaultContentHiddenStyle": "visibility: hidden;",
                     "defaultContentVisibleStyle": "visibility: visible;",
@@ -21,7 +28,7 @@
                     "enabled": true,
                     "endpoint": "/rest/v1/delivery",
                     "globalMboxName": "target-global-mbox",
-                    "imsOrgId": "B4AB28AE56D80CAF7F000101@AdobeOrg",
+                    "imsOrgId": "updateOrgID@AdobeOrg",
                     "optinEnabled": false,
                     "optoutEnabled": false,
                     "overrideMboxEdgeServer": false,
@@ -29,7 +36,7 @@
                     "pageLoadEnabled": true,
                     "secureOnly": false,
                     "selectorsPollingTimeout": 5000,
-                    "serverDomain": "adobevlab7us.tt.omtrdc.net",
+                    "serverDomain": "updateDomain",
                     "serverState": {},
                     "sessionIdLifetime": 1860000,
                     "supplementalDataIdParamTimeout": 30,
@@ -43,9 +50,35 @@
         },
         {
             "enabled": true,
+            "key": "SETTINGS_EXT_adobe-analytics",
+            "value": {
+                "libraryCode": {
+                    "accounts": {
+                        "development": [
+                            "updateDev"
+                        ],
+                        "production": [
+                            "updateprod"
+                        ],
+                        "staging": [
+                            "updatestage"
+                        ]
+                    },
+                    "company": "updateCompany",
+                    "type": "managed"
+                },
+                "orgId": "updateOrgID@AdobeOrg",
+                "trackerProperties": {
+                    "trackingServer": "updateTrackingServer",
+                    "trackingServerSecure": "UpateTrackingServer"
+                }
+            }
+        },
+        {
+            "enabled": true,
             "key": "SETTINGS_DE_aemPublish_cookieDomain",
             "value": {
-                "value": "publish-p50203-e282782.adobeaemcloud.com"
+                "value": "updateAEMpublishDomain"
             }
         }
     ]

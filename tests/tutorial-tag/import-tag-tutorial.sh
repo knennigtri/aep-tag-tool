@@ -5,7 +5,7 @@
 # Name of Tag property
 PROPNAME="ExL Target Tutorial"
 
-GLOBALS="settings.postman-globals.json"
+GLOBALS="tutorial.postman-globals.json"
 
 # JSON files for all extensions and data elements
 EXT_JSON="json-exports/tutorial-extensions.json"
@@ -16,12 +16,12 @@ RULENAMES[0]="[10] Target"
 RULECMP_JSONS[0]="json-exports/tutorial-rulecmp-target.json"
 
 
-IO_COLLECTION=https://www.getpostman.com/collections/c962d6b3b81776a4c4bf
-IMPORT_COLLECTION=https://www.getpostman.com/collections/c0c463dbe2f98d3b354a
+IO_COLLECTION="../../collections/Adobe IO Token.postman_collection.json"
+IMPORT_COLLECTION="../../collections/Import Tag Property.postman_collection.json"
 
 # Manually set the postman environment
-ENVIRONMENT=example.postman_environment.json
-# Alternatively add the file to the command: $ ./run-venia-tag myEnv.postman_environment.json
+ENVIRONMENT="docs/examples/example.postman_environment.json"
+# Alternatively add the file to the command: $ ./import-tag-tutorial myEnv.postman_environment.json
 ENVIRONMENT=$1
 
 #Adobe IO

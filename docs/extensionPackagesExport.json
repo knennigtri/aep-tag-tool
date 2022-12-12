@@ -1,0 +1,402 @@
+{
+  "6sense": {
+    "description": "Connect account insights from 6sense across Adobe Analytics & Adobe Target to deliver personalized experiences that engage buyers",
+    "display_name": "6sense for Analytics & Target"
+  },
+  "msdyntoaa": {
+    "description": "AA + Microsoft Dynamics Integration quickly connects down funnel conversions and customer attributes from Microsoft Dynamics CRM into Analysis Workspace in Adobe Analytics.",
+    "display_name": "AA+Dynamics"
+  },
+  "aa-product-string-search-discovery": {
+    "description": "The ultimate solution for dynamically building Adobe Analytics Product String and s.events.  Supports custom events and merch evars. Actions can be intermixed with Adobe Analytics actions.",
+    "display_name": "AA Product String Builder"
+  },
+  "sftoaa": {
+    "description": "AA + SFDC Integration quickly connects down funnel conversions and customer attributes from Salesforce CRM into Analysis Workspace in Adobe Analytics.",
+    "display_name": "AA+SFDC"
+  },
+  "accessible-page-speed-metrics": {
+    "description": "Enrich your Adobe Analytics data with metrics including Server Response Time, Page Render Time and Total Page Load Time, made available via a new class of Data Elements",
+    "display_name": "Accessible Site Speed Metrics"
+  },
+  "activity-map-customizer": {
+    "description": "Provides the ability to customize the Adobe Analytics Activity Map module without custom code. Supports using DOM attributes, configuring link, region, and exclusion settings, and replacing unwanted values.",
+    "display_name": "Activity Map Customizer"
+  },
+  "acton-page-refresh": {
+    "description": "Detects page refresh & you can 1) Measure with Adobe Analytics  2)Personalize by helpful messages or trigger chat with Adobe Target 3)Ensure consistent experience with Adobe Audience Manager",
+    "display_name": "Acton PageRefresh"
+  },
+  "adform-site-tracking": {
+    "description": "The Adform Website Tracking extension enables advertisers to implement Adform Tracking Points effortlessly across their sites using the Adobe Launch Platform.",
+    "display_name": "Adform Website Tracking"
+  },
+  "adobe-analytics": {
+    "description": "Adobe Analytics is an industry-leading solution that empowers you to understand your customers as people and steer your business with customer intelligence. This extension deploys with AppMeasurement version 2.23.0.",
+    "display_name": "Adobe Analytics"
+  },
+  "adobe-analytics-product-string": {
+    "description": "An Adobe Launch extension for management of the Adobe Analytics product string. Create multiple product string configurations and use them as data elements.",
+    "display_name": "Adobe Analytics Product String"
+  },
+  "reactor-aa-product-string-builder": {
+    "description": "The official product string extension from Adobe Consulting Services. Use the Launch UI to automatically set the s.products variable. No custom code needed.",
+    "display_name": "Adobe Analytics Product String"
+  },
+  "aam-dil-extension": {
+    "description": "This is the Adobe Audience Manager (AAM) Data Integration Library (DIL v9.5.1) extension (client-side implementation). Note: This extension is not meant to be used for server-side forwarding (SSF) of Adobe Analytics data. For SSF, use the Adobe Analytics extension. Important: Starting with version 8.0, DIL has a hard dependency on the Experience Cloud ID Service, version 3.3 or higher. Please implement both Experience Cloud ID Service and DIL for full Audience Manager data integration capabilities.",
+    "display_name": "Adobe Audience Manager (DIL)"
+  },
+  "gcoe-adobe-client-data-layer": {
+    "description": "The ACDL is a utility for effectively managing webpage data intended to be used for marketing activities.",
+    "display_name": "Adobe Client Data Layer"
+  },
+  "adobe-contexthub": {
+    "description": "The Adobe ContextHub extension provides you with the ability to define data elements for ContextHub data.",
+    "display_name": "Adobe ContextHub"
+  },
+  "formanalyticssupport": {
+    "description": "An Adobe Launch extension for Adobe Experience Manager Forms allows you to capture out of the box and custom events from Adaptive Forms to gain insights into end user behavior.",
+    "display_name": "Adobe Experience Manager Forms"
+  },
+  "adobe-alloy": {
+    "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
+    "display_name": "Adobe Experience Platform Web SDK"
+  },
+  "extension-typekit": {
+    "description": "Our complete library of fonts is included with all Creative Cloud subscription plans. Choose any subscription plan and the complete library is yours to use. Learn more at https://fonts.adobe.com/about",
+    "display_name": "Adobe Fonts"
+  },
+  "adobe-livefyre": {
+    "description": "Adobe Livefyre enables you to discover, organize, and publish a constant flow of user generated content onto your website to create authentic and highly personalized experiences.",
+    "display_name": "Adobe Livefyre"
+  },
+  "adobe-media-analytics": {
+    "description": "Adobe Media Analytics for Audio and Video is an add-on to the base Analytics offering that provides clients with robust measurement for video, audio and advertisements. This extension deploys with Media SDK version 3.0.2.",
+    "display_name": "Adobe Media Analytics (3.x SDK) for Audio and Video"
+  },
+  "adobe-video-analytics": {
+    "description": "Adobe Media Analytics for Audio and Video is an add-on to the base Analytics offering that provides clients with robust measurement for video, audio and advertisements. This extension deploys with Media SDK version 2.2.1.",
+    "display_name": "Adobe Media Analytics for Audio and Video"
+  },
+  "adobe-privacy": {
+    "description": "This is the Adobe Experience Cloud Privacy extension. It contains functions that can assist those implementing privacy initiatives, such as GDPR.",
+    "display_name": "Adobe Privacy"
+  },
+  "report-suite-selector": {
+    "description": "An Adobe Analytics extension that allows you to automatically retrieve report suites located in your Adobe Analytics login company.",
+    "display_name": "Adobe Report Suite Selector"
+  },
+  "adobe-target": {
+    "description": "Adobe Target Launch extension (at.js v1.8.3)",
+    "display_name": "Adobe Target"
+  },
+  "target-to-analytics": {
+    "description": "This extension lets you create new data elements in Launch that capture data from Adobe Target such as activity and experience IDs and names. These data elements can then be captured by tools such as Adobe Analytics (using a list variable) or any other digital marketing tag you deploy through Adobe Launch.",
+    "display_name": "Adobe Target Toolkit"
+  },
+  "adobe-target-v2": {
+    "description": "Adobe Target v2 Launch extension (at.js v2.10.0)",
+    "display_name": "Adobe Target v2"
+  },
+  "adobe-media-optimizer": {
+    "description": "Advertising Cloud extension for implementing Advertising Cloud conversion and segment tags for both the DSP and Search (DCO is not supported currently).",
+    "display_name": "Advertising Cloud"
+  },
+  "aem-asset-insights": {
+    "description": "This extension is intended to be used with AEM Asset Insights, and replaces the 'pageTracker' embed code. Once implemented, Asset impression & click metrics are available in AEM & Analytics.",
+    "display_name": "AEM Asset Insights"
+  },
+  "airbrake-js-notifier-module": {
+    "description": "Provides Airbrake JS Notifier library as a shared module for use by other extensions.",
+    "display_name": "Airbrake JS Notifier"
+  },
+  "feldm-amplitude": {
+    "description": "Wraps the Amplitude Analytics JavaScript SDK. Manage your implementation and send data to Amplitude Analytics using a feature complete UI.",
+    "display_name": "Amplitude"
+  },
+  "ags055-analytics-contextdata-variable-tools": {
+    "description": "Provides Actions and Tools around Analytics contextData variables.",
+    "display_name": "Analytics contextData Tools"
+  },
+  "apollo-qax-search-discovery": {
+    "description": "Apollo QAX is a companion extension for Adobe Analytics that inspects each beacon prior to being sent, validating for syntax and content.",
+    "display_name": "Apollo QAX"
+  },
+  "arealist": {
+    "description": "Define hot areas for pages or UI elements quickly & easily. Collect smart impressions, accounting for any type of visibility change (e. g. tab nav, single-page apps). Send clickthrough data to any supported analytics platform.",
+    "display_name": "AreaList"
+  },
+  "awin-advertiser-mastertag": {
+    "description": "The MasterTag is a JavaScript library containing all functions required for Awin tracking solution and should be unconditionally appended to every page on the site, including the confirmation page, but excluding any page that displays or processes payment information.",
+    "display_name": "Awin Advertiser Mastertag"
+  },
+  "awint-conversion-tag": {
+    "description": "The Conversion Tag is the declaration of the AWIN.Tracking.Sale JavaScript object, which is done on the confirmation page to instruct the Mastertag that a conversion has taken place. It will then subsequently perform the necessary tracking requests.",
+    "display_name": "Awin Conversion Tag"
+  },
+  "beemray": {
+    "description": "Beemray help you accelerate your product with situational context. Enabling you to gain insights, build new experiences, drive interactions, an engage in moments that really matter. Beemray automate contextual intelligence using machine learning. We connect to the Adobe Experience Cloud, and the rest of your tech partners. Everything takes place in real-time. This extension installs Beemray SDK on your site.",
+    "display_name": "Beemray"
+  },
+  "bing-ads-extension": {
+    "description": "Bing Ads Universal Event Tracking (UET) for Adobe launch is a useful way to track what happens after someone has clicked on your search ad.  By using a single UET tag to record what customers do on your website, you can leverage that data, allowing you to track conversions or target audiences using remarketing lists.",
+    "display_name": "Bing Ads UET Tag"
+  },
+  "bizible": {
+    "description": "Bizible is the industry-leading B2B attribution solution that gives you unparallelled visibility into your data, so you can make smart decisions that power growth.",
+    "display_name": "Bizible Analytics"
+  },
+  "marketo": {
+    "description": "Marketo's powerful marketing automation software helps marketers master the art & science of digital marketing to engage customers and prospects.",
+    "display_name": "Bounteous Extension for Adobe Launch and Marketo"
+  },
+  "branch-mobile-growth": {
+    "description": "Powerful links and solutions that help you acquire, engage, and measure across all devices, channels, and platforms.",
+    "display_name": "Branch Experiences and Measurement"
+  },
+  "calltrackingmetrics": {
+    "description": "Call tracking metrics help you to identify which campaigns drive the most value for your business. Analyze calls from different sources and import the data in Adobe Analytics with this extension​.",
+    "display_name": "CallTrackingMetrics"
+  },
+  "channel-source-identifier": {
+    "description": "The Channel Source Identifier (CSI) allows you to immediately identify and act on traffic source data - including Channel, Campaign, and Referring Domain - while a visitor is still on your website.",
+    "display_name": "Channel Source Identifier"
+  },
+  "cheetah_experiences": {
+    "description": "The Cheetah Experiences Launch Extension equips marketers with the tools they need to measure the performance of experiences resulting in optimized marketing campaigns.",
+    "display_name": "Cheetah Experiences Launch Extension"
+  },
+  "clicktale": {
+    "description": "Quickly deploy the Clicktale tag to your site.",
+    "display_name": "Clicktale Tag Injector"
+  },
+  "common-analytics-plugins": {
+    "description": "Allows for integration of a list of common Adobe Consulting sponsored plugins for Adobe Analytics.",
+    "display_name": "Common Analytics Plugins"
+  },
+  "common-web-sdk-plugins": {
+    "description": "Provides Web SDK compatible versions of common Adobe Consulting Plugins.",
+    "display_name": "Common Web SDK Plugins"
+  },
+  "concat-extension": {
+    "description": "Build a data element from other data elements or static text.",
+    "display_name": "Concat"
+  },
+  "confirmit-digital-feedback": {
+    "description": "Deploy Confirmit Digital Feedback program to your site.",
+    "display_name": "Confirmit Digital Feedback"
+  },
+  "consent-platform": {
+    "description": "The industry standard, patent-protected, desktop, mobile and in-app consent solution for compliance with ePrivacy Directive (“Cookie Law”), PIPEDA, CalOPPA and more.",
+    "display_name": "Consent Platform"
+  },
+  "constant-dataelement": {
+    "description": "Provides a Data Element type that allows you to define constant Data Elements.",
+    "display_name": "Constant Data Element"
+  },
+  "contentsquare": {
+    "description": "Install the Contentsquare tags, setup custom variables and events. Start gathering data for your UX analysis in a few clicks",
+    "display_name": "Contentsquare"
+  },
+  "usercentrics": {
+    "description": "Connects your Adobe Launch tag setup with Usercentrics Consent Management Solution (CMP v2).",
+    "display_name": "Cookie Consent Management by Usercentrics CMP v2"
+  },
+  "trustarc-notice": {
+    "description": "A powerful, flexible, proven solution to address Cookie Compliance.",
+    "display_name": "Cookie Consent Manager"
+  },
+  "core": {
+    "description": "Provides default event, condition, and data element types available to all Launch properties.",
+    "display_name": "Core"
+  },
+  "custom-debug-logger": {
+    "description": "Write custom logs using the Launch UI that are only visible in debug mode",
+    "display_name": "Custom Debug Logger"
+  },
+  "customer-recognition": {
+    "description": "Our patented identity graph provides a unified view of people across their personal and professional lives enabling deeper understanding and empathy in every interaction.",
+    "display_name": "Customer Recognition"
+  },
+  "data-element-assistant": {
+    "description": "DEA allows you to perform simple math, combine pieces of data, extract pieces of data, evaluate a conditional sequence, generate unique identifiers and hash data without writing custom code.",
+    "display_name": "Data Element Assistant"
+  },
+  "data-layer-manager-search-discovery": {
+    "description": "A Data Layer Manager for event driven, asynchronous data layers. Dispatches CustomEvents as payloads are pushed. Manages payloads pushed prior to Launch Library Load. Provides computedState object as an aggregated view of all payloads.",
+    "display_name": "Data Layer Manager"
+  },
+  "dnb-launch-extension": {
+    "description": "Analyze your unknown visitors and convert them into leads.",
+    "display_name": "D&B-Visitor-Intelligence"
+  },
+  "decibel-insight": {
+    "description": "Quickly and seamlessly deploy Decibel on your web properties. Additional advanced configurations may also be deployed with Rules using Actions made available through our extension.",
+    "display_name": "Decibel"
+  },
+  "demandbase": {
+    "description": "Get Demandbase B2B account insights right into Adobe Analytics where you can segment traffic and behavior by Industry, Revenue and your target accounts. This account based view delivers unique insights on engagement, conversion and the source for your most valuable visitors.",
+    "display_name": "Demandbase"
+  },
+  "iridium-atag": {
+    "description": "Display customer profile directly on any website.",
+    "display_name": "Demo System Profile Viewer"
+  },
+  "iridium-demosystem": {
+    "description": "Display customer profile directly on any website.",
+    "display_name": "Demo System Profile Viewer"
+  },
+  "dialogtech-sourcetrak-extension": {
+    "description": "Include SourceTrak javascript snippet in Adobe Launch",
+    "display_name": "DialogTech Sourcetrak Extension"
+  },
+  "differential-privacy": {
+    "description": "Provides a simple application of differential privacy to select a value from a list",
+    "display_name": "Differential Privacy"
+  },
+  "discovery-data-layer": {
+    "description": "Discovery's Data Layer is a collection of Data Element Types, etc to assist in the orchestration of Data Analytics.",
+    "display_name": "Discovery Data Layer"
+  },
+  "doubleclick-floodlight": {
+    "description": "Allows for quick and easy deployment of DoubleClick Floodlight tags using the traditional floodlight format (not Global Site Tag).Note: This extension is in beta.",
+    "display_name": "DoubleClick Floodlight (Beta)"
+  },
+  "extension-dmviewers": {
+    "description": "Enables tracking of data & events from Dynamic Media Viewers.",
+    "display_name": "Dynamic Media Viewers"
+  },
+  "petetoast-eddl-helper": {
+    "description": "Provides the ability to use any array as an Event Driven Data Layer in Launch. You can specify an array to use, then specify when to fire direct call rules from push events to that array, and create data elements to retrieve values from the merged state of the data layer.",
+    "display_name": "EDDL Helper"
+  },
+  "epsilon-partner-sync-web-service": {
+    "description": "Epsilon is a global advertising and marketing tech company, and part of Publicis Groupe. We connect advertisers with people to drive performance while keeping consumer privacy at the forefront.",
+    "display_name": "Epsilon Partner Sync Web Service"
+  },
+  "evidon-universal-consent-platform": {
+    "description": "Evidon is the leading provider of simple solutions to complex digital problems.  Whether it's the GDPR, PIPEDA, or the ePrivacy Directive, or patented, easy-to-use technology keeps your sites in compliance with changing privacy laws and programs around the world.",
+    "display_name": "Evidon Universal Consent Platform"
+  },
+  "adobe-mcid": {
+    "description": "Implements the Experience Cloud ID Service which identifies visitors across all Experience Cloud solutions. (Visitor v5.5.0)",
+    "display_name": "Experience Cloud ID Service"
+  },
+  "facebook-pixel": {
+    "description": "The Facebook pixel is an analytics tool that allows you to measure the effectiveness of your advertising by understanding the actions people take on your website.",
+    "display_name": "Facebook Pixel"
+  },
+  "flashtalking": {
+    "description": "Deploy the Flashtalking OneTag to your web properties.",
+    "display_name": "Flashtalking OneTag"
+  },
+  "foresee": {
+    "description": "Configure ForeSee product deployments",
+    "display_name": "ForeSee"
+  },
+  "gainsight-px": {
+    "description": "Empowers product owners with the tools to deeply understand user behavior, drive product adoption, and collect user feedback.",
+    "display_name": "Gainsight PX"
+  },
+  "genesys-predictive-engagement-for-genesys-cloud": {
+    "description": "Genesys Predictive Engagement is a real-time journey analytics platform that observes and analyzes visitors on Genesys customer websites.",
+    "display_name": "Genesys Predictive Engagement"
+  },
+  "adobegoogledatalayer": {
+    "description": "Supports the use of a Google data layer in Platform Data Collection  Launch. The extension uses Google's Data Layer Helper. A Google Data Layer will be created if not present.",
+    "display_name": "Google Data Layer"
+  },
+  "acronym-gtag.js": {
+    "description": "Send data to Google Analytics, Google Ads, and the Google Marketing Platform via Google's Global Site Tag, or gtag.js. Multiple accounts per product can be configured!",
+    "display_name": "Google Global Site Tag (gtag)"
+  },
+  "inmoment-intercept": {
+    "description": "The InMoment Launch Integration allows you to quickly and easily enable online feedback via our Digital Intercept product. In the app, intercepts can be configured and managed via the CXI Cloud Admin allowing CX managers more control of their program.",
+    "display_name": "InMoment Launch Integration"
+  },
+  "invoca": {
+    "description": "Invoca brings call data and voice insights into the digital customer journey. With Invoca’s call intelligence platform, marketers finally have analytics to measure call outcomes and tie offline conversions back to digital spend.",
+    "display_name": "Invoca Tags"
+  },
+  "json-helper": {
+    "description": "Parse JSON strings and convert values to JSON natively within Adobe Experience Platform Data Collection Tags without using custom code at all.",
+    "display_name": "JSON Helper"
+  },
+  "jw-player-adapter-for-adobe-video-analytics": {
+    "description": "JW Player adapter to connect JW Player events to Adobe Video Analytics. Harness the power of Adobe Video Analytics to gain detailed insights to understanding your customers’ video viewing habits.  ",
+    "display_name": "JW Player Analytics (BETA)"
+  },
+  "kickfire": {
+    "description": "KickFire's IP address intelligence & B2B firmographic data allows you to translate IP addresses to companies, identify anonymous web visitors, and integrate account data into your technology stack – all based on a company's IP address.",
+    "display_name": "KickFire"
+  },
+  "konami-code": {
+    "description": "Trigger a rule when a user enters the Konami Code (up, up, down, down, left, right, left, right, b, a).",
+    "display_name": "Konami Code"
+  },
+  "linkedin": {
+    "description": "Install the LinkedIn Insight Tag to use conversion tracking, retargeting and website demographics features",
+    "display_name": "LinkedIn Insight Tag"
+  },
+  "lookup-table-utility": {
+    "description": "This extension lets you take values currently received on your site and map them to other more desirable values. This is helpful when mapping IDs to domains, currency codes, or correcting values that currently are wrong or have multiple variations.",
+    "display_name": "Lookup Table Utility"
+  },
+  "mapping-table": {
+    "description": "Provides a rich and versatile mapping table data element. Supports regex, exact and case insensitive matches, starts with, contains and boolean matching. Further the output can be static or another data element to offer even more flexibility. E.g. ideal for implementing multiple marketing pixels.",
+    "display_name": "Mapping Table"
+  },
+  "marketo-munchkin": {
+    "description": "Marketo’s Munchkin JavaScript for tracking of end-user page visits and clicks to your web pages",
+    "display_name": "Marketo Munchkin"
+  },
+  "marketo-web-personalization": {
+    "description": "This extension deploys the script for Marketo’s Web Personalization and ContentAI applications. Marketo Web Personalization uniquely identifies and personalizes content to web visitor characteristics, such as firmographics for anonymous visitors and a broad array of behavioral attributes within the Marketo Engagement Platform for known visitors. Marketo ContentAI contains capabilities for AI-powered recommendations and personalization for web and email campaigns that are unique for B2B customers.",
+    "display_name": "Marketo Web Personalization"
+  },
+  "master-property-manager-search-discovery": {
+    "description": "Enables users to copy resources from a master Launch property to child properties.",
+    "display_name": "Master Property Manager"
+  },
+  "medallia-for-adobe-launch": {
+    "description": "Deploy Medallia quickly and seamlessly on your web properties. The extension also allows you to detect survey events, capture customer feedback in real-time through Data elements, use it in rules to personalize your customer's experience and share data with Adobe Analytics.",
+    "display_name": "Medallia for Adobe Launch"
+  },
+  "monita": {
+    "description": "This is Monita’s official Tag Monitoring Extension. Sign up to the Monita platform on getmonita.io and use this extension to monitor any rule running on your page.",
+    "display_name": "Monita"
+  },
+  "nielsen-bsdk-1": {
+    "description": "Nielsen BSDK",
+    "display_name": "Nielsen BSDK"
+  },
+  "nielsen-ima-1": {
+    "description": "Nielsen IMA Handler",
+    "display_name": "Nielsen IMA Handler"
+  },
+  "nielsen-vjs-1": {
+    "description": "Nielsen VideoJS Player Handler",
+    "display_name": "Nielsen VideoJS Player Handler"
+  },
+  "onetrust-consent-management-for-cookies": {
+    "description": "The OneTrust Consent Management for Cookies Adobe Launch extension assists with configuration for controlling cookies based on site visitor preferences.",
+    "display_name": "OneTrust Consent Management for Cookies"
+  },
+  "parse.ly-analytics": {
+    "description": "Parse.ly Analytics helps 2,500+ companies use data to understand their online audience. This extension installs a JavaScript snippet, which tracks how visitors interact with content on your site.",
+    "display_name": "Parse.ly Analytics"
+  },
+  "pebblepost": {
+    "description": "PebblePost's Programmatic Direct Mail® solution helps digital marketers connect online interest and intent to offline, tangible media that converts. Marketers can leverage the custom data segments they have created in Adobe to now target consumers with a relevant, longer-lasting, in-home media impression. Analyze performance in real-time based on response path activity and on-site conversions.",
+    "display_name": "PebblePost"
+  },
+  "pepperjam-extension": {
+    "description": "Pepperjam is a performance marketing solutions provider powering growth for marketers seeking a scaled alternative to their primary sales and marketing channels. Ascend™, Pepperjam’s cloud-based affiliate marketing lifecycle platform, delivers the category’s only fully integrated partner discovery, recruitment, tracking, payment and brand safety solution. Powering over $1B in gross merchandise sales and supported by a comprehensive service team including the category’s only in-housing practice, Pepperjam is headquartered in Philadelphia, Pa. and retains offices in NYC, Santa Cruz and Wilkes-Barre.",
+    "display_name": "Pepperjam"
+  },
+  "persado-connect": {
+    "description": "Persado Connect allows you to track view, click and conversion events on your webpages and automatically return your results back to Persado per variation.",
+    "display_name": "Persado Connect"
+  }
+}

@@ -1,0 +1,13 @@
+---
+globals: tutorial.postman-globals.json
+environment: ../../docs/examples/example.postman_environment.json
+propID: PR6e367f5e04584d84974fcb82d8b1d705
+delete:
+ searchStr: ExL Tutorial 2022
+import:
+ propertyName: ExL Tutorial
+ extensions: json-exports/tutorial-extensions.json
+ dataElements: json-exports/tutorial-data-elements.json
+ rules:
+  "[10] Target": json-exports/tutorial-rulecmp-target.json
+---

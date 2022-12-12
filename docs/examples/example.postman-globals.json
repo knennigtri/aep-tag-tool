@@ -6,14 +6,7 @@
     "values": [
         {
             "enabled": true,
-            "key": "SETTINGS_EXT_adobe-mcid",
-            "value": {
-                "orgId": "test@AdobeOrg"
-            }
-        },
-        {
-            "enabled": true,
-            "key": "SETTINGS_EXT_adobe-target-v2",
+            "key": "SETTINGS_EXT_<extension-name-from-export>",
             "value": {
                 "targetSettings": {
                     "analyticsLogging": "server_side",
@@ -50,33 +43,7 @@
         },
         {
             "enabled": true,
-            "key": "SETTINGS_EXT_adobe-analytics",
-            "value": {
-                "libraryCode": {
-                    "accounts": {
-                        "development": [
-                            "vlab7dev"
-                        ],
-                        "production": [
-                            "vlab7prod"
-                        ],
-                        "staging": [
-                            "vlab7stage"
-                        ]
-                    },
-                    "company": "adobev12",
-                    "type": "managed"
-                },
-                "orgId": "test@AdobeOrg",
-                "trackerProperties": {
-                    "trackingServer": "acs7-us.sc.omtrdc.net",
-                    "trackingServerSecure": "acs7-us.sc.omtrdc.net"
-                }
-            }
-        },
-        {
-            "enabled": true,
-            "key": "SETTINGS_DE_aemPublish_cookieDomain",
+            "key": "SETTINGS_DE_<data-element-name-from-export>",
             "value": {
                 "value": "test.adobeaemcloud.com"
             }

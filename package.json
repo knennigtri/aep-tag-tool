@@ -1,0 +1,68 @@
+{
+  "name": "@knennigtri/aep-tag-tool",
+  "version": "0.0.7",
+  "description": "Export and Import Adobe Experience Platform Tags (previously Launch) with optional variable updates based on Organzations",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:knennigtri/aep-tag-tool.git"
+  },
+  "author": "Kevin Nennig <nen.devpr@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/knennigtri/aep-tag-tool/issues/new/choose"
+  },
+  "main": "index.js",
+  "scripts": {
+    "preversion": "git fetch --tags && npm run lint && npm run test:noLogs",
+    "version": "npm run build",
+    "postversion": "git push --follow-tags",
+    "lint": "eslint '**/*.js?(x)'",
+    "lint:fix": "npm run lint -- --fix",
+    "build": "npm run updateTOCs && npm install && npm ci && npm i --package-lock-only && depcheck ./",
+    "updateTOCs": "doctoc . --github --notitle",
+    "release:bugfix": "npm version patch && publish:bugfix",
+    "publish:bugfix": "npm publish --tag bugfix",
+    "release:beta": "npm version patch && npm run publish:beta",
+    "publish:beta": "npm publish --tag beta",
+    "test": "node tests/tests.js",
+    "test:noLogs": "node tests/tests.js -- --hideconsole",
+    "test-delete": "aep-tag-tool -e environments/vLab7.postman_environment.json --delete -s 2022",
+    "test-export": "aep-tag-tool -e environments/vLab7.postman_environment.json --export -p PR2d789071e520452485a61cdd5d174a7f",
+    "test-import": "aep-tag-tool -e environments/vLab7.postman_environment.json -g tests/venia-simple/simple.postman-globals.json -f tests/venia-simple/venia-simple.json --import",
+    "test-all-modes": "npm run test-export && npm run test-import && npm run test-delete",
+    "test-venia-import": "aep-tag-tool -e environments/vLab7.postman_environment.json -g environments/vLab7-venia.postman-globals.json -f tests/venia-tag/venia-config.yml --import",
+    "test-tutorial-import": "aep-tag-tool -e environments/vLab7.postman_environment.json -g environments/vLab7-tutorial.postman-globals.json -f tests/tutorial-tag/tutorial-config.yml --import",
+    "test-script-export": "cd docs/examples && ./export-tag.sh ../../environments/vLab7.postman_environment.json",
+    "test-script-venia-import": "cd tests/venia-tag && ./import-tag-venia.sh ../../environments/vLab7.postman_environment.json",
+    "test-script-tutorial-import": "cd tests/tutorial-tag && ./import-tag-tutorial.sh ../../environments/vLab7.postman_environment.json"
+  },
+  "keywords": [
+    "aep",
+    "tag",
+    "web-property",
+    "launch",
+    "adobe",
+    "adobe-experience-platform",
+    "postman",
+    "importer",
+    "exporter"
+  ],
+  "bin": {
+    "aep-tag-tool": "bin/global.js"
+  },
+  "preferGlobal": true,
+  "directories": {
+    "test": "test"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "debug": "^4.3.4",
+    "js-yaml": "^4.1.0",
+    "minimist": "^1.2.7",
+    "newman": "^5.3.2"
+  },
+  "devDependencies": {
+    "depcheck": "^1.4.3",
+    "doctoc": "^2.2.0",
+    "eslint": "^8.25.0"
+  }
+}
