@@ -17,6 +17,7 @@ jobs:
       contents: read
       packages: write 
     steps:
+      - run: npm install
       - run: npm ci
       # - run: npm test
   publish-npm:
@@ -31,7 +32,6 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-      - run: npm install
       - run: npm ci
       - run: npm publish --access public
         env:
