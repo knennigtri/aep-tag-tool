@@ -1,6 +1,6 @@
 {
   "name": "@knennigtri/aep-tag-tool",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Export and Import Adobe Experience Platform Tags (previously Launch) with optional variable updates based on Organzations",
   "repository": {
     "type": "git",
