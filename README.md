@@ -1,4 +1,7 @@
 # AEP Tag Tool
+
+[![Build & Publish to NPM and GHP](https://github.com/knennigtri/aep-tag-tool/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/knennigtri/aep-tag-tool/actions/workflows/release.yml)
+
 Import, Export, and Delete web properties from Adobe Expience Platform Tags, previously known as Launch.
 
 ## Overview
