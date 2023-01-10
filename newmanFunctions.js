@@ -107,7 +107,7 @@ function recurseImportChain(actions, environment, configObj){
         .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj));
     } else if(nextAction === "L"){
       return publishLibraryToDev(environment, configObj)
-        .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
+        .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj));
     } else if(nextAction === "P"){
       return publishLibraryToProd(environment, configObj)
         .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
