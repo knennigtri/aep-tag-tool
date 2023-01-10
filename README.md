@@ -11,22 +11,20 @@ This is a project to automates postman collections using the [Reactor API](https
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [AEP Tag Tool](#aep-tag-tool)
-  - [Overview](#overview)
-  - [Installation](#installation)
-  - [Command Line Tool](#command-line-tool)
-  - [Usage](#usage)
-  - [Export a Tag](#export-a-tag)
-    - [Using the Export Collection without NPM:](#using-the-export-collection-without-npm)
-  - [Import a Tag](#import-a-tag)
-    - [CEDRLP params](#cedrlp-params)
-    - [Using the Import Collection without NPM:](#using-the-import-collection-without-npm)
-  - [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
-  - [Customize Settings for the Import](#customize-settings-for-the-import)
-    - [Extensions](#extensions)
-    - [Data Elements](#data-elements)
-    - [Rules](#rules)
-  - [Postman Collections](#postman-collections)
+- [Installation](#installation)
+- [Command Line Tool](#command-line-tool)
+- [Usage](#usage)
+- [Export a Tag](#export-a-tag)
+  - [Using the Export Collection without NPM:](#using-the-export-collection-without-npm)
+- [Import a Tag](#import-a-tag)
+  - [CEDRLP params](#cedrlp-params)
+  - [Using the Import Collection without NPM:](#using-the-import-collection-without-npm)
+- [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
+- [Customize Settings for the Import](#customize-settings-for-the-import)
+  - [Extensions](#extensions)
+  - [Data Elements](#data-elements)
+  - [Rules](#rules)
+- [Postman Collections](#postman-collections)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
