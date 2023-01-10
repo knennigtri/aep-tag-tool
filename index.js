@@ -17,12 +17,12 @@ const HELP_F = "-f  <file>                      configuration file [json | yml].
 const HELP_E = "-e  <postman_environment.json>  specify an environment file";
 const HELP_P = "-p, --pid  <pid>                property ID. Req for export mode";
 const HELP_S = "-s, --search  <str>             search string for properties to delete. Reg for delete mode";
-const HELP_CEDRP = "-C,-E,-D,-R,-P                  Options to partially import. See -h import";
+const HELP_CEDRLP = "-C,-E,-D,-R,-L,-P          Options to partially import. See -h import";
 const MSG_HELP = "Usage: "+ packageInfo.name.replace("@knennigtri/", "") + ` [ARGS]
  Arguments:
     --export                        Mode to export a given property ID
     --import                        Mode to import a property given a config file
-    ` + HELP_CEDRP + `
+    ` + HELP_CEDRLP + `
     --delete                        Mode to delete properties containing a specific string
     ` + HELP_F + `
     ` + HELP_E + `
@@ -85,7 +85,8 @@ If -C is not used with the remaining parameters, propID is required.
   -E  Imports extensions. configFile.import.extensions is required.
   -D  Imports data elements. configFile.import.dataElement is required.
   -R  Imports rule components. configFile.import.rules.[rules] is required.
-  -P  Publishes the library.
+  -L  Builds a library of all items the Dev environment
+  -P  Publishes the library into Prod
   `;
 const MSG_HELP_DELETE = `Delete mode requires:
  ` + HELP_E + `
@@ -120,7 +121,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
 
   // Show CLI help
   if (argsHelp) {
-    //TODO Add -CEDRP
+    //TODO Add -CEDRLP
     if(argsHelp == true){
       console.log(MSG_HELP);
     } else {

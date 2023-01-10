@@ -11,20 +11,22 @@ This is a project to automates postman collections using the [Reactor API](https
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Installation](#installation)
-- [Command Line Tool](#command-line-tool)
-- [Usage](#usage)
-- [Export a Tag](#export-a-tag)
-  - [Using only the Export Collection:](#using-only-the-export-collection)
-- [Import a Tag](#import-a-tag)
-  - [CEDRP params](#cedrp-params)
-  - [Using only the Import Collection:](#using-only-the-import-collection)
-- [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
-- [Customize Settings for the Import](#customize-settings-for-the-import)
-  - [Extensions](#extensions)
-  - [Data Elements](#data-elements)
-  - [Rules](#rules)
-- [Postman Collections](#postman-collections)
+- [AEP Tag Tool](#aep-tag-tool)
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Command Line Tool](#command-line-tool)
+  - [Usage](#usage)
+  - [Export a Tag](#export-a-tag)
+    - [Using only the Export Collection:](#using-only-the-export-collection)
+  - [Import a Tag](#import-a-tag)
+    - [CEDRP params](#cedrp-params)
+    - [Using only the Import Collection:](#using-only-the-import-collection)
+  - [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
+  - [Customize Settings for the Import](#customize-settings-for-the-import)
+    - [Extensions](#extensions)
+    - [Data Elements](#data-elements)
+    - [Rules](#rules)
+  - [Postman Collections](#postman-collections)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -59,9 +61,9 @@ Usage: aep-tag-tool [ARGS]
  Arguments:
     --export                        Mode to export a given property ID
     --import                        Mode to import a property given a config file
-    -C,-E,-D,-R,-P                  Options to partially import. See -h import
+    -C,-E,-D,-R,-L,-P               Options to partially import. See -h import
     --delete                        Mode to delete properties containing a specific string
-    -f  <file>                      configuration [json | yml] file
+    -f  <file>                      configuration file [json | yml]. See -h configFile
     -e  <postman_environment.json>  specify an environment file
     -g  <postman_globals.json>      specify a global file
     -p, --pid  <pid>                property ID. Req for export mode
@@ -140,7 +142,8 @@ If -C is not used with the remaining parameters, `propID` is required.
 -E  Imports extensions. `configFile.import.extensions` is required.
 -D  Imports data elements. `configFile.import.dataElement` is required.
 -R  Imports rule components. `configFile.import.rules.[rules]` is required.
--P  Publishes the library.
+-L  Builds a library of all items the Dev environment
+-P  Publishes the library into Prod
 
 ### Using only the [Import Collection](collections/Import%20Tag%20Property.postman_collection.json):
 * Using Postman collection runner on folders - [Learn how to use the Import Tag collection](importTagCollection.md)

@@ -57,14 +57,15 @@ exports.exportTag = function exportTag(configObj, workingDir, callback) {
 
 exports.importTag = function importTag(configObj, args, callback) {
   let actions = [];
-  if(args.C || args.E || args.D || args.R || args.P){
+  if(args.C || args.E || args.D || args.R || args.L || args.P){
     if(args.C) actions.push("C");
     if(args.E) actions.push("E");
     if(args.D) actions.push("D");
     if(args.R) actions.push("R");
+    if(args.L) actions.push("L");
     if(args.P) actions.push("P");
   } else { // create and import everything
-    actions = ["C", "E", "D", "R", "P"];
+    actions = ["C", "E", "D", "R", "L", "P"];
   }
   debugImport(actions);
   
@@ -104,13 +105,16 @@ function recurseImportChain(actions, environment, configObj){
     } else if(nextAction === "R"){
       return importRules(environment, configObj)
         .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj));
+    } else if(nextAction === "L"){
+      return publishLibraryToDev(environment, configObj)
+        .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj));
     } else if(nextAction === "P"){
-      return publishLibrary(environment, configObj)
+      return publishLibraryToProd(environment, configObj)
         .then((resultEnv) => recurseImportChain(actions, resultEnv, configObj))
         .then(function (resultEnv){
-          let prodArtifactURL = getEnvironmentValue(resultEnv, "prodArtifactURL");
+          let artifactURL = getEnvironmentValue(resultEnv, "prodArtifactURL");
           console.log("Prod Library embed code: ");
-          console.log("<script src='"+prodArtifactURL+"' async></script>");
+          console.log("<script src='"+artifactURL+"' async></script>");
         });
     } else Promise.resolve(environment);
   }else{
@@ -183,13 +187,23 @@ async function importRules(environment, configObj){
   return environment;
 }
 
-// Runs the Import Tag collection folder "Publish Tag Library"
-function publishLibrary(environment, configObj) {
-  return newmanRun("publishLib", 
+// Runs the Import Tag collection folder "Publish Prod"
+function publishLibraryToProd(environment, configObj) {
+  return newmanRun("publishLibProd", 
     environment, configObj.globals, 
-    IMPORT_COLLECTION, "Publish Tag Library", 
+    IMPORT_COLLECTION, "Publish Prod", 
     "", "");
 }
+
+// Runs the Import Tag collection folder "Publish Dev"
+function publishLibraryToDev(environment, configObj) {
+  return newmanRun("publishLibDev", 
+    environment, configObj.globals, 
+    IMPORT_COLLECTION, "Publish Dev", 
+    "", "");
+}
+
+
 
 /******* Helper Functions ******/
 
