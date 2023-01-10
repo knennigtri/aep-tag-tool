@@ -17,10 +17,10 @@ This is a project to automates postman collections using the [Reactor API](https
   - [Command Line Tool](#command-line-tool)
   - [Usage](#usage)
   - [Export a Tag](#export-a-tag)
-    - [Using only the Export Collection:](#using-only-the-export-collection)
+    - [Using the Export Collection without NPM:](#using-the-export-collection-without-npm)
   - [Import a Tag](#import-a-tag)
-    - [CEDRP params](#cedrp-params)
-    - [Using only the Import Collection:](#using-only-the-import-collection)
+    - [CEDRLP params](#cedrlp-params)
+    - [Using the Import Collection without NPM:](#using-the-import-collection-without-npm)
   - [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
   - [Customize Settings for the Import](#customize-settings-for-the-import)
     - [Extensions](#extensions)
@@ -83,16 +83,19 @@ Export mode allows for a web property from AEP Tags to be exported as JSON. Expo
  * export rules and their rule components
 
 Export mode requires:
- -e  <postman_environment.json>  specify an environment file
- -p, --pid  <pid>                property ID. Req for export mode
+
+`-e  <postman_environment.json>`  specify an environment file
+
+`-p, --pid  <pid>`               property ID. Req for export mode
 
 ```bash
   aep-tag-tool --export -e myEnvironment.postman_environment.json -p PR12345678901234567890
 ```
 
-These values can alternatively be set in a config file:
-   configFile.environment
-   configfile.propID
+Values can alternatively be set in a configuration file:
+
+  1. configFile.environment
+  2. configfile.propID
 
 ```bash
   aep-tag-tool --export -f myConfig.json
@@ -105,7 +108,7 @@ myConfig.json
 }
 ```
 
-### Using only the [Export Collection](collections/Export%20Tag%20Property.postman_collection.json):
+### Using the [Export Collection](collections/Export%20Tag%20Property.postman_collection.json) without NPM:
 * Using Postman collection runner on folders - [Learn how to use the Export Tag collection](exportTagCollection.md)
 * Using Newman to run the collection folders - See [example export bash script](example-venia-tag/export-tag.sh)
 
@@ -125,27 +128,30 @@ Import mode allows for an exported web property from AEP Tags to be imported int
 Importing into a different Adobe organization should be used with caution since many extension settings are specific to the Adobe organization they are exported from. These can be updated with a postman_globals.json file if needed. See [Customize Settings for the the import](#customize-settings-for-the-import).
 
 Import mode requires:
- -e  <postman_environment.json>  specify an environment file
- -f  <file>                      configuration [json | yml] file
 
-  The config file requires:
-    configFile.import.extensions
-    configFile.import.dataElements
-    configFile.import.rules.[rules]
+ `-e  <postman_environment.json>`  specify an environment file
 
-### CEDRP params
-You can specify exactly what you want to create/import/publish with these params. No matter the parameter order, they will always execute in the order below.
+ `-f  <file>`                      configuration [json | yml] file
 
--C  Creates a new property. `configFile.import.propertyName` is optional.
+Configuration [json | yml] file requires:
+ 1. configFile.import.extensions
+ 2. configFile.import.dataElements
+ 3. configFile.import.rules.[rules]
+
+### CEDRLP params
+You can specify exactly what you want to create/import/publish with these params. No matter the parameter order, they will always execute in the order below. Default is running all steps.
+
+`-C`  Creates a new property. `configFile.import.propertyName` is optional.
 
 If -C is not used with the remaining parameters, `propID` is required.
--E  Imports extensions. `configFile.import.extensions` is required.
--D  Imports data elements. `configFile.import.dataElement` is required.
--R  Imports rule components. `configFile.import.rules.[rules]` is required.
--L  Builds a library of all items the Dev environment
--P  Publishes the library into Prod
 
-### Using only the [Import Collection](collections/Import%20Tag%20Property.postman_collection.json):
+ * `-E`  Imports extensions. `configFile.import.extensions` is required.
+ * `-D`  Imports data elements. `configFile.import.dataElement` is required.
+ * `-R`  Imports rule components. `configFile.import.rules.[rules]` is required.
+ * `-L`  Builds a library of all items the Dev environment
+ * `-P`  Publishes the library into Prod
+
+### Using the [Import Collection](collections/Import%20Tag%20Property.postman_collection.json) without NPM:
 * Using Postman collection runner on folders - [Learn how to use the Import Tag collection](importTagCollection.md)
 * Using Newman to run the collection folders - See [example import bash script](example-venia-tag/import-venia-tag.sh) 
 
@@ -153,20 +159,24 @@ If -C is not used with the remaining parameters, `propID` is required.
 Quickly delete web properties that might have been created with this tool. Delete mode allows you to search for web properties in an Adobe organization based on a search string. If any web properties contain the search string, they are deleted. This is particularly useful if you are developing your own property to import/export since all properties end with a timestamp. Searching (-s) for `2022-10-25` would delete `MyProperty 2022-10-25T20:57:42.049Z`, `MyProperty 2022-10-25T21:57:42.049Z`, and `MyProperty 2022-10-25T20:58:42.049Z`.
 
 Delete mode requires:
- -e  <postman_environment.json>  specify an environment file
- -s, --search  <str>             search string for properties to delete. Reg for delete mode
+
+ `-e  <postman_environment.json>`  specify an environment file
+
+ `-s, --search  <str>`             search string for properties to delete. Reg for delete mode
   
-  These values can alternatively be set in the config file:
-    configFile.environment
-    configfile.delete.searchStr
+Values can alternatively be set in the config file:
+
+  1. configFile.environment
+  2. configfile.delete.searchStr
 
 ```bash
   aep-tag-tool --delete -e myEnvironment.postman_environment.json -s 2022
 ```
 
-These values can alternatively be set in the config file:
-   configFile.environment
-   configfile.delete.searchStr
+Values can alternatively be set in the config file:
+
+  1. configFile.environment
+  2. configfile.delete.searchStr
 
 ```bash
   aep-tag-tool --export -f myConfig.json
