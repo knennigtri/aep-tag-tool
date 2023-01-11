@@ -1,4 +1,5 @@
 const newmanTF = require("./newmanFunctions.js");
+const config = require("./convert-config.js");
 var packageInfo = require("./package.json");
 const yaml = require("js-yaml");
 const fs = require("fs");
@@ -130,8 +131,8 @@ const MSG_HELP_DEBUG = `Debug options:
      .replaceAll("}","")
     ;
 
-var init = function(mode, configParam, envParam, globalsParam, pidParam, searchStrParam){
-  let config = configParam || args.f;
+function init(mode, dataParam, envParam, globalsParam, pidParam, searchStrParam){
+  let data = dataParam || args.f;
   let argsEnv = envParam || args.e;
   let argsGlobals = globalsParam || args.g;
   const argsPID = pidParam || args.p || args.pid;
@@ -140,8 +141,9 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   const argsHelp =  args.h || args.help;
   let argsMode = "";
 
-  argsEnv = getData(argsEnv, "./");
-  argsGlobals = getData(argsGlobals, "./");
+  //TODO
+  argsEnv = getDataItem(argsEnv, "./");
+  argsGlobals = getDataItem(argsGlobals, "./");
   
   if((mode && mode.toLowerCase() == modes.export) ||  args.export){
     argsMode = modes.export;
@@ -172,79 +174,41 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     return;
   }
 
-  //Read the config file or assign the object
-  let configFileDir;
-  let jsonObj = {};
-  if(config){   //Check if there is a config file/object
-    let configContents;
-    if(typeof config == "string"){
-      if(fs.lstatSync(config).isFile()){
-        config = path.resolve(config);
-        configContents = fs.readFileSync(config, "utf8");
-        configFileDir = path.dirname(config);
-      } else {
-        console.log("-f parameter is not a file.");
-        console.log(MSG_HELP);
-        return;
-      }
-    } else if(typeof config  === "object" && config !== null) {
-      configContents = config;
-      configFileDir = "./";
-    } 
-
-    // Parse the configContents from YAML or JSON
-    try {
-      //Attempt to read the YAML and output JSON
-      let data = yaml.loadAll(configContents,"json");
-      let yamlContents = JSON.stringify(data[0], null, 2);
-      jsonObj = JSON.parse(yamlContents);
-    } catch {
-      console.log("Could not read YAML, attemping JSON");
-      try {
-        //Attempt to read JSON
-        jsonObj = JSON.parse(configContents);
-      } catch(e){
-        console.log("File does not contain valid YAML or JSON content.");
-        throw e;
-      }
-    }
-  } else {
-    jsonObj = {};
-    configFileDir = "./";
-  }
-
-  //set PID and searchStr values
-  jsonObj.propID = argsPID || jsonObj.propID;
-  debugData("PID: " + jsonObj.propID);
-  if(!jsonObj.delete) jsonObj.delete = {};
-  jsonObj.delete.searchStr = argsSearch || jsonObj.delete.searchStr;
-  debugData("Del Str: " + jsonObj.delete.searchStr);
-  
-  
-  //setup the data with ABS paths if they aren't objects
-  jsonObj.environment = argsEnv || getData(jsonObj.environment, configFileDir);
-  debugData("Env: " + JSON.stringify(jsonObj.environment));
-  jsonObj.globals = argsGlobals || getData(jsonObj.globals, configFileDir);
-
-  if(!jsonObj.import) jsonObj.import = {};
-  let ext = getData(jsonObj.import.extensions, configFileDir);
-  jsonObj.import.extensions = ext;
-  let de = getData(jsonObj.import.dataElements, configFileDir);
-  jsonObj.import.dataElements = de;
-  for (let rule in jsonObj.import.rules){
-    let ruleCmps = getData(jsonObj.import.rules[rule], configFileDir);
-    jsonObj.import.rules[rule] = ruleCmps;
-  }
-  
-  /** All Modes require an environment (cli -e | file.environment) */
-  if(!jsonObj.environment){
+  /** All Modes require an environment */
+  if(!argsEnv){
     console.log("No environment Specified.");
     console.log(MSG_HELP);
     return;
   }
 
+  let configObj;
+  config.create(argsEnv)
+    .then((resultConfigObj) => {
+      configObj = resultConfigObj;
+    })
+    .catch((err) => {
+      console.log(err);
+      console.log(MSG_HELP); 
+      return;
+    });
+
+    let dataFileDir = "./";
+    if(fs.lstatSync(data).isFile()) dataFileDir = path.dirname(data);
+config.getJSON(data)
+  .then((resultDataObj) => absPathsUpdate(resultDataObj, dataFileDir)) 
+  .then((resultDataObj) => addParamsToDataObj(resultDataObj, configObj, argsPID, argsSearch))
+  //   .then((resultDataObj) => {
+  //   }) //run import/export/delete
+    .catch((err) => {
+      console.log(err);
+      console.log(MSG_HELP); 
+      return;
+    });
+
+    return;
+
   //Dry Run exit
-  debugDryRun(JSON.stringify(jsonObj, null, 2));
+  debugDryRun(JSON.stringify(dataObj, null, 2));
   if(debug.enabled("dryrun")){
     return;
   }
@@ -252,13 +216,13 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   //Export Mode
   //requires pid (cli -p, --pid | file.propID)
   if(argsMode == modes.export){
-    if(!jsonObj.propID){
+    if(!dataObj.propID){
       console.log("Export mode must have a property ID specified");
       console.log(MSG_HELP);
       return;
     }
-    console.log("PropID: "+jsonObj.propID);
-    newmanTF.exportTag(jsonObj, configFileDir, function(err, resultObj){
+    console.log("PropID: "+dataObj.propID);
+    newmanTF.exportTag(dataObj, dataFileDir, function(err, resultObj){
       if(err){
         console.error(err);
         console.log(MSG_HELP);
@@ -275,17 +239,17 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     // file.dataElements
     // file.rules.{rule1, rule2}
   } else if(argsMode == modes.import){ // IMPORT mode
-    if(!config){
+    if(!data){
       console.log("Configuration file/object is missing for import");
       console.log(MSG_HELP);
       return;
     }
-    if(!jsonObj.import){
+    if(!dataObj.import){
       console.log("Import mode is missing values to import");
       console.log(MSG_HELP);
       return;
     }
-    newmanTF.importTag(jsonObj, args, function(err, resultObj){
+    newmanTF.importTag(dataObj, args, function(err, resultObj){
       if(err){
         console.error(err);
         console.log(MSG_HELP);
@@ -298,13 +262,13 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     //DELETE mode
     //Requires searchStr (cli -s, --search | file.delete.searchStr)
   } else if(argsMode == modes.delete){
-    if(!jsonObj.delete || !jsonObj.delete.searchStr){
+    if(!dataObj.delete || !dataObj.delete.searchStr){
       console.log("Delete mode must have a search string specified");
       console.log(MSG_HELP);
       return;
     }
-    console.log("SearchStr: " + jsonObj.delete.searchStr);
-    newmanTF.deleteTags(jsonObj, jsonObj.delete.searchStr, function(err, resultObj){
+    console.log("SearchStr: " + dataObj.delete.searchStr);
+    newmanTF.deleteTags(dataObj, dataObj.delete.searchStr, function(err, resultObj){
       if(err){
         console.error(err);
         console.log(MSG_HELP);
@@ -320,17 +284,45 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
   
 };
 
-function getData(data, rootDir){
+function absPathsUpdate(dataObj, dataFileDir){
+  debugData("absPathsUpdate: function()");
+  
+  //Update any relative paths to absolute paths or return the json object
+  if(dataObj.import){
+    dataObj.import.extensions = getDataItem(dataObj.import.extensions, dataFileDir);
+    dataObj.import.dataElements = getDataItem(dataObj.import.dataElements, dataFileDir);
+    for (let rule in dataObj.import.rules){
+      dataObj.import.rules[rule] = getDataItem(dataObj.import.rules[rule], dataFileDir);
+    }
+  }
+  if(dataObj.environment) dataObj.environment = getDataItem(dataObj.environment, dataFileDir);
+  if(dataObj.globals) dataObj.globals = getDataItem(dataObj.globals, dataFileDir);
+
+  return Promise.resolve(dataObj);
+}
+
+function addParamsToDataObj(dataObj, configObj, pid,delSearchStr){
+  debugData("addParamsToDataObj: function()");
+
+  dataObj.environment = configObj || dataObj.environment
+  debugData("configObj: " + dataObj.environment);
+  dataObj.propID = pid || dataObj.propID;
+  debugData("PID: " + dataObj.propID);
+  if(!dataObj.delete) dataObj.delete = {};
+  dataObj.delete.searchStr = delSearchStr || dataObj.delete.searchStr;
+  debugData("Del Str: " + dataObj.delete.searchStr);
+}
+
+function getDataItem(data, rootDir){
   if(typeof data == "string"){
     let absPath = path.resolve(rootDir, data);
     if(fs.existsSync(absPath)){
-      // console.log("Using path:" +absPath);
+      debugData("Using path:" +absPath);
       return absPath;
     } else {
       throw new Error("Cannot Read File: " + absPath);
     }
   } else {
-    // console.log("Returning Data: " +data);
     return data;
   }
 }
