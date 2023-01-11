@@ -14,10 +14,10 @@ const debugOptions = {
 };
 
 let REPORTERS = ["emojitrain", "junit", "html"];
-let IO_COLLECTION = require("./collections/Adobe IO Token.postman_collection.json");
-let EXPORT_COLLECTION = require("./collections/Export Tag Property.postman_collection.json");
-let IMPORT_COLLECTION = require("./collections/Import Tag Property.postman_collection.json");
-let DELETE_PROPS = require("./collections/Delete Properties.postman_collection.json");
+let IO_COLLECTION = require("./postman/Adobe IO Token.postman_collection.json");
+let EXPORT_COLLECTION = require("./postman/Export Tag Property.postman_collection.json");
+let IMPORT_COLLECTION = require("./postman/Import Tag Property.postman_collection.json");
+let DELETE_PROPS = require("./postman/Delete Properties.postman_collection.json");
 
 //Development commands
 if (debug.enabled("collections")) {
@@ -281,32 +281,7 @@ function getEnvironmentValue(envObj, key) {
   return "";
 }
 
-function setEnvironmentValue(envObj, key, value){
-  envObj = JSON.parse(JSON.stringify(envObj));
-  let addVal = true;
-  let envVal = {};
-  if(envObj && envObj.values){
-    for(let i = 0; i < envObj.values.length; i++){
-      envVal = envObj.values[i];
-      if(envVal.key == key){
-        addVal = false;
-        envVal.value = value;
-        envObj.values[i] = envVal;
-        i = envObj.values.length;
-      }
-    }
-    if(addVal){
-      envVal = {
-        "type": "any",
-        "value": value,
-        "key": key
-      };
-      envObj.values.push(envVal);
-    }
-    return envObj;
-  }
-  return null;
-}
+//TODO incorperate setEnvironmentValue() from convert-config.js
 
 exports.debugOptions = debugOptions;
 exports.exportTag = exportTag;
