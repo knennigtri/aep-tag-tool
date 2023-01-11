@@ -5,8 +5,18 @@ const fs = require("fs");
 var minimist = require("minimist");
 var args = minimist(process.argv.slice(2));
 var path = require("path");
+//https://www.npmjs.com/package/debug
 var debug = require("debug");
-var debugConfig = require("debug")("index:config");
+var debugDryRun = require("debug")("dryrun");
+var debugConfig = require("debug")("config");
+var debugData = require("debug")("data");
+const debugOptions = {
+  "*": "Output all debugging messages",
+  "dryrun": "Run without running postman collections to verify input",
+  "config": "Config messages for connecting to Adobe IO",
+  "data": "Data messages for full json object"
+};
+
 const modes = {
   export: "export",
   import: "import",
@@ -34,6 +44,7 @@ const MSG_HELP = "Usage: "+ packageInfo.name.replace("@knennigtri/", "") + ` [AR
                export               how to use export mode
                import               how to use import mode
                delete               how to use delete mode
+               debug                how to use debug
     -v, --version                   Displays version of this package
  `;
 const CONFIGFILE_EXAMPLE = 
@@ -97,6 +108,27 @@ const MSG_HELP_DELETE = `Delete mode requires:
     configfile.delete.searchStr
  
     `;
+const MSG_HELP_DEBUG = `Debug options:
+  Mac:
+    $ DEBUG=<value> aep-tag-tool....
+  Win:
+    $ set DEBUG=<value> & aep-tag-tool...
+
+  Where <value> can be:
+`+
+    JSON.stringify(debugOptions, null, 2)
+     .replaceAll("\": ","     >")
+     .replaceAll("\"","")
+     .replaceAll(",","")
+     .replaceAll("{\n","")
+     .replaceAll("}","")
+  + JSON.stringify(newmanTF.debugOptions, null, 2)
+     .replaceAll("\": ","     >")   
+     .replaceAll("\"","")
+     .replaceAll(",","")
+     .replaceAll("{\n","")
+     .replaceAll("}","")
+    ;
 
 var init = function(mode, configParam, envParam, globalsParam, pidParam, searchStrParam){
   let config = configParam || args.f;
@@ -129,6 +161,7 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
       if(argsHelp.toLowerCase() == "export") console.log(MSG_HELP_EXPORT);
       if(argsHelp.toLowerCase() == "import") console.log(MSG_HELP_IMPORT);
       if(argsHelp.toLowerCase() == "delete") console.log(MSG_HELP_DELETE);
+      if(argsHelp.toLowerCase() == "debug") console.log(MSG_HELP_DEBUG);
     }
     return;
   }
@@ -182,12 +215,15 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
 
   //set PID and searchStr values
   jsonObj.propID = argsPID || jsonObj.propID;
+  debugData("PID: " + jsonObj.propID);
   if(!jsonObj.delete) jsonObj.delete = {};
   jsonObj.delete.searchStr = argsSearch || jsonObj.delete.searchStr;
+  debugData("Del Str: " + jsonObj.delete.searchStr);
   
   
   //setup the data with ABS paths if they aren't objects
   jsonObj.environment = argsEnv || getData(jsonObj.environment, configFileDir);
+  debugData("Env: " + JSON.stringify(jsonObj.environment));
   jsonObj.globals = argsGlobals || getData(jsonObj.globals, configFileDir);
 
   if(!jsonObj.import) jsonObj.import = {};
@@ -207,8 +243,9 @@ var init = function(mode, configParam, envParam, globalsParam, pidParam, searchS
     return;
   }
 
-  debugConfig(JSON.stringify(jsonObj, null, 2));
-  if(debug.enabled("index:config")){
+  //Dry Run exit
+  debugDryRun(JSON.stringify(jsonObj, null, 2));
+  if(debug.enabled("dryrun")){
     return;
   }
     

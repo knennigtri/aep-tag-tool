@@ -1,8 +1,17 @@
 const newman = require("newman");
 const fs = require("fs");
+//https://www.npmjs.com/package/debug
 const debug = require("debug");
 const debugCollections = require("debug")("collections");
 const debugImport = require("debug")("import");
+const debugNewman = require("debug")("newman");
+require("debug")("newman:cli");
+const debugOptions = {
+  "collections": "Postman collection messages",
+  "import": "Import mode messages",
+  "newman": "Newman command messages",
+  "newman:cli": "Newman cli output for verbose messaging of collections"
+};
 
 let REPORTERS = ["emojitrain", "junit", "html"];
 let IO_COLLECTION = require("./collections/Adobe IO Token.postman_collection.json");
@@ -11,19 +20,24 @@ let IMPORT_COLLECTION = require("./collections/Import Tag Property.postman_colle
 let DELETE_PROPS = require("./collections/Delete Properties.postman_collection.json");
 
 //Development commands
-if (debug.enabled("newmanTF:collections")) {
+if (debug.enabled("collections")) {
   debugCollections("Using Postman Collections");
   IO_COLLECTION = "https://www.getpostman.com/collections/6ad99074fc75d564ac8a";
   IMPORT_COLLECTION = "https://www.getpostman.com/collections/2f3dc4c81eb464c21693";
   DELETE_PROPS = "https://www.getpostman.com/collections/357a7d9bea644bfc5b46";
   EXPORT_COLLECTION = "https://www.getpostman.com/collections/55520565b0f9933b5cf8";
-  // REPORTERS = ['cli','junit', 'html'];
+}
+
+//Mac: DEBUG=newman:cli aep-tag-tool....
+//WIN: set DEBUG=newman:cli & aep-tag-tool....
+if (debug.enabled("newman:cli")) {
+  REPORTERS = ["cli", "junit", "html"]
 }
 
 let TIMESTAMP = formatDateTime();
 let reportersDir = "newman/";
 
-exports.exportTag = function exportTag(configObj, workingDir, callback) {
+function exportTag(configObj, workingDir, callback) {
   authenicateAIO(configObj.environment, configObj)
     .then((resultEnv) => newmanRun("exportTag", 
       resultEnv, configObj.globals, 
@@ -55,7 +69,7 @@ exports.exportTag = function exportTag(configObj, workingDir, callback) {
     .catch(err => callback(err, null));
 };
 
-exports.importTag = function importTag(configObj, args, callback) {
+function importTag(configObj, args, callback) {
   let actions = [];
   if(args.C || args.E || args.D || args.R || args.L || args.P){
     if(args.C) actions.push("C");
@@ -122,7 +136,7 @@ function recurseImportChain(actions, environment, configObj){
   }
 }
 
-exports.deleteTags = function deleteTags(configObj, searchStr, callback) {
+function deleteTags(configObj, searchStr, callback) {
   authenicateAIO(configObj.environment, configObj)
     .then((resultEnv) => newmanRun("deleteTags", 
       resultEnv, configObj.globals, 
@@ -209,11 +223,15 @@ function publishLibraryToDev(environment, configObj) {
 
 function newmanRun(cmdName, env, globals, collection, folder, data, envVar){
   const reportName = TIMESTAMP + "-" + cmdName + "-Report";
+  debugNewman("ReportName: "+ reportName);
   if(folder && folder != ""){
     console.log("Running: " + folder + " for: " + cmdName);
   } else { 
     console.log("Running: " + cmdName);
   }
+
+  debugNewman("ReportNameHTML: "+ reportersDir + reportName + ".html");
+  debugNewman("ReportNameXML: "+ reportersDir + reportName + ".xml");
 
   return new Promise(function(resolve, reject) {
     //run newman to create new rule
@@ -228,7 +246,7 @@ function newmanRun(cmdName, env, globals, collection, folder, data, envVar){
       reporter: {
         "html": { export: reportersDir + reportName + ".html" },
         "junit": { export: reportersDir + reportName + ".xml" }
-      }
+      }//TODO investigate saving via Win and Mac
     }).on("done", function (err, summary) {
       if (err) reject(err);
 
@@ -289,3 +307,8 @@ function setEnvironmentValue(envObj, key, value){
   }
   return null;
 }
+
+exports.debugOptions = debugOptions;
+exports.exportTag = exportTag;
+exports.importTag = importTag;
+exports.deleteTags = deleteTags;
