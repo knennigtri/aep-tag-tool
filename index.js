@@ -1,11 +1,8 @@
 const newman = require("./newman.js");
-const config = require("./launch.js");
+const launch = require("./launch.js");
 var packageInfo = require("./package.json");
-const yaml = require("js-yaml");
-const fs = require("fs");
 var minimist = require("minimist");
 var args = minimist(process.argv.slice(2));
-var path = require("path");
 //https://www.npmjs.com/package/debug
 var debug = require("debug");
 var debugDryRun = require("debug")("dryrun");
@@ -120,23 +117,23 @@ const MSG_HELP_DEBUG = `Debug options:
   Where <value> can be:
 `+
     JSON.stringify(debugOptions, null, 2)
-     .replaceAll("\": ","     >")
-     .replaceAll("\"","")
-     .replaceAll(",","")
-     .replaceAll("{\n","")
-     .replaceAll("}","")
+      .replaceAll("\": ","     >")
+      .replaceAll("\"","")
+      .replaceAll(",","")
+      .replaceAll("{\n","")
+      .replaceAll("}","")
   + JSON.stringify(newman.debugOptions, null, 2)
-     .replaceAll("\": ","     >")   
-     .replaceAll("\"","")
-     .replaceAll(",","")
-     .replaceAll("{\n","")
-     .replaceAll("}","")
-  + JSON.stringify(convert-configs.debugOptions, null, 2)
-     .replaceAll("\": ","     >")   
-     .replaceAll("\"","")
-     .replaceAll(",","")
-     .replaceAll("{\n","")
-     .replaceAll("}","")
+    .replaceAll("\": ","     >")   
+    .replaceAll("\"","")
+    .replaceAll(",","")
+    .replaceAll("{\n","")
+    .replaceAll("}","")
+  + JSON.stringify(launch.debugOptions, null, 2)
+    .replaceAll("\": ","     >")   
+    .replaceAll("\"","")
+    .replaceAll(",","")
+    .replaceAll("{\n","")
+    .replaceAll("}","")
     ;
 
 function init(mode, dataParam, envParam, globalsParam, pidParam, searchStrParam){
@@ -145,19 +142,12 @@ function init(mode, dataParam, envParam, globalsParam, pidParam, searchStrParam)
   let argsGlobals = globalsParam || args.g;
   const argsPID = pidParam || args.p || args.pid;
   const argsSearch = searchStrParam || args.s || args.search;
+  const argsWorkingDir = workingDirParam || args.d || args.directory; //TODO Create director param for --export
   const argsVersion = args.v || args.version;
   const argsHelp =  args.h || args.help;
   
-
-  //TODO
-  // argsEnv = getDataItem(argsEnv, "./");
-  // argsGlobals = getDataItem(argsGlobals, "./");
-  
-
-
   // Show CLI help
   if (argsHelp) {
-    //TODO Add -CEDRLP
     if(argsHelp == true){
       console.log(MSG_HELP);
     } else {
@@ -184,8 +174,8 @@ function init(mode, dataParam, envParam, globalsParam, pidParam, searchStrParam)
   }
 
   // let configObj;
-  config.createAuthObj(argsEnv)
-    .then((resultAuthObj) => config.createLaunchObj(data, resultAuthObj))
+  launch.createAuthObj(argsEnv)
+    .then((resultAuthObj) => launch.createLaunchObj(data, resultAuthObj))
     .then((resultDataObj) => addParamsToDataObj(resultDataObj, argsPID, argsSearch))
     .then((resultDataObj) => {
       //Dry Run exit
@@ -281,7 +271,7 @@ function runAEPTagTool(dataObj, mode, workingDir, actions){
     console.log(MSG_HELP);
   }
   
-};
+}
 
 
 
@@ -298,22 +288,21 @@ function addParamsToDataObj(dataObj, pid, delSearchStr){
   });
 }
 
-function getArgActions(arguments){
+function getArgActions(a){
   let actions = [];
-  if(arguments.C || arguments.E || arguments.D || arguments.R || arguments.L || arguments.P){
-    if(arguments.C) actions.push("C");
-    if(arguments.E) actions.push("E");
-    if(arguments.D) actions.push("D");
-    if(arguments.R) actions.push("R");
-    if(arguments.L) actions.push("L");
-    if(arguments.P) actions.push("P");
+  if(a.C || a.E || a.D || a.R || a.L || a.P){
+    if(a.C) actions.push("C");
+    if(a.E) actions.push("E");
+    if(a.D) actions.push("D");
+    if(a.R) actions.push("R");
+    if(a.L) actions.push("L");
+    if(a.P) actions.push("P");
   } else { // create and import everything
     actions = ["C", "E", "D", "R", "L", "P"];
   }
   debugArgs(actions);
   return actions;
 }
-
 
 exports.run = init;
 exports.modes = modes;

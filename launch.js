@@ -1,4 +1,3 @@
-const newman = require("newman");
 const fs = require("fs");
 var path = require("path");
 const yaml = require("js-yaml");
@@ -16,7 +15,7 @@ const POSTMAN_ENV = require("./postman/aep-tag-tool.postman_environment.json");
 
 function createFileObj(file){
   debugData(createFileObj);
-  let obj = {}
+  let obj = {};
   if(typeof file == "string"){
     if(fs.lstatSync(file).isFile()){
       file = path.resolve(file);
@@ -24,11 +23,11 @@ function createFileObj(file){
       obj.workingDir = path.dirname(file);
     } else {
       obj.contents = file;
-      obj.workingDir = "./"
+      obj.workingDir = "./";
     }
   } else {
     obj.contents = "{}";
-    obj.workingDir = "./"
+    obj.workingDir = "./";
   }
   return obj;
 }
@@ -36,7 +35,7 @@ function createFileObj(file){
 // Returns a Postman Environment json with the correct variables for authentication
 function createAuthObj(configYMLFile){
   return new Promise(function(resolve, reject) {
-    let configFileObj = createFileObj(configYMLFile)
+    let configFileObj = createFileObj(configYMLFile);
 
     getJSON(configFileObj.contents, configFileObj.workingDir)
       .then((resultObj) => {
@@ -44,23 +43,23 @@ function createAuthObj(configYMLFile){
         let postmanObj = POSTMAN_ENV;
 
         for(let key in resultObj.auth){
-          postmanObj = setEnvironmentValue(postmanObj, key, resultObj.auth[key])
+          postmanObj = setEnvironmentValue(postmanObj, key, resultObj.auth[key]);
           let normalizedKey = key.toUpperCase().replace("-","_").replace(" ","_");
           if(normalizedKey.includes("CLIENT_ID")){
-            postmanObj = setEnvironmentValue(postmanObj, "CLIENT_ID", resultObj.auth[key])
+            postmanObj = setEnvironmentValue(postmanObj, "CLIENT_ID", resultObj.auth[key]);
             debugEnv("CLIENT_ID set.");
           } else if(normalizedKey.includes("CLIENT_SECRET")){
-            postmanObj = setEnvironmentValue(postmanObj, "CLIENT_SECRET", resultObj.auth[key])
+            postmanObj = setEnvironmentValue(postmanObj, "CLIENT_SECRET", resultObj.auth[key]);
             debugEnv("CLIENT_SECRET set.");
           } else if(normalizedKey.includes("ORG_ID")){
-            postmanObj = setEnvironmentValue(postmanObj, "ORG_ID", resultObj.auth[key])
+            postmanObj = setEnvironmentValue(postmanObj, "ORG_ID", resultObj.auth[key]);
             debugEnv("ORG_ID set.");
           } else if(normalizedKey.includes("TECHNICAL_ACCOUNT")){
-            postmanObj = setEnvironmentValue(postmanObj, "TECHNICAL_ACCOUNT", resultObj.auth[key])
+            postmanObj = setEnvironmentValue(postmanObj, "TECHNICAL_ACCOUNT", resultObj.auth[key]);
             debugEnv("TECHNICAL_ACCOUNT set.");
           } else if(normalizedKey.includes("PRIVATE_KEY")){
             let privateKey = getPrivateKey(resultObj.auth[key], configFileObj.workingDir);
-            postmanObj = setEnvironmentValue(postmanObj, "PRIVATE_KEY", privateKey)
+            postmanObj = setEnvironmentValue(postmanObj, "PRIVATE_KEY", privateKey);
             debugEnv("PRIVATE_KEY set.");
           } else {
             debugEnv(key + " is not valid for auth values. Skipping.");
@@ -95,23 +94,23 @@ function getPrivateKey(str, workingDir){
 function createLaunchObj(file, authObj){
   debugData(createLaunchObj);
   return new Promise(function(resolve, reject) {
-      let dataFileObj = createFileObj(file);
+    let dataFileObj = createFileObj(file);
       
-      getJSON(dataFileObj.contents)
-        .then((resultDataContents) => {
-          //add authentication environment
-          resultDataContents.environment = authObj || resultDataContents.environment;
-          //Make all file paths absolute
-          resultDataContents = absPathsUpdate(resultDataContents, dataFileObj.workingDir);
-          debugData(resultDataContents);
-          resolve(resultDataContents);
-        })
-        .catch((err) => {
-          console.log(err);
-          return;
-        });
+    getJSON(dataFileObj.contents)
+      .then((resultDataContents) => {
+        //add authentication environment
+        resultDataContents.environment = authObj || resultDataContents.environment;
+        //Make all file paths absolute
+        resultDataContents = absPathsUpdate(resultDataContents, dataFileObj.workingDir);
+        debugData(resultDataContents);
+        resolve(resultDataContents);
+      })
+      .catch((err) => {
+        console.log(err);
+        return;
+      });
 
-    });
+  });
 }
 
 function absPathsUpdate(dataObj, dataFileDir){

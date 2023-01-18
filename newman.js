@@ -3,12 +3,10 @@ const fs = require("fs");
 //https://www.npmjs.com/package/debug
 const debug = require("debug");
 const debugCollections = require("debug")("collections");
-const debugImport = require("debug")("import");
 const debugNewman = require("debug")("newman");
 require("debug")("newman:cli");
 const debugOptions = {
   "collections": "Postman collection messages",
-  "import": "Import mode messages",
   "newman": "Newman command messages",
   "newman:cli": "Newman cli output for verbose messaging of collections"
 };
@@ -31,7 +29,7 @@ if (debug.enabled("collections")) {
 //Mac: DEBUG=newman:cli aep-tag-tool....
 //WIN: set DEBUG=newman:cli & aep-tag-tool....
 if (debug.enabled("newman:cli")) {
-  REPORTERS = ["cli", "junit", "html"]
+  REPORTERS = ["cli", "junit", "html"];
 }
 
 let TIMESTAMP = formatDateTime();
@@ -67,27 +65,16 @@ function exportTag(configObj, workingDir, callback) {
     })
     .then((resultEnv) => callback(null, resultEnv))
     .catch(err => callback(err, null));
-};
+}
 
 function importTag(configObj, actions, callback) {
-  // let actions = [];
-  // if(args.C || args.E || args.D || args.R || args.L || args.P){
-  //   if(args.C) actions.push("C");
-  //   if(args.E) actions.push("E");
-  //   if(args.D) actions.push("D");
-  //   if(args.R) actions.push("R");
-  //   if(args.L) actions.push("L");
-  //   if(args.P) actions.push("P");
-  // } else { // create and import everything
-  //   actions = ["C", "E", "D", "R", "L", "P"];
-  // }
-  // debugImport(actions);
   
   authenicateAIO(configObj.environment, configObj)
     .then(function(resultEnv){ //Add propID if importing to an existing property
       return new Promise(function (resolve,reject){
         if(actions[0] != "C"){
           if(configObj.propID){
+            //TODO is setEnvironmentValue even needed here?
             let env = setEnvironmentValue(resultEnv, "propID", configObj.propID);
             if(env) resolve(env);
             else reject(new Error("Cannot update environment"));
@@ -102,7 +89,7 @@ function importTag(configObj, actions, callback) {
       callback(null, resultEnv);
     })
     .catch(err => callback(err, null));
-};
+}
 
 function recurseImportChain(actions, environment, configObj){
   const nextAction = actions.shift();
@@ -148,7 +135,7 @@ function deleteTags(configObj, searchStr, callback) {
     )
     .then((resultEnv) => callback(null, resultEnv))
     .catch(err => callback(err, null));
-};
+}
 
 // Runs the Adobe IO Token collection
 function authenicateAIO(environment, configObj) {
@@ -280,8 +267,6 @@ function getEnvironmentValue(envObj, key) {
   }
   return "";
 }
-
-//TODO incorperate setEnvironmentValue() from convert-config.js
 
 exports.debugOptions = debugOptions;
 exports.exportTag = exportTag;
