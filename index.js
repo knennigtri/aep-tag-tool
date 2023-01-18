@@ -142,7 +142,8 @@ function init(mode, dataParam, envParam, globalsParam, pidParam, searchStrParam)
   let argsGlobals = globalsParam || args.g;
   const argsPID = pidParam || args.p || args.pid;
   const argsSearch = searchStrParam || args.s || args.search;
-  const argsWorkingDir = workingDirParam || args.d || args.directory; //TODO Create director param for --export
+  //TODO Create director param for --export
+  // const argsWorkingDir = workingDirParam || args.d || args.directory;
   const argsVersion = args.v || args.version;
   const argsHelp =  args.h || args.help;
   
@@ -172,6 +173,14 @@ function init(mode, dataParam, envParam, globalsParam, pidParam, searchStrParam)
     console.log(MSG_HELP);
     return;
   }
+
+  // let imports = launch.getImports(argsEnv, data); //gets all imports
+  // //Check if mode is import if Yes:
+  // //see if config.imports exists
+  // //-f overrides 
+  // if(imports){
+
+  // }
 
   // let configObj;
   launch.createAuthObj(argsEnv)
@@ -211,7 +220,7 @@ function runAEPTagTool(dataObj, mode, workingDir, actions){
       return;
     }
     console.log("PropID: "+dataObj.propID);
-    newman.exportTag(dataObj, workingDir, function(err, resultObj){
+    newman.exportTag(dataObj.environment, dataObj.propID, workingDir, function(err, resultObj){
       if(err){
         console.error(err);
         console.log(MSG_HELP);
@@ -238,7 +247,7 @@ function runAEPTagTool(dataObj, mode, workingDir, actions){
       console.log(MSG_HELP);
       return;
     }
-    newman.importTag(dataObj, actions, function(err, resultObj){
+    newman.importTag(dataObj.environment, dataObj.import, actions, dataObj.propID, dataObj.globals, function(err, resultObj){
       if(err){
         console.error(err);
         console.log(MSG_HELP);
@@ -257,7 +266,7 @@ function runAEPTagTool(dataObj, mode, workingDir, actions){
       return;
     }
     console.log("SearchStr: " + dataObj.delete.searchStr);
-    newman.deleteTags(dataObj, dataObj.delete.searchStr, function(err, resultObj){
+    newman.deleteTags(dataObj.environment, dataObj.delete.searchStr, function(err, resultObj){
       if(err){
         console.error(err);
         console.log(MSG_HELP);

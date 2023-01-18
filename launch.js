@@ -199,5 +199,6 @@ function setEnvironmentValue(envObj, key, value){
 }
 
 exports.debugOptions = debugOptions;
+exports.setEnvironmentValue = setEnvironmentValue;
 exports.createAuthObj = createAuthObj;
 exports.createLaunchObj = createLaunchObj;
