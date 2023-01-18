@@ -24,7 +24,7 @@ const modes = {
 };
 
 const HELP_F = "-f  <file>                      configuration file [json | yml]. See -h configFile" ;
-const HELP_E = "-e  <postman_environment.json>  specify an environment file";
+const HELP_E = "-e  <myconfig.yml>              specify a config file";
 const HELP_P = "-p, --pid  <pid>                property ID. Req for export mode";
 const HELP_S = "-s, --search  <str>             search string for properties to delete. Reg for delete mode";
 const HELP_CEDRLP = "-C,-E,-D,-R,-L,-P          Options to partially import. See -h import";
