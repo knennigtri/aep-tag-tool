@@ -49,21 +49,19 @@ function exportTag(env, pid, exportDir, callback) {
     .then(function(resultEnv){
       let tagExport = {};
       tagExport.propID = pid;
-      tagExport.import = {}; //TODO Remove import opject and add everything to tagExport obj
-      tagExport.import.propertyName = getEnvironmentValue(resultEnv, "exportPropName");
-      tagExport.import.extensions = getEnvironmentValue(resultEnv, "exportExtensions");
-      tagExport.import.dataElements = getEnvironmentValue(resultEnv, "exportDataElements");
-      tagExport.import.ruleNames = getEnvironmentValue(resultEnv, "exportRules");
-      tagExport.import.rules = {};
-      for (var element in tagExport.import.ruleNames) {
-        let ruleName = tagExport.import.ruleNames[element].attributes.name;
-        tagExport.import.rules[ruleName] = getEnvironmentValue(resultEnv, "exportRuleCmps-" + element);
+      tagExport.propertyName = getEnvironmentValue(resultEnv, "exportPropName");
+      tagExport.extensions = getEnvironmentValue(resultEnv, "exportExtensions");
+      tagExport.dataElements = getEnvironmentValue(resultEnv, "exportDataElements");
+      tagExport.ruleNames = getEnvironmentValue(resultEnv, "exportRules");
+      tagExport.rules = {};
+      for (var element in tagExport.ruleNames) {
+        let ruleName = tagExport.ruleNames[element].attributes.name;
+        tagExport.rules[ruleName] = getEnvironmentValue(resultEnv, "exportRuleCmps-" + element);
       }
       //Write to a file
-      var propName = tagExport.import.propertyName.replace(/\s+/g, "-").toLowerCase();
+      var propName = tagExport.propertyName.replace(/\s+/g, "-").toLowerCase();
       if(!exportDir) exportDir = ".";
       fs.writeFileSync(exportDir + "/" + propName + ".json", JSON.stringify(tagExport, null, 2));
-    // fs.writeFileSync(workingDir+"/"+propName+".yml", yaml.dump(tagExport));
     })
     .then((resultEnv) => callback(null, resultEnv))
     .catch(err => callback(err, null));
@@ -73,9 +71,9 @@ function importTag(env, importObj, actions, pid, globals, callback) {
   authenicateAIO(env)
     .then(function(resultEnv){ //Add propID if importing to an existing property
       return new Promise(function (resolve,reject){
+        if(!actions) actions = getImportActions(); //TODO verify it works
         if(actions[0] != "C"){
           if(pid){
-            //TODO is setEnvironmentValue even needed here?
             let env = launch.setEnvironmentValue(resultEnv, "propID", pid);
             if(env) resolve(env);
             else reject(new Error("Cannot update environment"));
@@ -258,6 +256,22 @@ function formatDateTime() {
   return time;
 }
 
+function getImportActions(create, extentions, dataElements, rules, libraryToDev, publishToProd){
+  let actions = [];
+  if(create || extentions || dataElements || rules || libraryToDev || publishToProd){
+    if(create) actions.push("C");
+    if(extentions) actions.push("E");
+    if(dataElements) actions.push("D");
+    if(rules) actions.push("R");
+    if(libraryToDev) actions.push("L");
+    if(publishToProd) actions.push("P");
+  } else { // create and import everything
+    actions = ["C", "E", "D", "R", "L", "P"];
+  }
+  debugNewman(actions);
+  return actions;
+}
+
 function getEnvironmentValue(envObj, key) {
   let envVals = JSON.parse(JSON.stringify(envObj.values));
   for (var element of envVals) {
@@ -269,6 +283,7 @@ function getEnvironmentValue(envObj, key) {
 }
 
 exports.debugOptions = debugOptions;
+exports.getImportActions = getImportActions;
 exports.exportTag = exportTag;
 exports.importTag = importTag;
 exports.deleteTags = deleteTags;

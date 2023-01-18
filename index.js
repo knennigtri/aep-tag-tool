@@ -136,14 +136,25 @@ const MSG_HELP_DEBUG = `Debug options:
     .replaceAll("}","")
     ;
 
-function init(mode, dataParam, envParam, globalsParam, pidParam, searchStrParam){
+function init(envParam, mode, dataParam, pidParam, workingDirParam, searchStrParam, globalsParam){
+//TODO update parameters
+// aep-tag-tool -c ./my.config.xml --delete "2023"
+// aep-tag-tool -c ./my.config.xml -d "2023"
+// aep-tag-tool -c ./my.config.xml --export ./exports/
+// aep-tag-tool -c ./my.config.xml -e ./exports/ -p P12345
+// aep-tag-tool -c ./my.config.xml --import ./myProperty.json
+// aep-tag-tool -c ./my.config.xml -i ./myProperty.json
+ 
+//TODO support CSV 
+// aep-tag-tool -c ./myCSV.csv --import
+// aep-tag-tool -c ./myCSV.csv --import ./myproperty.json
+// aep-tag-tool -c ./myCSV.csv --delete "2023"
   let data = dataParam || args.f;
   let argsEnv = envParam || args.e;
   let argsGlobals = globalsParam || args.g;
   const argsPID = pidParam || args.p || args.pid;
   const argsSearch = searchStrParam || args.s || args.search;
-  //TODO Create director param for --export
-  // const argsWorkingDir = workingDirParam || args.d || args.directory;
+  const argsWorkingDir = workingDirParam || args.d || args.directory; //TODO add param
   const argsVersion = args.v || args.version;
   const argsHelp =  args.h || args.help;
   
@@ -173,144 +184,106 @@ function init(mode, dataParam, envParam, globalsParam, pidParam, searchStrParam)
     console.log(MSG_HELP);
     return;
   }
+  
+  //TODO Iterate config files
+  //If config.csv, iterate through config.yml
+  //Specify config.yml
 
-  // let imports = launch.getImports(argsEnv, data); //gets all imports
-  // //Check if mode is import if Yes:
-  // //see if config.imports exists
-  // //-f overrides 
-  // if(imports){
+  //create AuthObj from config.yml
+  let authObj = launch.createAuthObjSync(argsEnv);
+  if(!authObj) {
+    console.log("Environment not properly configured"); //TODO better message
+    console.log(MSG_HELP);
+    return;
+  }
+  debugDryRun(JSON.stringify(authObj, null, 2));
 
-  // }
-
-  // let configObj;
-  launch.createAuthObj(argsEnv)
-    .then((resultAuthObj) => launch.createLaunchObj(data, resultAuthObj))
-    .then((resultDataObj) => addParamsToDataObj(resultDataObj, argsPID, argsSearch))
-    .then((resultDataObj) => {
-      //Dry Run exit
-      debugDryRun(JSON.stringify(resultDataObj, null, 2));
-      if(debug.enabled("dryrun")){
-        return;
-      }
-
-      //Run tool
-      if((mode && mode.toLowerCase() == modes.export) ||  args.export){
-        runAEPTagTool(resultDataObj, modes.export, "./");
-      } else if((mode && mode.toLowerCase() == modes.import) ||  args.import){
-        runAEPTagTool(resultDataObj, modes.import, "", getArgActions(args));
-      } else if((mode && mode.toLowerCase() == modes.delete) ||  args.delete){
-        runAEPTagTool(resultDataObj, modes.delete);
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      console.log(MSG_HELP); 
-      return;
-    });
-
-}
-
-function runAEPTagTool(dataObj, mode, workingDir, actions){    
-  //Export Mode
-  //requires pid (cli -p, --pid | file.propID)
-  if(mode == modes.export){
-    if(!dataObj.propID){
+  if((mode && mode.toLowerCase() == modes.export) ||  args.export){ //EXPORT
+    if(!argsPID){
       console.log("Export mode must have a property ID specified");
       console.log(MSG_HELP);
       return;
     }
-    console.log("PropID: "+dataObj.propID);
-    newman.exportTag(dataObj.environment, dataObj.propID, workingDir, function(err, resultObj){
-      if(err){
-        console.error(err);
-        console.log(MSG_HELP);
-      }
-      if(resultObj) {
-        console.log("Complete. Check logs for any issues.");
-      }
-    });
-
-    //IMPORT mode
-    //Requires -f, --file
-    // file.propertyName
-    // file.extensions
-    // file.dataElements
-    // file.rules.{rule1, rule2}
-  } else if(mode == modes.import){ // IMPORT mode
-    if(!dataObj){
-      console.log("Configuration file/object is missing for import");
-      console.log(MSG_HELP);
-      return;
-    }
-    if(!dataObj.import){
-      console.log("Import mode is missing values to import");
-      console.log(MSG_HELP);
-      return;
-    }
-    newman.importTag(dataObj.environment, dataObj.import, actions, dataObj.propID, dataObj.globals, function(err, resultObj){
-      if(err){
-        console.error(err);
-        console.log(MSG_HELP);
-      }
-      if(resultObj) {
-        console.log("Complete. Check logs for any issues.");
-      }
-    });
+    console.log("PropID: "+argsPID);
     
-    //DELETE mode
-    //Requires searchStr (cli -s, --search | file.delete.searchStr)
-  } else if(mode == modes.delete){
-    if(!dataObj.delete || !dataObj.delete.searchStr){
+    if(debug.enabled("dryrun")){
+      debugDryRun("PID: " + argsPID);
+      debugDryRun("workingDir: " + argsWorkingDir);
+    } else {
+      newman.exportTag(authObj, argsPID, argsWorkingDir, function(err, resultObj){
+        if(err){
+          console.error(err);
+          console.log(MSG_HELP);
+        }
+        if(resultObj) {
+          console.log("Complete. Check logs for any issues.");
+        }
+      });
+    }
+  } else if((mode && mode.toLowerCase() == modes.import) ||  args.import){  //IMPORT
+    let curPID = pidParam;
+    let curImportFile = data;
+
+    //TODO import iterations
+    //if -f exists, 1 iteration on -f
+      //if pid, set it
+    //elseif config.yml.imports exists, iterate number needed
+      //{file.json: "Pxxxxx"}
+    //Iterate the code below
+    
+    let curImportObj = launch.createLaunchObjSync(curImportFile);
+    if(!curImportObj){
+      console.log("Cannot parse import object or it DNE");
+      console.log(MSG_HELP);
+      return;
+    }
+    let actions = newman.getImportActions(args.C, args.E, args.D, args.R, args.L, args.P);
+    if(!actions.includes("C") && !curPID){
+      console.log("A PID (-p) is required when importing without creating a new property");
+      console.log(MSG_HELP);
+      return;
+    }
+    if(debug.enabled("dryrun")){
+      var f2 = function (k, v) { return k && v && typeof v !== "number" ? "" + v : v; };
+      debugDryRun(JSON.stringify(curImportObj, f2, 2));
+      debugDryRun("PID: " + argsPID);
+      debugDryRun("Actions: " + actions);
+    } else {
+      newman.importTag(authObj, curImportObj, actions, curPID, globalsParam, function(err, resultObj){
+        if(err){
+          console.error(err);
+          console.log(MSG_HELP);
+        }
+        if(resultObj) {
+          console.log("Complete. Check logs for any issues.");
+        }
+      });
+    }
+
+  } else if((mode && mode.toLowerCase() == modes.delete) ||  args.delete){ //DELETE
+    if(!argsSearch){
       console.log("Delete mode must have a search string specified");
       console.log(MSG_HELP);
       return;
     }
-    console.log("SearchStr: " + dataObj.delete.searchStr);
-    newman.deleteTags(dataObj.environment, dataObj.delete.searchStr, function(err, resultObj){
-      if(err){
-        console.error(err);
-        console.log(MSG_HELP);
-      }
-      if(resultObj) {
-        console.log("Complete. Check logs for any issues.");
-      }
-    });
+    console.log("SearchStr: " + argsSearch);
+    if(debug.enabled("dryrun")){
+      debugDryRun("SearchStr: " + argsSearch);
+    } else {
+      newman.deleteTags(authObj, argsSearch, function(err, resultObj){
+        if(err){
+          console.error(err);
+          console.log(MSG_HELP);
+        }
+        if(resultObj) {
+          console.log("Complete. Check logs for any issues.");
+        }
+      });
+    }
   } else {
     console.log("No mode selected");
     console.log(MSG_HELP);
   }
-  
-}
-
-
-
-function addParamsToDataObj(dataObj, pid, delSearchStr){
-  debugData(addParamsToDataObj);
-  return new Promise(function(resolve, reject) {
-    dataObj.propID = pid || dataObj.propID;
-    debugData("PID: " + dataObj.propID);
-    if(!dataObj.delete) dataObj.delete = {};
-    if(!dataObj.delete.searchStr) dataObj.delete.searchStr = "";
-    dataObj.delete.searchStr = delSearchStr || dataObj.delete.searchStr;
-    debugData("Del Str: " + dataObj.delete.searchStr);
-    resolve(dataObj);
-  });
-}
-
-function getArgActions(a){
-  let actions = [];
-  if(a.C || a.E || a.D || a.R || a.L || a.P){
-    if(a.C) actions.push("C");
-    if(a.E) actions.push("E");
-    if(a.D) actions.push("D");
-    if(a.R) actions.push("R");
-    if(a.L) actions.push("L");
-    if(a.P) actions.push("P");
-  } else { // create and import everything
-    actions = ["C", "E", "D", "R", "L", "P"];
-  }
-  debugArgs(actions);
-  return actions;
 }
 
 exports.run = init;

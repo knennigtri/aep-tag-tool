@@ -10,69 +10,50 @@ const debugOptions = {
   "data": "Data messages for full json object",
   "env": "Messages related to the postman environment object"
 };
-
 const POSTMAN_ENV = require("./postman/aep-tag-tool.postman_environment.json");
 
-function createFileObj(file){
-  debugData(createFileObj);
-  let obj = {};
-  if(typeof file == "string"){
-    if(fs.lstatSync(file).isFile()){
-      file = path.resolve(file);
-      obj.contents = fs.readFileSync(file, "utf8");
-      obj.workingDir = path.dirname(file);
+function createAuthObjSync(ymlFile){
+  let configObj = createFileObj(ymlFile);
+
+  let resultObj = getJSONSync(configObj.contents);
+
+  if(!resultObj || !resultObj.auth) reject(new Error("config file doesn't have auth info"));
+  let postmanObj = POSTMAN_ENV;
+
+  for(let key in resultObj.auth){
+    postmanObj = setEnvironmentValue(postmanObj, key, resultObj.auth[key]);
+    let normalizedKey = key.toUpperCase().replace("-","_").replace(" ","_");
+    if(normalizedKey.includes("CLIENT_ID")){
+      postmanObj = setEnvironmentValue(postmanObj, "CLIENT_ID", resultObj.auth[key]);
+      debugEnv("CLIENT_ID set.");
+    } else if(normalizedKey.includes("CLIENT_SECRET")){
+      postmanObj = setEnvironmentValue(postmanObj, "CLIENT_SECRET", resultObj.auth[key]);
+      debugEnv("CLIENT_SECRET set.");
+    } else if(normalizedKey.includes("ORG_ID")){
+      postmanObj = setEnvironmentValue(postmanObj, "ORG_ID", resultObj.auth[key]);
+      debugEnv("ORG_ID set.");
+    } else if(normalizedKey.includes("TECHNICAL_ACCOUNT")){
+      postmanObj = setEnvironmentValue(postmanObj, "TECHNICAL_ACCOUNT", resultObj.auth[key]);
+      debugEnv("TECHNICAL_ACCOUNT set.");
+    } else if(normalizedKey.includes("PRIVATE_KEY")){
+      let privateKey = getPrivateKey(resultObj.auth[key], configObj.workingDir);
+      postmanObj = setEnvironmentValue(postmanObj, "PRIVATE_KEY", privateKey);
+      debugEnv("PRIVATE_KEY set.");
     } else {
-      obj.contents = file;
-      obj.workingDir = "./";
+      debugEnv(key + " is not valid for auth values. Skipping.");
     }
-  } else {
-    obj.contents = "{}";
-    obj.workingDir = "./";
+
   }
-  return obj;
+  debugEnv(postmanObj);
+  return postmanObj;
 }
 
 // Returns a Postman Environment json with the correct variables for authentication
 function createAuthObj(configYMLFile){
   return new Promise(function(resolve, reject) {
-    let configFileObj = createFileObj(configYMLFile);
-
-    getJSON(configFileObj.contents, configFileObj.workingDir)
-      .then((resultObj) => {
-        if(!resultObj || !resultObj.auth) reject(new Error("config file doesn't have auth info"));
-        let postmanObj = POSTMAN_ENV;
-
-        for(let key in resultObj.auth){
-          postmanObj = setEnvironmentValue(postmanObj, key, resultObj.auth[key]);
-          let normalizedKey = key.toUpperCase().replace("-","_").replace(" ","_");
-          if(normalizedKey.includes("CLIENT_ID")){
-            postmanObj = setEnvironmentValue(postmanObj, "CLIENT_ID", resultObj.auth[key]);
-            debugEnv("CLIENT_ID set.");
-          } else if(normalizedKey.includes("CLIENT_SECRET")){
-            postmanObj = setEnvironmentValue(postmanObj, "CLIENT_SECRET", resultObj.auth[key]);
-            debugEnv("CLIENT_SECRET set.");
-          } else if(normalizedKey.includes("ORG_ID")){
-            postmanObj = setEnvironmentValue(postmanObj, "ORG_ID", resultObj.auth[key]);
-            debugEnv("ORG_ID set.");
-          } else if(normalizedKey.includes("TECHNICAL_ACCOUNT")){
-            postmanObj = setEnvironmentValue(postmanObj, "TECHNICAL_ACCOUNT", resultObj.auth[key]);
-            debugEnv("TECHNICAL_ACCOUNT set.");
-          } else if(normalizedKey.includes("PRIVATE_KEY")){
-            let privateKey = getPrivateKey(resultObj.auth[key], configFileObj.workingDir);
-            postmanObj = setEnvironmentValue(postmanObj, "PRIVATE_KEY", privateKey);
-            debugEnv("PRIVATE_KEY set.");
-          } else {
-            debugEnv(key + " is not valid for auth values. Skipping.");
-          }
-
-        }
-        debugEnv(postmanObj);
-        resolve(postmanObj);
-      })
-      .catch((err) => {
-        console.log(err);
-        return;
-      });
+    let postmanEnv = createAuthObjSync(ymlFile);
+    if(postmanEnv) resolve(postmanEnv)
+    else reject(new Error("Could not create a postman environment with yaml given"));
   });
 }
 
@@ -91,43 +72,32 @@ function getPrivateKey(str, workingDir){
   } else return;
 }
 
-function createLaunchObj(file, authObj){
-  debugData(createLaunchObj);
-  return new Promise(function(resolve, reject) {
-    let dataFileObj = createFileObj(file);
+function createLaunchObjSync(file){
+  debugData(createLaunchObjSync);
+  let dataFileObj = createFileObj(file);
       
-    getJSON(dataFileObj.contents)
-      .then((resultDataContents) => {
-        //add authentication environment
-        resultDataContents.environment = authObj || resultDataContents.environment;
-        //Make all file paths absolute
-        resultDataContents = absPathsUpdate(resultDataContents, dataFileObj.workingDir);
-        debugData(resultDataContents);
-        resolve(resultDataContents);
-      })
-      .catch((err) => {
-        console.log(err);
-        return;
-      });
+  let resultDataContents = getJSONSync(dataFileObj.contents)
 
-  });
-}
-
-function absPathsUpdate(dataObj, dataFileDir){
-  debugData(absPathsUpdate);
-  
   //Update any relative paths to absolute paths or return the json object
-  if(dataObj.import){
-    dataObj.import.extensions = getDataItem(dataObj.import.extensions, dataFileDir);
-    dataObj.import.dataElements = getDataItem(dataObj.import.dataElements, dataFileDir);
-    for (let rule in dataObj.import.rules){
-      dataObj.import.rules[rule] = getDataItem(dataObj.import.rules[rule], dataFileDir);
+  if(resultDataContents){
+    resultDataContents.extensions = getDataItem(resultDataContents.extensions, dataFileObj.workingDir);
+    resultDataContents.dataElements = getDataItem(resultDataContents.dataElements, dataFileObj.workingDir);
+    for (let rule in resultDataContents.rules){
+      resultDataContents.rules[rule] = getDataItem(resultDataContents.rules[rule], dataFileObj.workingDir);
     }
   }
-  if(dataObj.environment) dataObj.environment = getDataItem(dataObj.environment, dataFileDir);
-  if(dataObj.globals) dataObj.globals = getDataItem(dataObj.globals, dataFileDir);
 
-  return dataObj;
+  debugData(resultDataContents);
+  return resultDataContents;
+
+}
+
+function createLaunchObj(file){
+  return new Promise(function(resolve, reject) {
+    let dataContents = createLaunchObjSync(file);
+    if(dataContents) resolve(dataContents)
+    else reject(new Error("Could not create launch object"));
+  });
 }
 
 function getDataItem(data, rootDir){
@@ -145,30 +115,27 @@ function getDataItem(data, rootDir){
 }
 
 // Returns a json object of the contents given
-function getJSON(dataContents) {
-  debugJSON(getJSON);
+function getJSONSync(dataContents){
+  debugJSON(getJSONSync);
   let dataObj = {};
-  return new Promise(function(resolve, reject) {
-
-    // Parse the dataContents from YAML or JSON
+  // Parse the dataContents from YAML or JSON
+  try {
+    //Attempt to read the YAML and output JSON
+    let data = yaml.loadAll(dataContents,"json");
+    let yamlContents = JSON.stringify(data[0], null, 2);
+    dataObj = JSON.parse(yamlContents);
+  } catch {
+    console.log("Could not read YAML, attemping JSON...");
     try {
-      //Attempt to read the YAML and output JSON
-      let data = yaml.loadAll(dataContents,"json");
-      let yamlContents = JSON.stringify(data[0], null, 2);
-      dataObj = JSON.parse(yamlContents);
-    } catch {
-      console.log("Could not read YAML, attemping JSON...");
-      try {
-        //Attempt to read JSON
-        dataObj = JSON.parse(dataContents);
-      } catch(err){
-        reject(new Error("File does not contain valid YAML or JSON content.",{cause: err.name}));
-      }
+      //Attempt to read JSON
+      dataObj = JSON.parse(dataContents);
+    } catch(err){
+      new Error("File does not contain valid YAML or JSON content.",{cause: err.name});
     }
+  }
 
-    debugJSON(dataObj);
-    resolve(dataObj);
-  });
+  debugJSON(dataObj);
+  return dataObj;
 }
 
 function setEnvironmentValue(envObj, key, value){
@@ -198,7 +165,28 @@ function setEnvironmentValue(envObj, key, value){
   return null;
 }
 
+function createFileObj(file){
+  debugData(createFileObj);
+  let obj = {};
+  if(typeof file == "string"){
+    if(fs.lstatSync(file).isFile()){
+      file = path.resolve(file);
+      obj.contents = fs.readFileSync(file, "utf8");
+      obj.workingDir = path.dirname(file);
+    } else {
+      obj.contents = file;
+      obj.workingDir = "./";
+    }
+  } else {
+    obj.contents = "{}";
+    obj.workingDir = "./";
+  }
+  return obj;
+}
+
 exports.debugOptions = debugOptions;
 exports.setEnvironmentValue = setEnvironmentValue;
 exports.createAuthObj = createAuthObj;
+exports.createAuthObjSync = createAuthObjSync;
 exports.createLaunchObj = createLaunchObj;
+exports.createLaunchObjSync = createLaunchObjSync;
