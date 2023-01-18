@@ -69,19 +69,19 @@ function exportTag(configObj, workingDir, callback) {
     .catch(err => callback(err, null));
 };
 
-function importTag(configObj, args, callback) {
-  let actions = [];
-  if(args.C || args.E || args.D || args.R || args.L || args.P){
-    if(args.C) actions.push("C");
-    if(args.E) actions.push("E");
-    if(args.D) actions.push("D");
-    if(args.R) actions.push("R");
-    if(args.L) actions.push("L");
-    if(args.P) actions.push("P");
-  } else { // create and import everything
-    actions = ["C", "E", "D", "R", "L", "P"];
-  }
-  debugImport(actions);
+function importTag(configObj, actions, callback) {
+  // let actions = [];
+  // if(args.C || args.E || args.D || args.R || args.L || args.P){
+  //   if(args.C) actions.push("C");
+  //   if(args.E) actions.push("E");
+  //   if(args.D) actions.push("D");
+  //   if(args.R) actions.push("R");
+  //   if(args.L) actions.push("L");
+  //   if(args.P) actions.push("P");
+  // } else { // create and import everything
+  //   actions = ["C", "E", "D", "R", "L", "P"];
+  // }
+  // debugImport(actions);
   
   authenicateAIO(configObj.environment, configObj)
     .then(function(resultEnv){ //Add propID if importing to an existing property

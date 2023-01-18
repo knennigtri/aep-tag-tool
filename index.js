@@ -11,6 +11,7 @@ var debug = require("debug");
 var debugDryRun = require("debug")("dryrun");
 var debugConfig = require("debug")("config");
 var debugData = require("debug")("data");
+var debugArgs = require("debug")("args");
 const debugOptions = {
   "*": "Output all debugging messages",
   "dryrun": "Run without running postman collections to verify input",
@@ -139,19 +140,13 @@ function init(mode, dataParam, envParam, globalsParam, pidParam, searchStrParam)
   const argsSearch = searchStrParam || args.s || args.search;
   const argsVersion = args.v || args.version;
   const argsHelp =  args.h || args.help;
-  let argsMode = "";
+  
 
   //TODO
-  argsEnv = getDataItem(argsEnv, "./");
-  argsGlobals = getDataItem(argsGlobals, "./");
+  // argsEnv = getDataItem(argsEnv, "./");
+  // argsGlobals = getDataItem(argsGlobals, "./");
   
-  if((mode && mode.toLowerCase() == modes.export) ||  args.export){
-    argsMode = modes.export;
-  } else if((mode && mode.toLowerCase() == modes.import) ||  args.import){
-    argsMode = modes.import;
-  } else if((mode && mode.toLowerCase() == modes.delete) ||  args.delete){
-    argsMode = modes.delete;
-  }
+
 
   // Show CLI help
   if (argsHelp) {
@@ -181,10 +176,25 @@ function init(mode, dataParam, envParam, globalsParam, pidParam, searchStrParam)
     return;
   }
 
-  let configObj;
-  config.create(argsEnv)
-    .then((resultConfigObj) => {
-      configObj = resultConfigObj;
+  // let configObj;
+  config.createAuthObj(argsEnv)
+    .then((resultAuthObj) => config.createLaunchObj(data, resultAuthObj))
+    .then((resultDataObj) => addParamsToDataObj(resultDataObj, argsPID, argsSearch))
+    .then((resultDataObj) => {
+      //Dry Run exit
+      debugDryRun(JSON.stringify(resultDataObj, null, 2));
+      if(debug.enabled("dryrun")){
+        return;
+      }
+
+      //Run tool
+      if((mode && mode.toLowerCase() == modes.export) ||  args.export){
+        runAEPTagTool(resultDataObj, modes.export, "./");
+      } else if((mode && mode.toLowerCase() == modes.import) ||  args.import){
+        runAEPTagTool(resultDataObj, modes.import, "", getArgActions(args));
+      } else if((mode && mode.toLowerCase() == modes.delete) ||  args.delete){
+        runAEPTagTool(resultDataObj, modes.delete);
+      }
     })
     .catch((err) => {
       console.log(err);
@@ -192,37 +202,19 @@ function init(mode, dataParam, envParam, globalsParam, pidParam, searchStrParam)
       return;
     });
 
-    let dataFileDir = "./";
-    if(fs.lstatSync(data).isFile()) dataFileDir = path.dirname(data);
-config.getJSON(data)
-  .then((resultDataObj) => absPathsUpdate(resultDataObj, dataFileDir)) 
-  .then((resultDataObj) => addParamsToDataObj(resultDataObj, configObj, argsPID, argsSearch))
-  //   .then((resultDataObj) => {
-  //   }) //run import/export/delete
-    .catch((err) => {
-      console.log(err);
-      console.log(MSG_HELP); 
-      return;
-    });
+}
 
-    return;
-
-  //Dry Run exit
-  debugDryRun(JSON.stringify(dataObj, null, 2));
-  if(debug.enabled("dryrun")){
-    return;
-  }
-    
+function runAEPTagTool(dataObj, mode, workingDir, actions){    
   //Export Mode
   //requires pid (cli -p, --pid | file.propID)
-  if(argsMode == modes.export){
+  if(mode == modes.export){
     if(!dataObj.propID){
       console.log("Export mode must have a property ID specified");
       console.log(MSG_HELP);
       return;
     }
     console.log("PropID: "+dataObj.propID);
-    newmanTF.exportTag(dataObj, dataFileDir, function(err, resultObj){
+    newmanTF.exportTag(dataObj, workingDir, function(err, resultObj){
       if(err){
         console.error(err);
         console.log(MSG_HELP);
@@ -238,8 +230,8 @@ config.getJSON(data)
     // file.extensions
     // file.dataElements
     // file.rules.{rule1, rule2}
-  } else if(argsMode == modes.import){ // IMPORT mode
-    if(!data){
+  } else if(mode == modes.import){ // IMPORT mode
+    if(!dataObj){
       console.log("Configuration file/object is missing for import");
       console.log(MSG_HELP);
       return;
@@ -249,7 +241,7 @@ config.getJSON(data)
       console.log(MSG_HELP);
       return;
     }
-    newmanTF.importTag(dataObj, args, function(err, resultObj){
+    newmanTF.importTag(dataObj, actions, function(err, resultObj){
       if(err){
         console.error(err);
         console.log(MSG_HELP);
@@ -261,7 +253,7 @@ config.getJSON(data)
     
     //DELETE mode
     //Requires searchStr (cli -s, --search | file.delete.searchStr)
-  } else if(argsMode == modes.delete){
+  } else if(mode == modes.delete){
     if(!dataObj.delete || !dataObj.delete.searchStr){
       console.log("Delete mode must have a search string specified");
       console.log(MSG_HELP);
@@ -284,48 +276,37 @@ config.getJSON(data)
   
 };
 
-function absPathsUpdate(dataObj, dataFileDir){
-  debugData("absPathsUpdate: function()");
-  
-  //Update any relative paths to absolute paths or return the json object
-  if(dataObj.import){
-    dataObj.import.extensions = getDataItem(dataObj.import.extensions, dataFileDir);
-    dataObj.import.dataElements = getDataItem(dataObj.import.dataElements, dataFileDir);
-    for (let rule in dataObj.import.rules){
-      dataObj.import.rules[rule] = getDataItem(dataObj.import.rules[rule], dataFileDir);
-    }
+
+
+function addParamsToDataObj(dataObj, pid, delSearchStr){
+  debugData(addParamsToDataObj);
+  return new Promise(function(resolve, reject) {
+    dataObj.propID = pid || dataObj.propID;
+    debugData("PID: " + dataObj.propID);
+    if(!dataObj.delete) dataObj.delete = {};
+    if(!dataObj.delete.searchStr) dataObj.delete.searchStr = "";
+    dataObj.delete.searchStr = delSearchStr || dataObj.delete.searchStr;
+    debugData("Del Str: " + dataObj.delete.searchStr);
+    resolve(dataObj);
+  });
+}
+
+function getArgActions(arguments){
+  let actions = [];
+  if(arguments.C || arguments.E || arguments.D || arguments.R || arguments.L || arguments.P){
+    if(arguments.C) actions.push("C");
+    if(arguments.E) actions.push("E");
+    if(arguments.D) actions.push("D");
+    if(arguments.R) actions.push("R");
+    if(arguments.L) actions.push("L");
+    if(arguments.P) actions.push("P");
+  } else { // create and import everything
+    actions = ["C", "E", "D", "R", "L", "P"];
   }
-  if(dataObj.environment) dataObj.environment = getDataItem(dataObj.environment, dataFileDir);
-  if(dataObj.globals) dataObj.globals = getDataItem(dataObj.globals, dataFileDir);
-
-  return Promise.resolve(dataObj);
+  debugArgs(actions);
+  return actions;
 }
 
-function addParamsToDataObj(dataObj, configObj, pid,delSearchStr){
-  debugData("addParamsToDataObj: function()");
-
-  dataObj.environment = configObj || dataObj.environment
-  debugData("configObj: " + dataObj.environment);
-  dataObj.propID = pid || dataObj.propID;
-  debugData("PID: " + dataObj.propID);
-  if(!dataObj.delete) dataObj.delete = {};
-  dataObj.delete.searchStr = delSearchStr || dataObj.delete.searchStr;
-  debugData("Del Str: " + dataObj.delete.searchStr);
-}
-
-function getDataItem(data, rootDir){
-  if(typeof data == "string"){
-    let absPath = path.resolve(rootDir, data);
-    if(fs.existsSync(absPath)){
-      debugData("Using path:" +absPath);
-      return absPath;
-    } else {
-      throw new Error("Cannot Read File: " + absPath);
-    }
-  } else {
-    return data;
-  }
-}
 
 exports.run = init;
 exports.modes = modes;
