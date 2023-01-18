@@ -6,6 +6,11 @@ const debug = require("debug");
 const debugData = require("debug")("data");
 const debugJSON = require("debug")("json");
 const debugEnv = require("debug")("env");
+const debugOptions = {
+  "json": "Messages on JSON obj creation from files",
+  "data": "Data messages for full json object",
+  "env": "Messages related to the postman environment object"
+};
 
 const POSTMAN_ENV = require("./postman/aep-tag-tool.postman_environment.json");
 
@@ -194,5 +199,6 @@ function setEnvironmentValue(envObj, key, value){
   return null;
 }
 
+exports.debugOptions = debugOptions;
 exports.createAuthObj = createAuthObj;
 exports.createLaunchObj = createLaunchObj;

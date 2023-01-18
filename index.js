@@ -1,5 +1,5 @@
-const newmanTF = require("./newmanFunctions.js");
-const config = require("./convert-config.js");
+const newman = require("./newman.js");
+const config = require("./launch.js");
 var packageInfo = require("./package.json");
 const yaml = require("js-yaml");
 const fs = require("fs");
@@ -16,7 +16,8 @@ const debugOptions = {
   "*": "Output all debugging messages",
   "dryrun": "Run without running postman collections to verify input",
   "config": "Config messages for connecting to Adobe IO",
-  "data": "Data messages for full json object"
+  "data": "Data messages for full json object",
+  "args": "See CLI argument messages"
 };
 
 const modes = {
@@ -124,7 +125,13 @@ const MSG_HELP_DEBUG = `Debug options:
      .replaceAll(",","")
      .replaceAll("{\n","")
      .replaceAll("}","")
-  + JSON.stringify(newmanTF.debugOptions, null, 2)
+  + JSON.stringify(newman.debugOptions, null, 2)
+     .replaceAll("\": ","     >")   
+     .replaceAll("\"","")
+     .replaceAll(",","")
+     .replaceAll("{\n","")
+     .replaceAll("}","")
+  + JSON.stringify(convert-configs.debugOptions, null, 2)
      .replaceAll("\": ","     >")   
      .replaceAll("\"","")
      .replaceAll(",","")
@@ -214,7 +221,7 @@ function runAEPTagTool(dataObj, mode, workingDir, actions){
       return;
     }
     console.log("PropID: "+dataObj.propID);
-    newmanTF.exportTag(dataObj, workingDir, function(err, resultObj){
+    newman.exportTag(dataObj, workingDir, function(err, resultObj){
       if(err){
         console.error(err);
         console.log(MSG_HELP);
@@ -241,7 +248,7 @@ function runAEPTagTool(dataObj, mode, workingDir, actions){
       console.log(MSG_HELP);
       return;
     }
-    newmanTF.importTag(dataObj, actions, function(err, resultObj){
+    newman.importTag(dataObj, actions, function(err, resultObj){
       if(err){
         console.error(err);
         console.log(MSG_HELP);
@@ -260,7 +267,7 @@ function runAEPTagTool(dataObj, mode, workingDir, actions){
       return;
     }
     console.log("SearchStr: " + dataObj.delete.searchStr);
-    newmanTF.deleteTags(dataObj, dataObj.delete.searchStr, function(err, resultObj){
+    newman.deleteTags(dataObj, dataObj.delete.searchStr, function(err, resultObj){
       if(err){
         console.error(err);
         console.log(MSG_HELP);
