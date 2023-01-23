@@ -1,11 +1,11 @@
 const fs = require("fs");
-var path = require("path");
+const path = require("path");
 const yaml = require("js-yaml");
 const debug = require("debug");
 const debugData = require("debug")("data");
 const debugJSON = require("debug")("json");
-const debugEnv = require("debug")("env");
-const debugOptions = {
+const debugConfig = require("debug")("config");
+exports.debugOptions = {
   "json": "Messages on JSON obj creation from files",
   "data": "Data messages for full json object",
   "env": "Messages related to the postman environment object"
@@ -25,26 +25,26 @@ function createAuthObjSync(ymlFile){
     let normalizedKey = key.toUpperCase().replace("-","_").replace(" ","_");
     if(normalizedKey.includes("CLIENT_ID")){
       postmanObj = setEnvironmentValue(postmanObj, "CLIENT_ID", resultObj.auth[key]);
-      debugEnv("CLIENT_ID set.");
+      debugConfig("CLIENT_ID set.");
     } else if(normalizedKey.includes("CLIENT_SECRET")){
       postmanObj = setEnvironmentValue(postmanObj, "CLIENT_SECRET", resultObj.auth[key]);
-      debugEnv("CLIENT_SECRET set.");
+      debugConfig("CLIENT_SECRET set.");
     } else if(normalizedKey.includes("ORG_ID")){
       postmanObj = setEnvironmentValue(postmanObj, "ORG_ID", resultObj.auth[key]);
-      debugEnv("ORG_ID set.");
+      debugConfig("ORG_ID set.");
     } else if(normalizedKey.includes("TECHNICAL_ACCOUNT")){
       postmanObj = setEnvironmentValue(postmanObj, "TECHNICAL_ACCOUNT", resultObj.auth[key]);
-      debugEnv("TECHNICAL_ACCOUNT set.");
+      debugConfig("TECHNICAL_ACCOUNT set.");
     } else if(normalizedKey.includes("PRIVATE_KEY")){
-      let privateKey = getPrivateKey(resultObj.auth[key], configObj.workingDir);
+      let privateKey = resolveFileWithContents(resultObj.auth[key], configObj.workingDir, true);
       postmanObj = setEnvironmentValue(postmanObj, "PRIVATE_KEY", privateKey);
-      debugEnv("PRIVATE_KEY set.");
+      debugConfig("PRIVATE_KEY set.");
     } else {
-      debugEnv(key + " is not valid for auth values. Skipping.");
+      debugConfig(key + " is not valid for auth values. Skipping.");
     }
 
   }
-  debugEnv(postmanObj);
+  debugConfig(postmanObj);
   return postmanObj;
 }
 
@@ -57,78 +57,120 @@ function createAuthObj(configYMLFile){
   });
 }
 
-// Takes in a file string and returns the contents of the file without line returns \n
-function getPrivateKey(str, workingDir){
-  let contents;
-  if(typeof str == "string"){
-    str = path.resolve(workingDir,str);
-    if(fs.lstatSync(str).isFile()){
-      contents = fs.readFileSync(str, "utf8");
-      contents = contents.replace(/\n/g,"");
-      return contents;
-    } else {
-      return str;
+//Get any import properties from the config file
+function getPropertiesFromConfig(ymlFile){
+  let configObj = createFileObj(ymlFile);
+  let resultObj = getJSONSync(configObj.contents);
+
+  let properties = {};
+  if(typeof resultObj.import == "string"){ //parse the string of files into a JSON
+    let arr = resultObj.import.split(" ")
+    for(i in arr){
+      properties[arr[i]] = "";
     }
-  } else return;
+  } else properties = resultObj.import; //set the json
+
+  //update any file paths absolute
+  if(properties) {
+    for(let str in properties){
+      absStr = resolveFileWithContents(str,configObj.workingDir);
+      properties[absStr] = properties[str];
+      delete properties[str];
+    }
+
+    debugConfig(properties)
+    return(properties);
+  }
+  
+  return "";
 }
 
-function createLaunchObjSync(file){
-  debugData(createLaunchObjSync);
+function createPropertyObjSync(file){
+  debugConfig(createPropertyObjSync);
   let dataFileObj = createFileObj(file);
       
   let resultDataContents = getJSONSync(dataFileObj.contents)
 
   //Update any relative paths to absolute paths or return the json object
   if(resultDataContents){
-    resultDataContents.extensions = getDataItem(resultDataContents.extensions, dataFileObj.workingDir);
-    resultDataContents.dataElements = getDataItem(resultDataContents.dataElements, dataFileObj.workingDir);
+    resultDataContents.extensions = resolveFileWithContents(resultDataContents.extensions, dataFileObj.workingDir, true);
+    resultDataContents.dataElements = resolveFileWithContents(resultDataContents.dataElements, dataFileObj.workingDir, true);
     for (let rule in resultDataContents.rules){
-      resultDataContents.rules[rule] = getDataItem(resultDataContents.rules[rule], dataFileObj.workingDir);
+      resultDataContents.rules[rule] = resolveFileWithContents(resultDataContents.rules[rule], dataFileObj.workingDir, true);
     }
   }
 
-  debugData(resultDataContents);
+  debugConfig(resultDataContents);
   return resultDataContents;
 
 }
 
-function createLaunchObj(file){
+function createPropertyObj(file){
   return new Promise(function(resolve, reject) {
-    let dataContents = createLaunchObjSync(file);
-    if(dataContents) resolve(dataContents)
+    let propertyContents = createPropertyObjSync(file);
+    if(propertyContents) resolve(propertyContents)
     else reject(new Error("Could not create launch object"));
   });
 }
 
-function getDataItem(data, rootDir){
-  if(typeof data == "string"){
-    let absPath = path.resolve(rootDir, data);
-    if(fs.existsSync(absPath)){
-      debugData("Using path:" +absPath);
-      return absPath;
-    } else {
-      throw new Error("Cannot Read File: " + absPath);
+//used to extract private.key from file
+//used to create absFile paths
+function resolveFileWithContents(val, workingDir, extractContents) {
+  if(typeof val == "string"){
+    let contents = path.resolve(workingDir,val);
+    if(fs.lstatSync(contents).isFile() && extractContents){
+      contents = fs.readFileSync(contents, "utf8");
+      contents = contents.replace(/\n/g,"");
     }
-  } else {
-    return data;
-  }
+    return contents;
+  } else
+   return val;
 }
 
+// function getPropertyItem(item, rootDir){
+//   if(typeof item == "string"){
+//     let absPath = path.resolve(rootDir, item);
+//     if(fs.existsSync(absPath)){
+//       debugData("Using path:" +absPath);
+//       return absPath;
+//     } else {
+//       throw new Error("Cannot Read File: " + absPath);
+//     }
+//   } else {
+//     return item;
+//   }
+// }
+
+// // Takes in a file string and returns the contents of the file without line returns \n
+// function getPrivateKey(str, workingDir){
+//   let contents;
+//   if(typeof str == "string"){
+//     str = path.resolve(workingDir,str);
+//     if(fs.lstatSync(str).isFile()){
+//       contents = fs.readFileSync(str, "utf8");
+//       contents = contents.replace(/\n/g,"");
+//       return contents;
+//     } else {
+//       return str;
+//     }
+//   } else return;
+// }
+
 // Returns a json object of the contents given
-function getJSONSync(dataContents){
+function getJSONSync(propertyContents){
   debugJSON(getJSONSync);
   let dataObj = {};
-  // Parse the dataContents from YAML or JSON
+  // Parse the propertyContents from YAML or JSON
   try {
     //Attempt to read the YAML and output JSON
-    let data = yaml.loadAll(dataContents,"json");
+    let data = yaml.loadAll(propertyContents,"json");
     let yamlContents = JSON.stringify(data[0], null, 2);
     dataObj = JSON.parse(yamlContents);
   } catch {
     console.log("Could not read YAML, attemping JSON...");
     try {
       //Attempt to read JSON
-      dataObj = JSON.parse(dataContents);
+      dataObj = JSON.parse(propertyContents);
     } catch(err){
       new Error("File does not contain valid YAML or JSON content.",{cause: err.name});
     }
@@ -184,9 +226,9 @@ function createFileObj(file){
   return obj;
 }
 
-exports.debugOptions = debugOptions;
 exports.setEnvironmentValue = setEnvironmentValue;
 exports.createAuthObj = createAuthObj;
 exports.createAuthObjSync = createAuthObjSync;
-exports.createLaunchObj = createLaunchObj;
-exports.createLaunchObjSync = createLaunchObjSync;
+exports.createLaunchObj = createPropertyObj;
+exports.createLaunchObjSync = createPropertyObjSync;
+exports.getPropertiesFromConfig = getPropertiesFromConfig;

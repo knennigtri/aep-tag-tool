@@ -6,7 +6,7 @@ const debug = require("debug");
 const debugCollections = require("debug")("collections");
 const debugNewman = require("debug")("newman");
 require("debug")("newman:cli");
-const debugOptions = {
+exports.debugOptions = {
   "collections": "Postman collection messages",
   "newman": "Newman command messages",
   "newman:cli": "Newman cli output for verbose messaging of collections"
@@ -68,26 +68,26 @@ function exportTag(env, pid, exportDir, callback) {
 }
 
 function importTag(env, importObj, actions, pid, globals, callback) {
-  authenicateAIO(env)
-    .then(function(resultEnv){ //Add propID if importing to an existing property
-      return new Promise(function (resolve,reject){
-        if(!actions) actions = getImportActions(); //TODO verify it works
-        if(actions[0] != "C"){
-          if(pid){
-            let env = launch.setEnvironmentValue(resultEnv, "propID", pid);
-            if(env) resolve(env);
-            else reject(new Error("Cannot update environment"));
-          } else {
-            reject(new Error("No propID specified to import into an existing property"));
-          }
-        } else resolve(resultEnv);
-      });
-    })  
-    .then((resultEnv) => recurseImportChain(resultEnv, importObj, actions, globals))
-    .then(function(resultEnv){
-      callback(null, resultEnv);
-    })
-    .catch(err => callback(err, null));
+  return new Promise(function(resolve, reject) {
+    authenicateAIO(env)
+      .then(function(resultEnv){ //Add propID if importing to an existing property
+        return new Promise(function (resolve,reject){
+          if(!actions) actions = getImportActions(); //TODO verify it works
+          if(actions[0] != "C"){
+            if(pid){
+              let env = launch.setEnvironmentValue(resultEnv, "propID", pid);
+              if(env) resolve(env);
+              else reject(new Error("Cannot update environment"));
+            } else {
+              reject(new Error("No propID specified to import into an existing property"));
+            }
+          } else resolve(resultEnv);
+        });
+      })  
+      .then((resultEnv) => recurseImportChain(resultEnv, importObj, actions, globals))
+      .then(resultEnv => resolve(resultEnv))
+      .catch(err => reject(err));
+  });
 }
 
 function recurseImportChain(environment, importItems, actions, globals){
@@ -207,16 +207,18 @@ function publishLibraryToProd(environment, globals) {
 /******* Helper Functions ******/
 
 function newmanRun(cmdName, env, globals, collection, folder, data, envVar){
+  //TODO When importing an object from a file this fails. I think it's being parsed incorrectly in launch.js
+  var f2 = function (k, v) { return k && v && typeof v !== "number" ? "" + v : v; };
+  debugNewman(JSON.stringify(data, f2, 2));
+
   const reportName = TIMESTAMP + "-" + cmdName + "-Report";
-  debugNewman("ReportName: "+ reportName);
   if(folder && folder != ""){
     console.log("Running: " + folder + " for: " + cmdName);
   } else { 
     console.log("Running: " + cmdName);
   }
 
-  debugNewman("ReportNameHTML: "+ reportersDir + reportName + ".html");
-  debugNewman("ReportNameXML: "+ reportersDir + reportName + ".xml");
+  debugNewman("ReportNameHTML: "+ reportersDir + reportName + ".[html | xml]");
 
   return new Promise(function(resolve, reject) {
     //run newman to create new rule
@@ -256,11 +258,11 @@ function formatDateTime() {
   return time;
 }
 
-function getImportActions(create, extentions, dataElements, rules, libraryToDev, publishToProd){
+function getImportActions(create, extensions, dataElements, rules, libraryToDev, publishToProd){
   let actions = [];
-  if(create || extentions || dataElements || rules || libraryToDev || publishToProd){
+  if(create || extensions || dataElements || rules || libraryToDev || publishToProd){
     if(create) actions.push("C");
-    if(extentions) actions.push("E");
+    if(extensions) actions.push("E");
     if(dataElements) actions.push("D");
     if(rules) actions.push("R");
     if(libraryToDev) actions.push("L");
@@ -282,7 +284,6 @@ function getEnvironmentValue(envObj, key) {
   return "";
 }
 
-exports.debugOptions = debugOptions;
 exports.getImportActions = getImportActions;
 exports.exportTag = exportTag;
 exports.importTag = importTag;
