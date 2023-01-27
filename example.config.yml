@@ -1,0 +1,8 @@
+---
+auth:
+ CLIENT_ID: 
+ CLIENT_SECRET: 
+ ORG_ID: 
+ TECHNICAL_ACCOUNT: 
+ PRIVATE_KEY: ./private.key
+---
