@@ -40,7 +40,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -117,7 +117,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -185,7 +185,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -251,7 +251,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -317,7 +317,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -383,7 +383,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -496,7 +496,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -610,7 +610,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -716,7 +716,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -811,7 +811,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -922,7 +922,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -994,7 +994,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -1078,7 +1078,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -1194,7 +1194,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -1268,7 +1268,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -1342,7 +1342,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -1407,7 +1407,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -1548,7 +1548,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -1634,7 +1634,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -1735,7 +1735,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -1807,7 +1807,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -1879,7 +1879,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -1960,7 +1960,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -2062,7 +2062,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -2136,7 +2136,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -2210,7 +2210,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -2275,7 +2275,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -2416,7 +2416,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -2494,7 +2494,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -2567,7 +2567,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -2639,7 +2639,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -2711,7 +2711,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{
@@ -2792,7 +2792,7 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "{{CLIENT_ID}}",
+								"value": "{{API_KEY}}",
 								"type": "text"
 							},
 							{

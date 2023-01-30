@@ -17,24 +17,25 @@ function createAuthObjSync(ymlFile){
 
   let resultObj = getJSONSync(configObj.contents);
 
+  //TODO support with or without auth object. JWT downloads won't have an auth object
   if(!resultObj || !resultObj.auth) reject(new Error("config file doesn't have auth info"));
   let postmanObj = POSTMAN_ENV;
 
   for(let key in resultObj.auth){
     postmanObj = setEnvironmentValue(postmanObj, key, resultObj.auth[key]);
     let normalizedKey = key.toUpperCase().replace("-","_").replace(" ","_");
-    if(normalizedKey.includes("CLIENT_ID")){
-      postmanObj = setEnvironmentValue(postmanObj, "CLIENT_ID", resultObj.auth[key]);
-      debugConfig("CLIENT_ID set.");
+    if(normalizedKey.includes("API_KEY") || normalizedKey.includes("CLIENT_ID")){
+      postmanObj = setEnvironmentValue(postmanObj, "API_KEY", resultObj.auth[key]);
+      debugConfig("API_KEY set.");
     } else if(normalizedKey.includes("CLIENT_SECRET")){
       postmanObj = setEnvironmentValue(postmanObj, "CLIENT_SECRET", resultObj.auth[key]);
       debugConfig("CLIENT_SECRET set.");
     } else if(normalizedKey.includes("ORG_ID")){
       postmanObj = setEnvironmentValue(postmanObj, "ORG_ID", resultObj.auth[key]);
       debugConfig("ORG_ID set.");
-    } else if(normalizedKey.includes("TECHNICAL_ACCOUNT")){
-      postmanObj = setEnvironmentValue(postmanObj, "TECHNICAL_ACCOUNT", resultObj.auth[key]);
-      debugConfig("TECHNICAL_ACCOUNT set.");
+    } else if(normalizedKey.includes("TECHNICAL_ACCOUNT_ID") || normalizedKey.includes("TECHNICAL_ACCOUNT")){
+      postmanObj = setEnvironmentValue(postmanObj, "TECHNICAL_ACCOUNT_ID", resultObj.auth[key]);
+      debugConfig("TECHNICAL_ACCOUNT_ID set.");
     } else if(normalizedKey.includes("PRIVATE_KEY")){
       let privateKey = resolveFileWithContents(resultObj.auth[key], configObj.workingDir, true);
       postmanObj = setEnvironmentValue(postmanObj, "PRIVATE_KEY", privateKey);

@@ -1,8 +1,8 @@
 ---
 auth:
- CLIENT_ID: 
- CLIENT_SECRET: 
- ORG_ID: 
- TECHNICAL_ACCOUNT: 
+ API_KEY: xxxxxxxxxxxxxxxxxxxxx
+ CLIENT_SECRET: xxxxxxxxxxxxxxxxxxxxx
+ ORG_ID: xxxxxxxxxxxxxxxxxxxxx@AdobeOrg
+ TECHNICAL_ACCOUNT_ID: xxxxxxxxxxxxxxxxxxxxx@techacct.adobe.com
  PRIVATE_KEY: ./private.key
 ---

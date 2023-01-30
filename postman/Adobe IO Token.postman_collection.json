@@ -83,8 +83,8 @@
 							"var data = {",
 							"\t\"exp\": Math.round(87000 + Date.now()/1000),",
 							"\t\"iss\": postman.getEnvironmentVariable(\"ORG_ID\"),",
-							"\t\"sub\": postman.getEnvironmentVariable(\"TECHNICAL_ACCOUNT\"),",
-							"\t\"aud\": postman.getEnvironmentVariable(\"IMS\")+\"/c/\"+postman.getEnvironmentVariable(\"CLIENT_ID\")",
+							"\t\"sub\": postman.getEnvironmentVariable(\"TECHNICAL_ACCOUNT_ID\"),",
+							"\t\"aud\": postman.getEnvironmentVariable(\"IMS\")+\"/c/\"+postman.getEnvironmentVariable(\"API_KEY\")",
 							"};",
 							"",
 							"meta_scopes = postman.getEnvironmentVariable(\"META_SCOPE\").split(',');",
@@ -116,8 +116,8 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "client_id",
-							"value": "{{CLIENT_ID}}",
+							"key": "API_KEY",
+							"value": "{{API_KEY}}",
 							"type": "text"
 						},
 						{

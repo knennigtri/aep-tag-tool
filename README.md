@@ -64,10 +64,10 @@ config.yml
 ```yaml
 ---
 auth:
- CLIENT_ID: xxxxxxxxxxxxxxxxxxx
+ API_KEY: xxxxxxxxxxxxxxxxxxx
  CLIENT_SECRET: xxxxxxxxxxxxxxxxxxx
  ORG_ID: xxxxxxxxxxxxxxxxxxx@AdobeOrg
- TECHNICAL_ACCOUNT: xxxxxxxxxxxxxxxxxxx@techacct.adobe.com
+ TECHNICAL_ACCOUNT_ID: xxxxxxxxxxxxxxxxxxx@techacct.adobe.com
  PRIVATE_KEY: ./private.key
 ---
 ```
