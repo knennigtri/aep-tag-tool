@@ -5,22 +5,22 @@
 # Name of Tag property
 PROPNAME="ExL Target Tutorial"
 
-GLOBALS="tutorial.postman-globals.json"
+GLOBALS="exl-tutorial.postman-globals.json"
 
 # JSON files for all extensions and data elements
-EXT_JSON="json-exports/tutorial-extensions.json"
-DE_JSON="json-exports/tutorial-data-elements.json"
+EXT_JSON="exl-tutorial-exports/tutorial-extensions.json"
+DE_JSON="exl-tutorial-exports/tutorial-data-elements.json"
 
 # Rule Names and corresponding rule component json files
 RULENAMES[0]="[10] Target"
-RULECMP_JSONS[0]="json-exports/tutorial-rulecmp-target.json"
+RULECMP_JSONS[0]="exl-tutorial-exports/tutorial-rulecmp-target.json"
 
 
-IO_COLLECTION="../../collections/Adobe IO Token.postman_collection.json"
-IMPORT_COLLECTION="../../collections/Import Tag Property.postman_collection.json"
+IO_COLLECTION="postman/Adobe IO Token.postman_collection.json"
+IMPORT_COLLECTION="postman/Import Tag Property.postman_collection.json"
 
 # Manually set the postman environment
-ENVIRONMENT="docs/examples/example.postman_environment.json"
+ENVIRONMENT="example.postman_environment.json"
 # Alternatively add the file to the command: $ ./import-tag-tutorial myEnv.postman_environment.json
 ENVIRONMENT=$1
 
