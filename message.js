@@ -33,18 +33,28 @@ const HELP =
                delete
                debug`;
 const CONFIGFILE_EXAMPLE = 
- `
-Create a myconfig.yml
- -Required auth section with values from an AIO project with the Launch API enabled
- -Optional import section to import all listed properties with import mode
+ `Dowload the jwt.json from an Adobe IO Project and add PRIVATE_KEY:
+{
+  "CLIENT_SECRET": "xxxxxxxxxxxxxxxxxxx",
+  "ORG_ID": "xxxxxxxxxxxxxxxxxxx@AdobeOrg",
+  "API_KEY": "xxxxxxxxxxxxxxxxxxx",
+  "TECHNICAL_ACCOUNT_ID": "xxxxxxxxxxxxxxxxxxx@techacct.adobe.com",
+  "TECHNICAL_ACCOUNT_EMAIL": "xxxxxxxxxxxxxxxxxxx@techacct.adobe.com",
+  "PUBLIC_KEYS_WITH_EXPIRY": {
+    "xxxxxxxxxxxxxxxxxxx": "01/07/2023",
+  }
+  "PRIVATE_Key": "location/of/private.key",
+}
 
+Alternatively:
+Create a myconfig.yml and optionally add an import section to import all listed properties with import mode
 ---
 auth:
-API_KEY: xxxxxxxxxxxxxxxxxxx
-CLIENT_SECRET: xxxxxxxxxxxxxxxxxxx
-ORG_ID: xxxxxxxxxxxxxxxxxxx@AdobeOrg
-TECHNICAL_ACCOUNT_ID: xxxxxxxxxxxxxxxxxxx@techacct.adobe.com
-PRIVATE_KEY: ./private.key
+  API_KEY: xxxxxxxxxxxxxxxxxxx
+  CLIENT_SECRET: xxxxxxxxxxxxxxxxxxx
+  ORG_ID: xxxxxxxxxxxxxxxxxxx@AdobeOrg
+  TECHNICAL_ACCOUNT_ID: xxxxxxxxxxxxxxxxxxx@techacct.adobe.com
+  PRIVATE_KEY: location/of/private.key
 import:
   ./propertyOne.json: 
   ./propertyTwo.json: Pxxxxxxxxxxxxxxxxxxx

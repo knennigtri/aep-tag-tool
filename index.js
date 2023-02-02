@@ -103,8 +103,8 @@ if(modeParam && modeParam.toLowerCase() == modes.delete ||  args.delete || args.
   //create AuthObj from config.yml
   let authObj = launch.createAuthObjSync(argsEnv);
   if(!authObj) {
-    console.log("Environment not properly configured"); //TODO better message
-    console.log(message.HELP);
+    console.log("Environment not properly configured. Make sure your config file has the required keys");
+    console.log(message.CONFIGFILE_EXAMPLE);
     return;
   }
   debugDryRun(JSON.stringify(authObj, null, 2));

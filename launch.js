@@ -12,82 +12,76 @@ exports.debugOptions = {
 };
 const POSTMAN_ENV = require("./postman/aep-tag-tool.postman_environment.json");
 
-function createAuthObjSync(ymlFile){
-  let configObj = createFileObj(ymlFile);
-
-  let resultObj = getJSONSync(configObj.contents);
-
-  //TODO support with or without auth object. JWT downloads won't have an auth object
-  if(!resultObj || !resultObj.auth) reject(new Error("config file doesn't have auth info"));
-  let postmanObj = POSTMAN_ENV;
-
-  for(let key in resultObj.auth){
-    postmanObj = setEnvironmentValue(postmanObj, key, resultObj.auth[key]);
-    let normalizedKey = key.toUpperCase().replace("-","_").replace(" ","_");
-    if(normalizedKey.includes("API_KEY") || normalizedKey.includes("CLIENT_ID")){
-      postmanObj = setEnvironmentValue(postmanObj, "API_KEY", resultObj.auth[key]);
-      debugConfig("API_KEY set.");
-    } else if(normalizedKey.includes("CLIENT_SECRET")){
-      postmanObj = setEnvironmentValue(postmanObj, "CLIENT_SECRET", resultObj.auth[key]);
-      debugConfig("CLIENT_SECRET set.");
-    } else if(normalizedKey.includes("ORG_ID")){
-      postmanObj = setEnvironmentValue(postmanObj, "ORG_ID", resultObj.auth[key]);
-      debugConfig("ORG_ID set.");
-    } else if(normalizedKey.includes("TECHNICAL_ACCOUNT_ID") || normalizedKey.includes("TECHNICAL_ACCOUNT")){
-      postmanObj = setEnvironmentValue(postmanObj, "TECHNICAL_ACCOUNT_ID", resultObj.auth[key]);
-      debugConfig("TECHNICAL_ACCOUNT_ID set.");
-    } else if(normalizedKey.includes("PRIVATE_KEY")){
-      let privateKey = resolveFileWithContents(resultObj.auth[key], configObj.workingDir, true);
-      postmanObj = setEnvironmentValue(postmanObj, "PRIVATE_KEY", privateKey);
-      debugConfig("PRIVATE_KEY set.");
-    } else {
-      debugConfig(key + " is not valid for auth values. Skipping.");
-    }
-
-  }
-  debugConfig(postmanObj);
-  return postmanObj;
-}
-
 // Returns a Postman Environment json with the correct variables for authentication
-function createAuthObj(configYMLFile){
-  return new Promise(function(resolve, reject) {
-    let postmanEnv = createAuthObjSync(ymlFile);
-    if(postmanEnv) resolve(postmanEnv)
-    else reject(new Error("Could not create a postman environment with yaml given"));
-  });
+function createAuthObjFromConfig(file){
+  let fileContentsAndWorkingDir = createFileObj(file);
+  let fileContentsJSON = getJSONSync(fileContentsAndWorkingDir.contents);
+  if(!fileContentsJSON) return;
+
+  let postmanObj = POSTMAN_ENV;
+  let authParamCount = 0; // counter to make sure all auth params are set
+
+  console.log("Looking for auth values in config file...");
+  let foundValues = {}
+  foundValues.API_KEY = findNestedObj(fileContentsJSON,"API_KEY") || findNestedObj(fileContentsJSON,"CLIENT_ID")
+  foundValues.CLIENT_SECRET = findNestedObj(fileContentsJSON,"CLIENT_SECRET")
+  foundValues.ORG_ID = findNestedObj(fileContentsJSON,"ORG_ID") || findNestedObj(fileContentsJSON,"IMS_ORG_ID");
+  foundValues.TECHNICAL_ACCOUNT_ID = findNestedObj(fileContentsJSON,"TECHNICAL_ACCOUNT_ID") || findNestedObj(fileContentsJSON,"IMS_ORG_ID");
+  foundValues.PRIVATE_KEY = findNestedObj(fileContentsJSON,"PRIVATE_KEY")
+  
+  for(let key in foundValues){
+    if(foundValues[key]){
+      let foundValue = foundValues[key];
+      if(key.includes("PRIVATE_KEY")) foundValue = resolveFileWithContents(foundValue, fileContentsAndWorkingDir.workingDir, true);
+      postmanObj = setPostmanEnvironmentValue(postmanObj, key, foundValue);
+      debugConfig(key + " set.");
+      authParamCount++
+    } else console.log("Could not find" + key)
+  }
+  //Verify that all 5 auth params have been found and set
+  if(authParamCount == 5){
+    debugConfig(postmanObj);
+    return postmanObj;
+  }
 }
 
 //Get any import properties from the config file
-function getPropertiesFromConfig(ymlFile){
-  let configObj = createFileObj(ymlFile);
-  let resultObj = getJSONSync(configObj.contents);
+function getWebPropertiesFromConfig(file){
+  let fileContentsAndWorkingDir = createFileObj(file);
+  let fileContentsJSON = getJSONSync(fileContentsAndWorkingDir.contents);
+
+console.log(fileContentsJSON);
+  let importsFound = findNestedObj(fileContentsJSON,"IMPORT");
 
   let properties = {};
-  if(typeof resultObj.import == "string"){ //parse the string of files into a JSON
-    let arr = resultObj.import.split(" ")
-    for(i in arr){
-      properties[arr[i]] = "";
+  if(typeof importsFound == "string"){ //parse the string of files into a JSON
+    importsFound = importsFound.split(" ")
+  }
+  if(Array.isArray(importsFound)){
+    for(i in importsFound){
+      properties[importsFound[i]] = "";
     }
-  } else properties = resultObj.import; //set the json
+  } else properties = importsFound; //set the json
 
   //update any file paths absolute
   if(properties) {
     for(let str in properties){
-      absStr = resolveFileWithContents(str,configObj.workingDir);
-      properties[absStr] = properties[str];
-      delete properties[str];
+      absStr = resolveFileWithContents(str,fileContentsAndWorkingDir.workingDir);
+      if(absStr != str){
+        properties[absStr] = properties[str];
+        delete properties[str];
+      }
     }
 
     debugConfig(properties)
     return(properties);
   }
-  
   return "";
 }
 
-function createPropertyObjSync(file){
-  debugConfig(createPropertyObjSync);
+//Create an web property import object from a file
+function getWebPropertyFromFile(file){
+  debugConfig(getWebPropertyFromFile);
   let dataFileObj = createFileObj(file);
       
   let resultDataContents = getJSONSync(dataFileObj.contents)
@@ -100,64 +94,11 @@ function createPropertyObjSync(file){
       resultDataContents.rules[rule] = resolveFileWithContents(resultDataContents.rules[rule], dataFileObj.workingDir, true);
     }
   }
-
   debugConfig(resultDataContents);
   return resultDataContents;
-
 }
 
-function createPropertyObj(file){
-  return new Promise(function(resolve, reject) {
-    let propertyContents = createPropertyObjSync(file);
-    if(propertyContents) resolve(propertyContents)
-    else reject(new Error("Could not create launch object"));
-  });
-}
-
-//used to extract private.key from file
-//used to create absFile paths
-function resolveFileWithContents(val, workingDir, extractContents) {
-  if(typeof val == "string"){
-    let contents = path.resolve(workingDir,val);
-    if(fs.lstatSync(contents).isFile() && extractContents){
-      contents = fs.readFileSync(contents, "utf8");
-      contents = contents.replace(/\n/g,"");
-    }
-    return contents;
-  } else
-   return val;
-}
-
-// function getPropertyItem(item, rootDir){
-//   if(typeof item == "string"){
-//     let absPath = path.resolve(rootDir, item);
-//     if(fs.existsSync(absPath)){
-//       debugData("Using path:" +absPath);
-//       return absPath;
-//     } else {
-//       throw new Error("Cannot Read File: " + absPath);
-//     }
-//   } else {
-//     return item;
-//   }
-// }
-
-// // Takes in a file string and returns the contents of the file without line returns \n
-// function getPrivateKey(str, workingDir){
-//   let contents;
-//   if(typeof str == "string"){
-//     str = path.resolve(workingDir,str);
-//     if(fs.lstatSync(str).isFile()){
-//       contents = fs.readFileSync(str, "utf8");
-//       contents = contents.replace(/\n/g,"");
-//       return contents;
-//     } else {
-//       return str;
-//     }
-//   } else return;
-// }
-
-// Returns a json object of the contents given
+//Input yaml contents or JSON contents to return a valid JSON object
 function getJSONSync(propertyContents){
   debugJSON(getJSONSync);
   let dataObj = {};
@@ -176,12 +117,38 @@ function getJSONSync(propertyContents){
       new Error("File does not contain valid YAML or JSON content.",{cause: err.name});
     }
   }
-
   debugJSON(dataObj);
   return dataObj;
 }
 
-function setEnvironmentValue(envObj, key, value){
+//Helper function to find the value of a nested key an a json object
+function findNestedObj(entireObj, keyToFind) {
+  let foundValue;
+  JSON.stringify(entireObj, (curKey, curVal) => {
+    if(curKey.toUpperCase().replace("-","_").replace(" ","_") == keyToFind){
+      debugConfig("Found: " + keyToFind);
+      foundValue = curVal;
+    }
+    return curVal;
+  });
+  return foundValue;
+};
+
+//Helper method to either return the absPath or the contents of the file
+function resolveFileWithContents(val, workingDir, extractContents) {
+  if(typeof val == "string"){
+    let contents = path.resolve(workingDir,val);
+    if(fs.lstatSync(contents).isFile() && extractContents){
+      contents = fs.readFileSync(contents, "utf8");
+      contents = contents.replace(/\n/g,""); //required for private.key
+    }
+    return contents;
+  } else
+   return val;
+}
+
+//Helper method update (or add) a key/value pair to a Postman Environment JSON
+function setPostmanEnvironmentValue(envObj, key, value){
   envObj = JSON.parse(JSON.stringify(envObj));
   let addVal = true;
   let envVal = {};
@@ -208,6 +175,11 @@ function setEnvironmentValue(envObj, key, value){
   return null;
 }
 
+//helper method to get the file contents and working directory of the file
+// {
+//   contents: <contents of file>
+//   workingDir: <dir of file>
+// }
 function createFileObj(file){
   debugData(createFileObj);
   let obj = {};
@@ -224,12 +196,11 @@ function createFileObj(file){
     obj.contents = "{}";
     obj.workingDir = "./";
   }
+
   return obj;
 }
 
-exports.setEnvironmentValue = setEnvironmentValue;
-exports.createAuthObj = createAuthObj;
-exports.createAuthObjSync = createAuthObjSync;
-exports.createLaunchObj = createPropertyObj;
-exports.createLaunchObjSync = createPropertyObjSync;
-exports.getPropertiesFromConfig = getPropertiesFromConfig;
+exports.setEnvironmentValue = setPostmanEnvironmentValue;
+exports.createAuthObjSync = createAuthObjFromConfig;
+exports.createLaunchObjSync = getWebPropertyFromFile;
+exports.getPropertiesFromConfig = getWebPropertiesFromConfig;
