@@ -13,18 +13,15 @@ This is a project to automates postman collections using the [Reactor API](https
 
 - [Installation](#installation)
 - [Command Line Tool](#command-line-tool)
+- [Create config file for Authentication](#create-config-file-for-authentication)
 - [Usage](#usage)
 - [Export a Tag](#export-a-tag)
-  - [Using the Export Collection without NPM:](#using-the-export-collection-without-npm)
 - [Import a Tag](#import-a-tag)
   - [CEDRLP params](#cedrlp-params)
-  - [Using the Import Collection without NPM:](#using-the-import-collection-without-npm)
+  - [Import into other Organizations](#import-into-other-organizations)
 - [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
-- [Customize Settings for the Import](#customize-settings-for-the-import)
-  - [Extensions](#extensions)
-  - [Data Elements](#data-elements)
-  - [Rules](#rules)
-- [Postman Collections](#postman-collections)
+- [Using this tool without NPM](#using-this-tool-without-npm)
+  - [Postman files](#postman-files)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -39,17 +36,49 @@ npm install -g @knennigtri/aep-tag-tool
 
 Export a tag property:
 ```bash
- aep-tag-tool --export -e myEnvironment.postman_environment.json -p PR12345678901234567890
+ aep-tag-tool -c myconfig.yml --export PR12345678901234567890
 ```
 
 Import a tag property:
 ```bash
- aep-tag-tool --import -e myEnvironment.postman_environment.json -f myConfig.json
+ aep-tag-tool -c myconfig.yml --import myImportData.json
 ```
 
 Delete a tag properties that contain 2022 in the title
 ```bash
- aep-tag-tool --delete -e myEnvironment.postman_environment.json -s "2022"
+ aep-tag-tool -c myconfig.yml --delete "2022"
+```
+
+## Create config file for Authentication
+1. Create and [Adobe IO project](https://developer.adobe.com/dep/guides/dev-console/create-project/)
+   1. Add the Experiance Platform Launch API
+      1. Generate a public/private key pair
+      2. Download the public/private key
+   2. Go to Service Account (JWT)
+      1. In the top right click **Download JSON**
+      2. Update downloaded file to `config.json`
+   3. Update `config.json` to include the path to the private.key you downloaded earlier.
+    ```JSON
+    {
+      "CLIENT_SECRET": "xxxxxxxxxxxxxxxxxxxxx",
+      "ORG_ID": "xxxxxxxxxxxxxxxxxxxxx@AdobeOrg",
+      "API_KEY": "xxxxxxxxxxxxxxxxxxxxx",
+      "TECHNICAL_ACCOUNT_ID": "xxxxxxxxxxxxxxxxxxxxx@techacct.adobe.com",
+      "TECHNICAL_ACCOUNT_EMAIL": "xxxxxxxxxxxxxxxxxxxxx@techacct.adobe.com",
+      "PUBLIC_KEYS_WITH_EXPIRY": {},
+      "PRIVATE_Key": "path/to/private.key"
+    }
+    ```
+
+Alternatively, you can use yaml as well:
+```yaml
+---
+API_KEY: xxxxxxxxxxxxxxxxxxx
+CLIENT_SECRET: xxxxxxxxxxxxxxxxxxx
+ORG_ID: xxxxxxxxxxxxxxxxxxx@AdobeOrg
+TECHNICAL_ACCOUNT_ID: xxxxxxxxxxxxxxxxxxx@techacct.adobe.com
+PRIVATE_KEY: ./private.key
+---
 ```
 
 ## Usage
@@ -57,149 +86,124 @@ Delete a tag properties that contain 2022 in the title
 aep-tag-tool -h
 Usage: aep-tag-tool [ARGS]
  Arguments:
-    --export                        Mode to export a given property ID
-    --import                        Mode to import a property given a config file
-    -C,-E,-D,-R,-L,-P               Options to partially import. See -h import
-    --delete                        Mode to delete properties containing a specific string
-    -f  <file>                      configuration file [json | yml]. See -h configFile
-    -e  <postman_environment.json>  specify an environment file
-    -g  <postman_globals.json>      specify a global file
-    -p, --pid  <pid>                property ID. Req for export mode
-    -s, --search  <str>             search string for properties to delete. Reg for delete mode
+    -c, --config <myconfig.yml>         Specify a config file
+    -e, --export <PID>                  Mode to export a given property ID.
+    -i, --import <propertyFile.json>    Mode to import a property given a config file.
+    -d, --delete <searchStr>            Mode to delete properties containing a specific string
+    -C,-E,-D,-R,-L,-P                   [import] Options to partially import. See -h import
+    -f, --file   <file>                 [import] file containing import json
+    -p, --pid    <pid>                  [export, import] property ID
+    -s, --search <str>                  [delete] search string for properties deletion
+    -o, --output <folder>               [export] folder path to save export property. Default ./
+    -g  <postman_globals.json>          Not supported currently
+    -v, --version                       Displays version of this package
     -h, --help
-               configfile           config file format
-               export               how to use export mode
-               import               how to use import mode
-               delete               how to use delete mode
-    -v, --version                   Displays version of this package
+               config
+               export 
+               import
+               delete
+               debug
 ```
 ## Export a Tag
-Export mode allows for a web property from AEP Tags to be exported as JSON. Exporting a tag will:
- * create a configuration file with the same name as the property
- * export extensions
- * export data elements
- * export rules and their rule components
+Export mode allows for a web property from AEP Tags to be exported as JSON. Exporting a tag will create a new file with the same name as the web property. The JSON file contents will have:
 
-Export mode requires:
+   * exported property id
+   * property title
+   * extensions
+   * edata elements
+   * rules and their rule components
 
-`-e  <postman_environment.json>`  specify an environment file
-
-`-p, --pid  <pid>`               property ID. Req for export mode
-
-```bash
-  aep-tag-tool --export -e myEnvironment.postman_environment.json -p PR12345678901234567890
+Requires:
+```
+ -c, --config <myconfig.yml>         Specify a config file
+ -e, --export <PID>                  Mode to export a given property ID.
 ```
 
-Values can alternatively be set in a configuration file:
-
-  1. configFile.environment
-  2. configfile.propID
-
-```bash
-  aep-tag-tool --export -f myConfig.json
+Optionally include the PID with a parameter
 ```
-myConfig.json
-```json
-{
-  "environment": "path/to/myEnvironment.postman_environment.json",
-  "propID": "PR12345678901234567890"
-}
+ -p, --pid    <pid>                  [export, import] property ID
 ```
 
-### Using the [Export Collection](collections/Export%20Tag%20Property.postman_collection.json) without NPM:
-* Using Postman collection runner on folders - [Learn how to use the Export Tag collection](exportTagCollection.md)
-* Using Newman to run the collection folders - See [example export bash script](example-venia-tag/export-tag.sh)
-
-> Running through the requests of this collection will create responses that need to be saved to use for Importing into other organizations. You will end up with `1` **extensions.json**, `1` **data-elements.json**, and `n` **rulecmp-json** files where `n` is the number of rules in your property
+Optionally specify the output folder
+```
+ -o, --output <folder>               [export] folder path to save export property. Default ./ 
+```
 
 ## Import a Tag
 Import mode allows for an exported web property from AEP Tags to be imported into an Adobe organization. Import mode will:
- * Create a new web property (`configFile.propName`)
-   * Create a Host adn dev/stage/prod environments
- * Add imported extensions (`configFile.extensions`)
- * Create imported data elements (`configFile.dataElements`)
- * Create imported rules (`configFile.rules.*`)
- * Create a Library and publish it
+ * Create a new web property (`obj.propertyName`) with a host and dev/stage/prod environments
+ * Add imported extensions (`obj.extensions`)
+ * Create imported data elements (`obj.dataElements`)
+ * Create imported rules (`obj.rules.*`)
+ * Build the library into dev
+ * Publish the library into prod
 
-> You can optionally specify what to create/import/publish with the [CEDRP parameters](#cedrp-params). 
+> You can optionally specify what to create/import/publish with the [CEDRLP parameters](#cedrlp-params). 
 
-Importing into a different Adobe organization should be used with caution since many extension settings are specific to the Adobe organization they are exported from. These can be updated with a postman_globals.json file if needed. See [Customize Settings for the the import](#customize-settings-for-the-import).
+Importing into a different Adobe organization should be used with caution since many extension settings are specific to the Adobe organization they are exported from. See [Import into other Organizations](#import-into-other-organizations).
 
-Import mode requires:
+Requires:
+```
+ -c, --config <myconfig.yml>         Specify a config file
+ -i, --import <propertyFile.json>    Mode to import a property given a config file.
+```
 
- `-e  <postman_environment.json>`  specify an environment file
+Optionally include the property file with a parameter
+```
+ -f, --file   <file>                 [import] file containing import json
+ -p, --pid    <pid>                  [export, import] property ID
+```
+Note: PID is ignored unless importing to an existing property (-C is omited)
 
- `-f  <file>`                      configuration [json | yml] file
-
-Configuration [json | yml] file requires:
- 1. configFile.import.extensions
- 2. configFile.import.dataElements
- 3. configFile.import.rules.[rules]
+propertyFile.json file requires:
+ 1. propertyFile.propertyName
+ 2. propertyFile.extensions
+ 3. propertyFile.dataElements
+ 4. propertyFile.rules.[rules]
 
 ### CEDRLP params
-You can specify exactly what you want to create/import/publish with these params. No matter the parameter order, they will always execute in the order below. Default is running all steps.
+You can specify exactly what you want to create/import with these params. 
+No matter the parameter order, they will always execute in the order below.
+  `-C`  Creates a new property.
 
-`-C`  Creates a new property. `configFile.import.propertyName` is optional.
+If `-C` is not used with the remaining parameters, a PID is required in parameters
+  `-E`  Imports extensions. `propertyFile.extensions` is required.
+  `-D`  Imports data elements. `propertyFile.dataElement` is required.
+  `-R`  Imports rule components. `propertyFile.rules.[rules]` is required.
+  `-L`  Builds a library of all items the Dev environment
+  `-P`  Publishes the library into Prod
 
-If -C is not used with the remaining parameters, `propID` is required.
-
- * `-E`  Imports extensions. `configFile.import.extensions` is required.
- * `-D`  Imports data elements. `configFile.import.dataElement` is required.
- * `-R`  Imports rule components. `configFile.import.rules.[rules]` is required.
- * `-L`  Builds a library of all items the Dev environment
- * `-P`  Publishes the library into Prod
-
-### Using the [Import Collection](collections/Import%20Tag%20Property.postman_collection.json) without NPM:
-* Using Postman collection runner on folders - [Learn how to use the Import Tag collection](importTagCollection.md)
-* Using Newman to run the collection folders - See [example import bash script](example-venia-tag/import-venia-tag.sh) 
+### Import into other Organizations
+1. Create a new [AEP Tag property](https://experienceleague.adobe.com/docs/experience-manager-learn/sites/integrations/experience-platform-launch/create-launch-property.html?lang=en). 
+   1. Take note of the PID from the URL: Pxxxxxxxxxxxxxxxxxxxxxxx
+   2. Manually adding extensions automatically put default values related to your organization. Look at the propertyFile.json you'd like to import and manually install those extension in you new property
+   3. The command below will only import Data Elements (-D) and Rules (-R) from the propertyFile.json
+```
+ aep-tag-tool -c config.json --import propertyFile.json -p <yourPID> -DR
+```
+  4. Verify the import and build and deploy a new Library
 
 ## Delete tag properties that contain a specific string
 Quickly delete web properties that might have been created with this tool. Delete mode allows you to search for web properties in an Adobe organization based on a search string. If any web properties contain the search string, they are deleted. This is particularly useful if you are developing your own property to import/export since all properties end with a timestamp. Searching (-s) for `2022-10-25` would delete `MyProperty 2022-10-25T20:57:42.049Z`, `MyProperty 2022-10-25T21:57:42.049Z`, and `MyProperty 2022-10-25T20:58:42.049Z`.
 
-Delete mode requires:
-
- `-e  <postman_environment.json>`  specify an environment file
-
- `-s, --search  <str>`             search string for properties to delete. Reg for delete mode
-  
-Values can alternatively be set in the config file:
-
-  1. configFile.environment
-  2. configfile.delete.searchStr
-
-```bash
-  aep-tag-tool --delete -e myEnvironment.postman_environment.json -s 2022
+Requires:
+```
+ -c, --config <myconfig.yml>         Specify a config file
+ -d, --delete <searchStr>            Mode to delete properties containing a specific string
 ```
 
-Values can alternatively be set in the config file:
-
-  1. configFile.environment
-  2. configfile.delete.searchStr
-
-```bash
-  aep-tag-tool --export -f myConfig.json
+Optionally include the search string with a parameter
 ```
-myConfig.json
-```json
-{
-  "environment": "path/to/myEnvironment.postman_environment.json",
-  "delete": {
-    "searchStr": "PR12345678901234567890"
-  }
-}
+ -s, --search <str>                  [delete] search string for properties deletion
 ```
 
-## Customize Settings for the Import
-//TODO document custom settings
+## Using this tool without NPM
+The Postman collections apart of this tool can also be used with [Postman](https://www.postman.com/) or [npm newman](https://www.npmjs.com/package/newman). See the [extra docs](docs/README.md) to learn more.
 
-### Extensions
-
-### Data Elements
-
-### Rules
-In this release there is no ability to customize rule settings. If this is a needed feature, fill out a git issue.
-
-## Postman Collections
-The Postman collections apart of this tool can also be used with [Postman](https://www.postman.com/) or [npm newman](https://www.npmjs.com/package/newman). See the [collection docs](docs/README.md) to learn more.
-* [Example Environment](docs/example.postman_environment.json)
+### Postman files
+* Download the [Authentication Collection](postman/Adobe%20IO%20Token.postman_collection.json)
+* Download the [Import Collection](postman/Import%20Tag%20Property.postman_collection.json)
+* Download the [Export Collection](postman/Export%20Tag%20Property.postman_collection.json)
+* Download the [Delete Collection](postman/Export%20Tag%20Property.postman_collection.json)
+* Download a sample [Environment file](postman/aep-tag-tool.postman_environment.json)
   * See configuration instructions: [docs/environment.md](docs/environment.md)

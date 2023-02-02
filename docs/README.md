@@ -13,13 +13,13 @@
 # Documentation Contents
 
 ## Postman Collections Used
- * [Adobe IO Token](../collections/Adobe%20IO%20Token.postman_collection.json)
- * [Export Tag Property](../collections/Export%20Tag%20Property.postman_collection.json)
- * [Import Tag Property](../collections/Import%20Tag%20Property.postman_collection.json)
+ * [Adobe IO Token](../postman/Adobe%20IO%20Token.postman_collection.json)
+ * [Export Tag Property](../postman/Export%20Tag%20Property.postman_collection.json)
+ * [Import Tag Property](../postman/Import%20Tag%20Property.postman_collection.json)
 
 ## Postman Environment
  * [Set up](environment.md) a Postman environment for the Adobe IO collection
-   * [example.postman_environment](examples/example.postman-globals.json)
+   * [example.postman_environment](../postman/aep-tag-tool.postman_environment.json)
 
 ## Exporting Tags
  * [Export using aep-tag-tool](../README.md#export-a-tag)
@@ -34,5 +34,5 @@
    * [example.postman_globals.json](examples/example.postman-globals.json)
 
 ## Example Tags:
- * [Venia Tag](../tests/venia-tag)
- * [ExL Tutorial](../tests/tutorial-tag/)
+ * [Venia Tag](../examples/venia-config.yml)
+ * [ExL Tutorial](../examples/exl-tutorial.yml/)

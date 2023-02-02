@@ -23,6 +23,7 @@
     "publish:bugfix": "npm publish --tag bugfix",
     "release:beta": "npm version patch && npm run publish:beta",
     "publish:beta": "npm publish --tag beta",
+    "cleanup": "rm -R newman",
     "test": "node tests/tests.js",
     "test:noLogs": "node tests/tests.js -- --hideconsole",
     "test-delete": "aep-tag-tool -e environments/vLab7.postman_environment.json --delete -s 2022",
