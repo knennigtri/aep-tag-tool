@@ -89,7 +89,7 @@ function importTag(env, importObj, actions, pid, globals) {
       .then(resultEnv => resolve(resultEnv))
       .catch(err => reject(err));
   })
-  .catch(err => console.error(err));
+    .catch(err => console.error(err));
 }
 
 function recurseImportChain(environment, importItems, actions, globals){

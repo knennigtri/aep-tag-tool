@@ -3,18 +3,13 @@ const launch = require("./launch.js");
 const packageInfo = require("./package.json");
 const minimist = require("minimist");
 const args = minimist(process.argv.slice(2));
-const async = require("async");
 //https://www.npmjs.com/package/debug
 const debug = require("debug");
 const debugDryRun = require("debug")("dryrun");
-const debugConfig = require("debug")("config");
-const configProperty = require("debug")("property");
 const debugArgs = require("debug")("args");
 exports.debugOptions = {
   "*": "Output all debugging messages",
   "dryrun": "Run without running postman collections to verify input",
-  "property": "messages related to the property file",
-  "config": "Messages related to config file",
   "args": "See CLI argument messages"
 };
 const message = require("./message.js");
@@ -25,7 +20,7 @@ const modes = {
   delete: "delete"
 };
 
-function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchStrParam, globalsParam){
+function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchStrParam){
   let mode = "";
   if(modeParam && modeParam.toLowerCase() == modes.export ||  args.export || args.e) mode = modes.export;
   if(modeParam && modeParam.toLowerCase() == modes.import ||  args.import || args.i) mode = modes.import;
@@ -76,7 +71,7 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
     console.log("Authentication not properly configured. Make sure your config file has the required Auth values.");
     console.log("Use -h config to learn mode");
     return;
-  } else console.log("Auth object successfully created.")
+  } else console.log("Auth object successfully created.");
   
   console.log("Running mode: " + mode);
   if(mode == modes.export){ //EXPORT
@@ -117,9 +112,9 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
       // if(configFileProperties) {
       //   propsToImport = configFileProperties;
       // } else {
-        console.log("Import mode must have at least 1 propertyFile. See -h import");
-        console.log(message.HELP);
-        return;
+      console.log("Import mode must have at least 1 propertyFile. See -h import");
+      console.log(message.HELP);
+      return;
       // }
     } else {
       propsToImport[propertiesFile] = importPID;
@@ -158,7 +153,7 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
 //TODO Recursively importing files results in messages being mixed. Need to review before enabling.
 function recursiveImport(authObj, propertyFilesToImport){
   //Grab the first file and remove it from propertyFilesToImport
-  nextPropertyFile = Object.keys(propertyFilesToImport)[0];
+  let nextPropertyFile = Object.keys(propertyFilesToImport)[0];
   let nextPID = propertyFilesToImport[nextPropertyFile];
   delete propertyFilesToImport[nextPropertyFile];
   
@@ -176,7 +171,7 @@ function recursiveImport(authObj, propertyFilesToImport){
         console.log("Skipping..");
       } else {
         if(debug.enabled("dryrun")){
-          var f2 = function (k, v) { return k && v && typeof v !== "number" ? "" + v : v; };
+          // var f2 = function (k, v) { return k && v && typeof v !== "number" ? "" + v : v; };
           debugDryRun("Importing: " + nextPropertyFile);
           // debugDryRun(JSON.stringify(propertyObj, f2, 2));
           debugDryRun("PID: " + nextPID);
@@ -185,8 +180,8 @@ function recursiveImport(authObj, propertyFilesToImport){
           return recursiveImport(authObj, propertyFilesToImport);
         } else {
           //TODO decide on global inclusion
-           return newman.importTag(authObj, propertyObj, actions, nextPID, "")
-            .then((resultEnv) => recursiveImport(authObj, propertyFilesToImport));
+          return newman.importTag(authObj, propertyObj, actions, nextPID, "")
+            .then(() => recursiveImport(authObj, propertyFilesToImport));
         }
       }
     }

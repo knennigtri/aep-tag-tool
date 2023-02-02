@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 const yaml = require("js-yaml");
-const debug = require("debug");
 const debugProperty = require("debug")("property");
 const debugJSON = require("debug")("json");
 const debugConfig = require("debug")("config");
@@ -22,12 +21,12 @@ function createAuthObjFromConfig(file){
   let authParamCount = 0; // counter to make sure all auth params are set
 
   console.log("Looking for auth values in config file...");
-  let foundValues = {}
-  foundValues.API_KEY = findNestedObj(fileContentsJSON,"API_KEY") || findNestedObj(fileContentsJSON,"CLIENT_ID")
-  foundValues.CLIENT_SECRET = findNestedObj(fileContentsJSON,"CLIENT_SECRET")
+  let foundValues = {};
+  foundValues.API_KEY = findNestedObj(fileContentsJSON,"API_KEY") || findNestedObj(fileContentsJSON,"CLIENT_ID");
+  foundValues.CLIENT_SECRET = findNestedObj(fileContentsJSON,"CLIENT_SECRET");
   foundValues.ORG_ID = findNestedObj(fileContentsJSON,"ORG_ID") || findNestedObj(fileContentsJSON,"IMS_ORG_ID");
   foundValues.TECHNICAL_ACCOUNT_ID = findNestedObj(fileContentsJSON,"TECHNICAL_ACCOUNT_ID") || findNestedObj(fileContentsJSON,"IMS_ORG_ID");
-  foundValues.PRIVATE_KEY = findNestedObj(fileContentsJSON,"PRIVATE_KEY")
+  foundValues.PRIVATE_KEY = findNestedObj(fileContentsJSON,"PRIVATE_KEY");
   
   for(let key in foundValues){
     if(foundValues[key]){
@@ -35,8 +34,8 @@ function createAuthObjFromConfig(file){
       if(key.includes("PRIVATE_KEY")) foundValue = resolveFileWithContents(foundValue, fileContentsAndWorkingDir.workingDir, true);
       postmanObj = setPostmanEnvironmentValue(postmanObj, key, foundValue);
       debugConfig(key + " set.");
-      authParamCount++
-    } else console.error("Could not find " + key)
+      authParamCount++;
+    } else console.error("Could not find " + key);
   }
   //Verify that all 5 auth params have been found and set
   if(authParamCount == 5){
@@ -50,15 +49,15 @@ function getWebPropertiesFromConfig(file){
   let fileContentsAndWorkingDir = createFileObj(file);
   let fileContentsJSON = getJSONSync(fileContentsAndWorkingDir.contents);
 
-console.log(fileContentsJSON);
+  console.log(fileContentsJSON);
   let importsFound = findNestedObj(fileContentsJSON,"IMPORT");
 
   let properties = {};
   if(typeof importsFound == "string"){ //parse the string of files into a JSON
-    importsFound = importsFound.split(" ")
+    importsFound = importsFound.split(" ");
   }
   if(Array.isArray(importsFound)){
-    for(i in importsFound){
+    for(let i in importsFound){
       properties[importsFound[i]] = "";
     }
   } else properties = importsFound; //set the json
@@ -66,14 +65,14 @@ console.log(fileContentsJSON);
   //update any file paths absolute
   if(properties) {
     for(let str in properties){
-      absStr = resolveFileWithContents(str,fileContentsAndWorkingDir.workingDir);
+      let absStr = resolveFileWithContents(str,fileContentsAndWorkingDir.workingDir);
       if(absStr != str){
         properties[absStr] = properties[str];
         delete properties[str];
       }
     }
 
-    debugConfig(properties)
+    debugConfig(properties);
     return(properties);
   }
   return "";
@@ -84,7 +83,7 @@ function getWebPropertyFromFile(file){
   debugConfig(getWebPropertyFromFile);
   let dataFileObj = createFileObj(file);
       
-  let resultDataContents = getJSONSync(dataFileObj.contents)
+  let resultDataContents = getJSONSync(dataFileObj.contents);
 
   //Update any relative paths to absolute paths or return the json object
   if(resultDataContents){
@@ -132,7 +131,7 @@ function findNestedObj(entireObj, keyToFind) {
     return curVal;
   });
   return foundValue;
-};
+}
 
 //Helper method to either return the absPath or the contents of the file
 function resolveFileWithContents(val, workingDir, extractContents) {
@@ -144,7 +143,7 @@ function resolveFileWithContents(val, workingDir, extractContents) {
     }
     return contents;
   } else
-   return val;
+    return val;
 }
 
 //Helper method update (or add) a key/value pair to a Postman Environment JSON

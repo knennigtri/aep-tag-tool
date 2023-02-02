@@ -9,11 +9,11 @@ const HELP_P =      "-p, --pid    <pid>                  [export, import] proper
 const HELP_S =      "-s, --search <str>                  [delete] search string for properties deletion";
 const HELP_O =      "-o, --output <folder>               [export] folder path to save export property. Default ./";
 const HELP_CEDRLP = "-C,-E,-D,-R,-L,-P                   [import] Options to partially import. See -h import";
-const HELP_export = "-e, --export <PID>                  Mode to export a given property ID."
-const HELP_import = "-i, --import <propertyFile.json>    Mode to import a property given a config file."
-const HELP_delete = "-d, --delete <searchStr>            Mode to delete properties containing a specific string"
+const HELP_export = "-e, --export <PID>                  Mode to export a given property ID.";
+const HELP_import = "-i, --import <propertyFile.json>    Mode to import a property given a config file.";
+const HELP_delete = "-d, --delete <searchStr>            Mode to delete properties containing a specific string";
 const HELP =
-`Usage: `+ packageInfo.name.replace("@knennigtri/", "") + ` [ARGS]
+"Usage: "+ packageInfo.name.replace("@knennigtri/", "") + ` [ARGS]
  Arguments:
     ` + HELP_config + `
     ` + HELP_export + `
@@ -132,11 +132,11 @@ const HELP_DEBUG =
   Where <value> can be:
 `
   + JSON.stringify(index.debugOptions, null, 2)
-      .replaceAll("\": ","     ")
-      .replaceAll("\"","")
-      .replaceAll(",","")
-      .replaceAll("{\n","")
-      .replaceAll("}","")
+    .replaceAll("\": ","     ")
+    .replaceAll("\"","")
+    .replaceAll(",","")
+    .replaceAll("{\n","")
+    .replaceAll("}","")
   + JSON.stringify(newman.debugOptions, null, 2)
     .replaceAll("\": ","     ")   
     .replaceAll("\"","")
