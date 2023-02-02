@@ -2,13 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const yaml = require("js-yaml");
 const debug = require("debug");
-const debugData = require("debug")("data");
+const debugProperty = require("debug")("property");
 const debugJSON = require("debug")("json");
 const debugConfig = require("debug")("config");
 exports.debugOptions = {
   "json": "Messages on JSON obj creation from files",
-  "data": "Data messages for full json object",
-  "env": "Messages related to the postman environment object"
+  "property": "messages related to the property file",
+  "config": "Messages related to config file"
 };
 const POSTMAN_ENV = require("./postman/aep-tag-tool.postman_environment.json");
 
@@ -36,7 +36,7 @@ function createAuthObjFromConfig(file){
       postmanObj = setPostmanEnvironmentValue(postmanObj, key, foundValue);
       debugConfig(key + " set.");
       authParamCount++
-    } else console.log("Could not find" + key)
+    } else console.error("Could not find " + key)
   }
   //Verify that all 5 auth params have been found and set
   if(authParamCount == 5){
@@ -181,7 +181,7 @@ function setPostmanEnvironmentValue(envObj, key, value){
 //   workingDir: <dir of file>
 // }
 function createFileObj(file){
-  debugData(createFileObj);
+  debugProperty(createFileObj);
   let obj = {};
   if(typeof file == "string"){
     if(fs.lstatSync(file).isFile()){

@@ -99,6 +99,7 @@ Requires:
 
 Optionally include the property file with a parameter
  ` + HELP_F + `
+ ` + HELP_P + `
 Note: PID is ignored unless importing to an existing property (-C is omited)
 
 You can specify exactly what you want to create/import with these params. 
@@ -106,9 +107,9 @@ No matter the parameter order, they will always execute in the order below.
   -C  Creates a new property.
 
 If -C is not used with the remaining parameters, a PID is required in parameters
-  -E  Imports extensions. configFile.extensions is required.
-  -D  Imports data elements. configFile.dataElement is required.
-  -R  Imports rule components. configFile.rules.[rules] is required.
+  -E  Imports extensions. propertyFile.extensions is required.
+  -D  Imports data elements. propertyFile.dataElement is required.
+  -R  Imports rule components. propertyFile.rules.[rules] is required.
   -L  Builds a library of all items the Dev environment
   -P  Publishes the library into Prod
   ` +CREATE_PROPERTYFILE;

@@ -60,6 +60,7 @@ function exportTag(env, pid, exportDir, callback) {
       }
       //Write to a file
       var propName = tagExport.propertyName.replace(/\s+/g, "-").toLowerCase();
+      //TODO fix -o outputDir
       if(!exportDir) exportDir = ".";
       fs.writeFileSync(exportDir + "/" + propName + ".json", JSON.stringify(tagExport, null, 2));
     })
@@ -67,7 +68,7 @@ function exportTag(env, pid, exportDir, callback) {
     .catch(err => callback(err, null));
 }
 
-function importTag(env, importObj, actions, pid, globals, callback) {
+function importTag(env, importObj, actions, pid, globals) {
   return new Promise(function(resolve, reject) {
     authenicateAIO(env)
       .then(function(resultEnv){ //Add propID if importing to an existing property
@@ -87,7 +88,8 @@ function importTag(env, importObj, actions, pid, globals, callback) {
       .then((resultEnv) => recurseImportChain(resultEnv, importObj, actions, globals))
       .then(resultEnv => resolve(resultEnv))
       .catch(err => reject(err));
-  });
+  })
+  .catch(err => console.error(err));
 }
 
 function recurseImportChain(environment, importItems, actions, globals){
@@ -207,7 +209,6 @@ function publishLibraryToProd(environment, globals) {
 /******* Helper Functions ******/
 
 function newmanRun(cmdName, env, globals, collection, folder, data, envVar){
-  //TODO When importing an object from a file this fails. I think it's being parsed incorrectly in launch.js
   var f2 = function (k, v) { return k && v && typeof v !== "number" ? "" + v : v; };
   debugNewman(JSON.stringify(data, f2, 2));
 
@@ -219,7 +220,8 @@ function newmanRun(cmdName, env, globals, collection, folder, data, envVar){
   }
 
   debugNewman("ReportNameHTML: "+ reportersDir + reportName + ".[html | xml]");
-
+  // Uncomment to generate the final postman environment file
+  // console.log(JSON.stringify(env));
   return new Promise(function(resolve, reject) {
     //run newman to create new rule
     newman.run({
@@ -240,7 +242,7 @@ function newmanRun(cmdName, env, globals, collection, folder, data, envVar){
       if (summary.run.failures == "") {
         console.log("Success!");
       } else {
-        console.log("Import Failures. Check the report logs in " + reportersDir);
+        reject("API Failures. Check the report logs in " + reportersDir);
       }
       resolve(summary.environment);
     });

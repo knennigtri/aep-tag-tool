@@ -8,17 +8,16 @@ const async = require("async");
 const debug = require("debug");
 const debugDryRun = require("debug")("dryrun");
 const debugConfig = require("debug")("config");
-const debugData = require("debug")("data");
+const configProperty = require("debug")("property");
 const debugArgs = require("debug")("args");
 exports.debugOptions = {
   "*": "Output all debugging messages",
   "dryrun": "Run without running postman collections to verify input",
-  "config": "Config messages for connecting to Adobe IO",
-  "data": "Data messages for full json object",
+  "property": "messages related to the property file",
+  "config": "Messages related to config file",
   "args": "See CLI argument messages"
 };
 const message = require("./message.js");
-
 
 const modes = {
   export: "export",
@@ -26,48 +25,17 @@ const modes = {
   delete: "delete"
 };
 
-
 function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchStrParam, globalsParam){
-//TODO update parameters
-// aep-tag-tool --config ./my.config.xml --delete "2023"
-// aep-tag-tool -c ./my.config.xml -d "2023"
-// aep-tag-tool -c ./my.config.xml --export P12345 -o ./exports/
-// aep-tag-tool -c ./my.config.xml --export -p P12345 -o ./exports/
-// aep-tag-tool -c ./my.config.xml -e P12345 -d ./
-// aep-tag-tool -c ./my.config.xml --import ./myProperty.json
-// aep-tag-tool -c ./my.config.xml -i ./myProperty.json
-// aep-tag-tool -c ./my.config.xml -i ./myProperty.json -CEDRLP
-// aep-tag-tool -c ./my.config.xml -i ./myProperty.json -EDRL -p P123456
-
-//--export -e (pid)
-//--import -i (file)
-//--delete -d (search)
-//--output -o
-//--pid -p
-//--search -s
-//--file -f
- 
-//TODO support CSV 
-// aep-tag-tool -c ./myCSV.csv --import
-// aep-tag-tool -c ./myCSV.csv --import ./myproperty.json
-// aep-tag-tool -c ./myCSV.csv --delete "2023"
-
-let mode = "";
-if(modeParam && modeParam.toLowerCase() == modes.export ||  args.export || args.e) mode = modes.export;
-if(modeParam && modeParam.toLowerCase() == modes.import ||  args.import || args.i) mode = modes.import;
-if(modeParam && modeParam.toLowerCase() == modes.delete ||  args.delete || args.d) mode = modes.delete;
-
-  // let data = dataParam || args.f;
+  let mode = "";
+  if(modeParam && modeParam.toLowerCase() == modes.export ||  args.export || args.e) mode = modes.export;
+  if(modeParam && modeParam.toLowerCase() == modes.import ||  args.import || args.i) mode = modes.import;
+  if(modeParam && modeParam.toLowerCase() == modes.delete ||  args.delete || args.d) mode = modes.delete;
   let argsEnv = envParam || args.config || args.c;
-  // let argsGlobals = globalsParam || args.g;
-  // const argsPID = pidParam || args.p || args.pid;
-  // const argsSearch = searchStrParam || args.s || args.search;
   
   const argsVersion = args.v || args.version;
   const argsHelp =  args.h || args.help;
 
   debugArgs(JSON.stringify(args,null,2));
-  // return;
   
   // Show CLI help
   if (argsHelp) {
@@ -96,19 +64,20 @@ if(modeParam && modeParam.toLowerCase() == modes.delete ||  args.delete || args.
     return;
   }
   
-  //TODO Iterate config files
-  //If config.csv, iterate through config.yml
-  //Specify config.yml
+  //TODO Allow for a config.csv which contains many config.yml files
+  // aep-tag-tool -c ./myCSV.csv --import
+  // aep-tag-tool -c ./myCSV.csv --import ./myproperty.json
+  // aep-tag-tool -c ./myCSV.csv --delete "2023"
 
   //create AuthObj from config.yml
   let authObj = launch.createAuthObjSync(argsEnv);
-  if(!authObj) {
-    console.log("Environment not properly configured. Make sure your config file has the required keys");
-    console.log(message.CONFIGFILE_EXAMPLE);
-    return;
-  }
   debugDryRun(JSON.stringify(authObj, null, 2));
-
+  if(!authObj) {
+    console.log("Authentication not properly configured. Make sure your config file has the required Auth values.");
+    console.log("Use -h config to learn mode");
+    return;
+  } else console.log("Auth object successfully created.")
+  
   console.log("Running mode: " + mode);
   if(mode == modes.export){ //EXPORT
     //optionally change the working directory for export
@@ -143,14 +112,15 @@ if(modeParam && modeParam.toLowerCase() == modes.delete ||  args.delete || args.
     let propertiesFile = dataParam || args.file || args.f || args.import || args.i;
     let propsToImport = {};
     if(typeof propertiesFile == ("boolean" || "undefined")) {
-      let configFileProperties = launch.getPropertiesFromConfig(argsEnv);
-      if(configFileProperties) {
-        propsToImport = configFileProperties;
-      } else {
+      //TODO Recursive imports turned off until working
+      // let configFileProperties = launch.getPropertiesFromConfig(argsEnv);
+      // if(configFileProperties) {
+      //   propsToImport = configFileProperties;
+      // } else {
         console.log("Import mode must have at least 1 propertyFile. See -h import");
         console.log(message.HELP);
         return;
-      }
+      // }
     } else {
       propsToImport[propertiesFile] = importPID;
     }
@@ -173,7 +143,6 @@ if(modeParam && modeParam.toLowerCase() == modes.delete ||  args.delete || args.
       newman.deleteTags(authObj, searchStr, function(err, resultObj){
         if(err){
           console.error(err);
-          console.log(message.HELP);
         }
         if(resultObj) {
           console.log("Complete. Check logs for any issues.");
@@ -186,7 +155,7 @@ if(modeParam && modeParam.toLowerCase() == modes.delete ||  args.delete || args.
   }
 }
 
-//TODO Doesn't work!
+//TODO Recursively importing files results in messages being mixed. Need to review before enabling.
 function recursiveImport(authObj, propertyFilesToImport){
   //Grab the first file and remove it from propertyFilesToImport
   nextPropertyFile = Object.keys(propertyFilesToImport)[0];
@@ -212,9 +181,10 @@ function recursiveImport(authObj, propertyFilesToImport){
           // debugDryRun(JSON.stringify(propertyObj, f2, 2));
           debugDryRun("PID: " + nextPID);
           debugDryRun("Actions: " + actions);
+          debugDryRun("Auth: " + authObj);
           return recursiveImport(authObj, propertyFilesToImport);
         } else {
-          //TODO global
+          //TODO decide on global inclusion
            return newman.importTag(authObj, propertyObj, actions, nextPID, "")
             .then((resultEnv) => recursiveImport(authObj, propertyFilesToImport));
         }
