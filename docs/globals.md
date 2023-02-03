@@ -8,8 +8,6 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-//TODO Review and Document
-
 ### Add unique configuration values for Extensions
 
 Tag Extensions typically have unique values specific to the Adobe Organization you are using. To mitigate this uniquiness, you can add the custom settings as a JSON in the postman_environment.json file. The easiest way to get these values is to extract them from the export process and edit the unique values. To successfully add them to the postman_environment.json, you need to use a special naming convention: `SETTINGS-<ExtentionName>`. You can find the ExtensionName in nearly any GET request from Launch. In the request below you can see in `data[0].attributes.delegate_descripter_id` the ExtensionName is `adobe-mcid`

@@ -1,0 +1,9 @@
+{
+  "CLIENT_SECRET": "xxxxxxxxxxxxxxxxxxxxx",
+  "ORG_ID": "xxxxxxxxxxxxxxxxxxxxx@AdobeOrg",
+  "API_KEY": "xxxxxxxxxxxxxxxxxxxxx",
+  "TECHNICAL_ACCOUNT_ID": "xxxxxxxxxxxxxxxxxxxxx@techacct.adobe.com",
+  "TECHNICAL_ACCOUNT_EMAIL": "xxxxxxxxxxxxxxxxxxxxx@techacct.adobe.com",
+  "PRIVATE_Key": "path/to/private.key",
+  "PUBLIC_KEYS_WITH_EXPIRY": {}
+}

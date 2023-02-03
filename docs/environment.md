@@ -34,9 +34,9 @@ In order to use the Reactor API (AEP Tags), you need to authenticate through Ado
 The steps below represent the minimum number of values needed to interact with the Launch API.
 
   1. In your Adobe IO project, go to the **Credentials > Service Account (JWT)**, copy the following values into their respective values in the environment JSON:
-        1. **CLIENT_ID** (Client ID)
+        1. **API_KEY** (Client ID)
         2. **CLIENT_SECRET** (Client Secret)
-        3. **TECHNICAL_ACCOUNT** (Technical Account ID)
+        3. **TECHNICAL_ACCOUNT_ID** (Technical Account ID)
         4. **ORG_ID** (Organization ID)
         
         <img src="links/environment/image-20211216113107047.png" alt="image-20211216113107047" style="zoom: 25%;" />

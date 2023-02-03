@@ -1,0 +1,11 @@
+---
+propID: PR6e367f5e04584d84974fcb82d8b1d705
+propertyName: Venia
+extensions: venia-tag-exports/venia-extensions.json
+dataElements: venia-tag-exports/venia-data-elements.json
+rules:
+ "[10] Target": venia-tag-exports/venia-rulecmp-target.json
+ "[50] Analytics Clear and Set Variables": venia-tag-exports/venia-rulecmp-clear-and-set-vars.json
+ "[90] Analytics Fire Beacon": venia-tag-exports/venia-rulecmp-send-beacon.json
+ "[10] ECID Authentication": venia-tag-exports/venia-rulecmp-ecid.json
+---
