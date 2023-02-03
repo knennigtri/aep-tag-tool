@@ -59,8 +59,7 @@
     "debug": "^4.3.4",
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.7",
-    "newman": "^4.6.1",
-    "newman-reporter-html": "^1.0.5"
+    "newman": "^4.6.1"
   },
   "devDependencies": {
     "depcheck": "^1.4.3",

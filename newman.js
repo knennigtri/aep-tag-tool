@@ -233,7 +233,6 @@ function newmanRun(cmdName, env, globals, collection, folder, data, envVar){
       iterationData: data,
       reporters: REPORTERS,
       reporter: {
-        "html": { export: reportersDir + reportName + ".html" },
         "junit": { export: reportersDir + reportName + ".xml" }
       }//TODO investigate saving via Win and Mac
     }).on("done", function (err, summary) {
