@@ -11,17 +11,19 @@ This is a project to automates postman collections using the [Reactor API](https
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Installation](#installation)
-- [Command Line Tool](#command-line-tool)
-- [Create config file for Authentication](#create-config-file-for-authentication)
-- [Usage](#usage)
-- [Export a Tag](#export-a-tag)
-- [Import a Tag](#import-a-tag)
-  - [CEDRLP params](#cedrlp-params)
-  - [Import into other Organizations](#import-into-other-organizations)
-- [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
-- [Using this tool without NPM](#using-this-tool-without-npm)
-  - [Postman files](#postman-files)
+- [AEP Tag Tool](#aep-tag-tool)
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Command Line Tool](#command-line-tool)
+  - [Create config file for Authentication](#create-config-file-for-authentication)
+  - [Usage](#usage)
+  - [Export a Tag](#export-a-tag)
+  - [Import a Tag](#import-a-tag)
+    - [CEDRLP params](#cedrlp-params)
+    - [Import into other Organizations](#import-into-other-organizations)
+  - [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
+  - [Using this tool without NPM](#using-this-tool-without-npm)
+    - [Postman files](#postman-files)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -167,10 +169,15 @@ No matter the parameter order, they will always execute in the order below.
   `-C`  Creates a new property.
 
 If `-C` is not used with the remaining parameters, a PID is required in parameters
+
   `-E`  Imports extensions. `propertyFile.extensions` is required.
+
   `-D`  Imports data elements. `propertyFile.dataElement` is required.
+
   `-R`  Imports rule components. `propertyFile.rules.[rules]` is required.
+  
   `-L`  Builds a library of all items the Dev environment
+  
   `-P`  Publishes the library into Prod
 
 ### Import into other Organizations
