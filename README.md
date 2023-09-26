@@ -11,19 +11,17 @@ This is a project to automates postman collections using the [Reactor API](https
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [AEP Tag Tool](#aep-tag-tool)
-  - [Overview](#overview)
-  - [Installation](#installation)
-  - [Command Line Tool](#command-line-tool)
-  - [Create config file for Authentication](#create-config-file-for-authentication)
-  - [Usage](#usage)
-  - [Export a Tag](#export-a-tag)
-  - [Import a Tag](#import-a-tag)
-    - [CEDRLP params](#cedrlp-params)
-    - [Import into other Adobe Organizations](#import-into-other-adobe-organizations)
-  - [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
-  - [Using this tool without NPM](#using-this-tool-without-npm)
-    - [Postman files](#postman-files)
+- [Installation](#installation)
+- [Command Line Tool](#command-line-tool)
+- [Create config file for Authentication](#create-config-file-for-authentication)
+- [Usage](#usage)
+- [Export a Tag](#export-a-tag)
+- [Import a Tag](#import-a-tag)
+  - [CEDRLP params](#cedrlp-params)
+  - [Import into other Adobe Organizations](#import-into-other-adobe-organizations)
+- [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
+- [Using this tool without NPM](#using-this-tool-without-npm)
+  - [Postman files](#postman-files)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
