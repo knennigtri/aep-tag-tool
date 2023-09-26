@@ -2,6 +2,8 @@ const newman = require("newman");
 const launch = require("./launch.js");
 const fs = require("fs");
 //https://www.npmjs.com/package/debug
+//Mac: DEBUG=* aep-tag-tool....
+//WIN: set DEBUG=* & aep-tag-tool....
 const debug = require("debug");
 const debugCollections = require("debug")("collections");
 const debugNewman = require("debug")("newman");
@@ -70,15 +72,15 @@ function exportTag(env, pid, exportDir, callback) {
     .catch(err => callback(err, null));
 }
 
-function importTag(env, importObj, actions, pid, globals) {
+function importTag(env, importObj, actions, globals) {
   return new Promise(function(resolve, reject) {
     authenicateAIO(env)
       .then(function(resultEnv){ //Add propID if importing to an existing property
         return new Promise(function (resolve,reject){
           if(!actions) actions = getImportActions(); //TODO verify it works
           if(actions[0] != "C"){
-            if(pid){
-              let env = launch.setEnvironmentValue(resultEnv, "propID", pid);
+            if(importObj.propID){
+              let env = launch.setEnvironmentValue(resultEnv, "propID", importObj.propID);
               if(env) resolve(env);
               else reject(new Error("Cannot update environment"));
             } else {
