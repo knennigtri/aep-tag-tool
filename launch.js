@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const yaml = require("js-yaml");
+//https://www.npmjs.com/package/debug
+//Mac: DEBUG=* aep-tag-tool....
+//WIN: set DEBUG=* & aep-tag-tool....
 const debugProperty = require("debug")("property");
 const debugJSON = require("debug")("json");
 const debugConfig = require("debug")("config");
