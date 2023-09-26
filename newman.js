@@ -2,6 +2,8 @@ const newman = require("newman");
 const launch = require("./launch.js");
 const fs = require("fs");
 //https://www.npmjs.com/package/debug
+//Mac: DEBUG=* aep-tag-tool....
+//WIN: set DEBUG=* & aep-tag-tool....
 const debug = require("debug");
 const debugCollections = require("debug")("collections");
 const debugNewman = require("debug")("newman");
@@ -12,8 +14,9 @@ exports.debugOptions = {
   "newman:cli": "Newman cli output for verbose messaging of collections"
 };
 
-let REPORTERS = ["emojitrain", "junit", "html"];
-let IO_COLLECTION = require("./postman/Adobe IO Token.postman_collection.json");
+let REPORTERS = ["emojitrain", "junit"];
+let IO_OAUTH_COLLECTION = require("./postman/Adobe IO Token OAuth.postman_collection.json");
+let IO_JWT_COLLECTION = require("./postman/Adobe IO Token.postman_collection.json");
 let EXPORT_COLLECTION = require("./postman/Export Tag Property.postman_collection.json");
 let IMPORT_COLLECTION = require("./postman/Import Tag Property.postman_collection.json");
 let DELETE_PROPS = require("./postman/Delete Properties.postman_collection.json");
@@ -21,7 +24,8 @@ let DELETE_PROPS = require("./postman/Delete Properties.postman_collection.json"
 //Development commands
 if (debug.enabled("collections")) {
   debugCollections("Using Postman Collections");
-  IO_COLLECTION = "https://www.getpostman.com/collections/6ad99074fc75d564ac8a";
+  IO_OAUTH_COLLECTION = "";
+  IO_JWT_COLLECTION = "https://www.getpostman.com/collections/6ad99074fc75d564ac8a";
   IMPORT_COLLECTION = "https://www.getpostman.com/collections/2f3dc4c81eb464c21693";
   DELETE_PROPS = "https://www.getpostman.com/collections/357a7d9bea644bfc5b46";
   EXPORT_COLLECTION = "https://www.getpostman.com/collections/55520565b0f9933b5cf8";
@@ -30,7 +34,7 @@ if (debug.enabled("collections")) {
 //Mac: DEBUG=newman:cli aep-tag-tool....
 //WIN: set DEBUG=newman:cli & aep-tag-tool....
 if (debug.enabled("newman:cli")) {
-  REPORTERS = ["cli", "junit", "html"];
+  REPORTERS = ["cli", "junit"];
 }
 
 let TIMESTAMP = formatDateTime();
@@ -68,15 +72,15 @@ function exportTag(env, pid, exportDir, callback) {
     .catch(err => callback(err, null));
 }
 
-function importTag(env, importObj, actions, pid, globals) {
+function importTag(env, importObj, actions, globals) {
   return new Promise(function(resolve, reject) {
     authenicateAIO(env)
       .then(function(resultEnv){ //Add propID if importing to an existing property
         return new Promise(function (resolve,reject){
           if(!actions) actions = getImportActions(); //TODO verify it works
           if(actions[0] != "C"){
-            if(pid){
-              let env = launch.setEnvironmentValue(resultEnv, "propID", pid);
+            if(importObj.propID){
+              let env = launch.setEnvironmentValue(resultEnv, "propID", importObj.propID);
               if(env) resolve(env);
               else reject(new Error("Cannot update environment"));
             } else {
@@ -140,9 +144,23 @@ function deleteTags(env, searchStr, callback) {
 
 // Runs the Adobe IO Token collection
 function authenicateAIO(environment) {
+  let auth_method;
+  for(let i = 0; i < environment.values.length; i++){
+    if(environment.values[i].key == "AUTH_METHOD"){
+      auth_method = environment.values[i].value;
+      i = environment.values.length;
+    }
+  }
+
+  let auth_collection;
+  if(auth_method == launch.auth.oauth){
+    auth_collection = IO_OAUTH_COLLECTION;
+  } else if(auth_method == launch.auth.jwt){
+    auth_collection = IO_JWT_COLLECTION;
+  }
   return newmanRun("auth", 
     environment, "", 
-    IO_COLLECTION, "", 
+    auth_collection, "", 
     "", "");
 }
 

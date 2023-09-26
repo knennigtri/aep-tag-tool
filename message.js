@@ -5,6 +5,7 @@ const launch = require("./launch.js");
 
 const HELP_config = "-c, --config <myconfig.yml>         Specify a config file";
 const HELP_F =      "-f, --file   <file>                 [import] file containing import json";
+const HELP_T =      "-t, --title  <title>                [import] optional new title of tag property";
 const HELP_P =      "-p, --pid    <pid>                  [export, import] property ID";
 const HELP_S =      "-s, --search <str>                  [delete] search string for properties deletion";
 const HELP_O =      "-o, --output <folder>               [export] folder path to save export property. Default ./";
@@ -21,11 +22,13 @@ const HELP =
     ` + HELP_delete + `
     ` + HELP_CEDRLP + `
     ` + HELP_F + `
+    ` + HELP_T + `
     ` + HELP_P + `
     ` + HELP_S + `
     ` + HELP_O + `
     -g  <postman_globals.json>          Not supported currently
     -v, --version                       Displays version of this package
+    --jwt                               Use if using JWT Auth. Deprecated by Adobe. Default is OAuth.
     -h, --help
                config
                export 
@@ -33,7 +36,19 @@ const HELP =
                delete
                debug`;
 const CONFIGFILE_EXAMPLE = 
- `Dowload the jwt.json from an Adobe IO Project and add PRIVATE_KEY:
+ `In your Adobe IO Project under Credentials click the "Download JSON" button
+ For OAuth credentials, make sure the JSON contains at least:
+ {
+  "ORG_ID": "xxxxxxxxxxxxxxxxxxxxx@AdobeOrg",
+  "CLIENT_SECRETS": [ "xxxxxxxxxxxxxxxxxxxxx" ],
+  "CLIENT_ID": "xxxxxxxxxxxxxxxxxxxxx",
+  "SCOPES": [
+    "xxxxxxxxx",
+    "xxxxxxxxx",
+    "xxxxxxxxx"
+  ]
+}
+ For JWT credentials, download the private key add PRIVATE_KEY:
 {
   "CLIENT_SECRET": "xxxxxxxxxxxxxxxxxxx",
   "ORG_ID": "xxxxxxxxxxxxxxxxxxx@AdobeOrg",
@@ -50,35 +65,16 @@ Alternatively:
 Create a myconfig.yml and optionally add an import section to import all listed properties with import mode
 ---
 auth:
-  API_KEY: xxxxxxxxxxxxxxxxxxx
+  CLIENT_ID: xxxxxxxxxxxxxxxxxxx
   CLIENT_SECRET: xxxxxxxxxxxxxxxxxxx
   ORG_ID: xxxxxxxxxxxxxxxxxxx@AdobeOrg
-  TECHNICAL_ACCOUNT_ID: xxxxxxxxxxxxxxxxxxx@techacct.adobe.com
-  PRIVATE_KEY: location/of/private.key
+  SCOPES: [xxxxx, xxxxxx, xxxxx]
 import:
   ./propertyOne.json: 
   ./propertyTwo.json: Pxxxxxxxxxxxxxxxxxxx
   ./propertyThree.json:
 ---
 `;
-const CREATE_PROPERTYFILE = `
-Create myPropertyFile.json
- 
- Option 1: Create the tag property file using the export command:
-   >  `+ packageInfo.name.replace("@knennigtri/", "") + ` -c <configFile> --export <pid>
- 
- Option 2: Manually create with Launch API responses:
- {
-  "propName": "name of property",
-  "extensions": "./fileOfExtension.json",
-  "dataElements": "./fileOfDataElements.json",
-  "rules": {
-   "rule name one": "./fileOfRule1Components.json",
-   "rule name two": "./fileOfRule2Components.json",
-   "rule name three": "./fileOfRule3Compponents.json"
-  }
- }
- `;
 const HELP_EXPORT =
 `Mode: Export
 Requires:
@@ -99,6 +95,7 @@ Requires:
 
 Optionally include the property file with a parameter
  ` + HELP_F + `
+ ` + HELP_T + `
  ` + HELP_P + `
 Note: PID is ignored unless importing to an existing property (-C is omited)
 
@@ -112,7 +109,11 @@ If -C is not used with the remaining parameters, a PID is required in parameters
   -R  Imports rule components. propertyFile.rules.[rules] is required.
   -L  Builds a library of all items the Dev environment
   -P  Publishes the library into Prod
-  ` +CREATE_PROPERTYFILE;
+
+Create the tag property file using the export command:
+   >  
+   ` + packageInfo.name.replace("@knennigtri/", "") + ` -c <configFile> --export <pid>
+   `;
 const HELP_DELETE =
 `Mode: Delete
 Requires:
@@ -153,7 +154,6 @@ const HELP_DEBUG =
 
 exports.HELP = HELP;
 exports.CONFIGFILE_EXAMPLE = CONFIGFILE_EXAMPLE;
-exports.CREATE_PROPERTYFILE = CREATE_PROPERTYFILE;
 exports.HELP_EXPORT = HELP_EXPORT;
 exports.HELP_IMPORT = HELP_IMPORT;
 exports.HELP_DELETE = HELP_DELETE;

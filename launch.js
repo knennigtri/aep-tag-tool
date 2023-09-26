@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const yaml = require("js-yaml");
+//https://www.npmjs.com/package/debug
+//Mac: DEBUG=* aep-tag-tool....
+//WIN: set DEBUG=* & aep-tag-tool....
 const debugProperty = require("debug")("property");
 const debugJSON = require("debug")("json");
 const debugConfig = require("debug")("config");
@@ -9,10 +12,23 @@ exports.debugOptions = {
   "property": "messages related to the property file",
   "config": "Messages related to config file"
 };
+const auth = {
+  jwt: "jwt",
+  oauth: "oauth"
+};
 const POSTMAN_ENV = require("./postman/aep-tag-tool.postman_environment.json");
 
-// Returns a Postman Environment json with the correct variables for authentication
-function createAuthObjFromConfig(file){
+function createPostmanEnvObjFromConfig(file, authMethod){
+  if(authMethod == auth.oauth){
+    return createOAuthPostmanEnvObjFromConfig(file, auth.oauth);
+  } if(authMethod == auth.jwt) {
+    return createJWTPostmanEnvObjFromConfig(file, auth.jwt);
+  }
+  return "";
+}
+
+// Returns a Postman Environment json with the correct variables for OAuth
+function createOAuthPostmanEnvObjFromConfig(file){
   let fileContentsAndWorkingDir = createFileObj(file);
   let fileContentsJSON = getJSONSync(fileContentsAndWorkingDir.contents);
   if(!fileContentsJSON) return;
@@ -22,11 +38,44 @@ function createAuthObjFromConfig(file){
 
   console.log("Looking for auth values in config file...");
   let foundValues = {};
-  foundValues.API_KEY = findNestedObj(fileContentsJSON,"API_KEY") || findNestedObj(fileContentsJSON,"CLIENT_ID");
+  foundValues.CLIENT_ID = findNestedObj(fileContentsJSON,"API_KEY") || findNestedObj(fileContentsJSON,"CLIENT_ID");
+  foundValues.CLIENT_SECRETS = findNestedObj(fileContentsJSON,"CLIENT_SECRETS");
+  foundValues.ORG_ID = findNestedObj(fileContentsJSON,"ORG_ID") || findNestedObj(fileContentsJSON,"IMS_ORG_ID");
+  foundValues.SCOPES = findNestedObj(fileContentsJSON,"SCOPES");
+  foundValues.AUTH_METHOD = auth.oauth;
+  
+  for(let key in foundValues){
+    if(foundValues[key]){
+      let foundValue = foundValues[key];
+      postmanObj = setPostmanEnvironmentValue(postmanObj, key, foundValue);
+      debugConfig(key + " set.");
+      authParamCount++;
+    } else console.error("Could not find " + key);
+  }
+  //Verify that all 5 foundValues above are set
+  if(authParamCount == 5){
+    debugConfig(postmanObj);
+    return postmanObj;
+  }
+}
+
+// Returns a Postman Environment json with the correct variables for JWT
+function createJWTPostmanEnvObjFromConfig(file){
+  let fileContentsAndWorkingDir = createFileObj(file);
+  let fileContentsJSON = getJSONSync(fileContentsAndWorkingDir.contents);
+  if(!fileContentsJSON) return;
+
+  let postmanObj = POSTMAN_ENV;
+  let authParamCount = 0; // counter to make sure all auth params are set
+
+  console.log("Looking for auth values in config file...");
+  let foundValues = {};
+  foundValues.CLIENT_ID = findNestedObj(fileContentsJSON,"API_KEY") || findNestedObj(fileContentsJSON,"CLIENT_ID");
   foundValues.CLIENT_SECRET = findNestedObj(fileContentsJSON,"CLIENT_SECRET");
   foundValues.ORG_ID = findNestedObj(fileContentsJSON,"ORG_ID") || findNestedObj(fileContentsJSON,"IMS_ORG_ID");
   foundValues.TECHNICAL_ACCOUNT_ID = findNestedObj(fileContentsJSON,"TECHNICAL_ACCOUNT_ID") || findNestedObj(fileContentsJSON,"IMS_ORG_ID");
   foundValues.PRIVATE_KEY = findNestedObj(fileContentsJSON,"PRIVATE_KEY");
+  foundValues.AUTH_METHOD = auth.jwt;
   
   for(let key in foundValues){
     if(foundValues[key]){
@@ -37,8 +86,8 @@ function createAuthObjFromConfig(file){
       authParamCount++;
     } else console.error("Could not find " + key);
   }
-  //Verify that all 5 auth params have been found and set
-  if(authParamCount == 5){
+  //Verify that all 6 foundValues above are set
+  if(authParamCount == 6){
     debugConfig(postmanObj);
     return postmanObj;
   }
@@ -133,7 +182,7 @@ function findNestedObj(entireObj, keyToFind) {
   return foundValue;
 }
 
-//Helper method to either return the absPath or the contents of the file
+//Helper method to either return the absPath or the contents of the config file
 function resolveFileWithContents(val, workingDir, extractContents) {
   if(typeof val == "string"){
     let contents = path.resolve(workingDir,val);
@@ -174,7 +223,7 @@ function setPostmanEnvironmentValue(envObj, key, value){
   return null;
 }
 
-//helper method to get the file contents and working directory of the file
+//helper method to get the file contents and working directory of the config file
 // {
 //   contents: <contents of file>
 //   workingDir: <dir of file>
@@ -199,7 +248,8 @@ function createFileObj(file){
   return obj;
 }
 
+exports.createAuthObjSync = createPostmanEnvObjFromConfig;
 exports.setEnvironmentValue = setPostmanEnvironmentValue;
-exports.createAuthObjSync = createAuthObjFromConfig;
 exports.createLaunchObjSync = getWebPropertyFromFile;
 exports.getPropertiesFromConfig = getWebPropertiesFromConfig;
+exports.auth = auth;

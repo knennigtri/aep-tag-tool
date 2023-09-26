@@ -44,7 +44,7 @@
 					},
 					{
 						"key": "x-api-key",
-						"value": "{{API_KEY}}",
+						"value": "{{CLIENT_ID}}",
 						"type": "text"
 					},
 					{
@@ -125,7 +125,7 @@
 					},
 					{
 						"key": "x-api-key",
-						"value": "{{API_KEY}}",
+						"value": "{{CLIENT_ID}}",
 						"type": "text"
 					},
 					{
@@ -217,7 +217,7 @@
 					},
 					{
 						"key": "x-api-key",
-						"value": "{{API_KEY}}",
+						"value": "{{CLIENT_ID}}",
 						"type": "text"
 					},
 					{

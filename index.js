@@ -4,6 +4,8 @@ const packageInfo = require("./package.json");
 const minimist = require("minimist");
 const args = minimist(process.argv.slice(2));
 //https://www.npmjs.com/package/debug
+//Mac: DEBUG=* aep-tag-tool....
+//WIN: set DEBUG=* & aep-tag-tool....
 const debug = require("debug");
 const debugDryRun = require("debug")("dryrun");
 const debugArgs = require("debug")("args");
@@ -19,13 +21,16 @@ const modes = {
   import: "import",
   delete: "delete"
 };
-
-function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchStrParam){
+//TODO reimplement as a JSON input
+function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchStrParam, titleParam, authMethod){
   let mode = "";
-  if(modeParam && modeParam.toLowerCase() == modes.export ||  args.export || args.e) mode = modes.export;
-  if(modeParam && modeParam.toLowerCase() == modes.import ||  args.import || args.i) mode = modes.import;
-  if(modeParam && modeParam.toLowerCase() == modes.delete ||  args.delete || args.d) mode = modes.delete;
+  if(modeParam?.toLowerCase() == modes.export ||  args.export || args.e) mode = modes.export;
+  if(modeParam?.toLowerCase() == modes.import ||  args.import || args.i) mode = modes.import;
+  if(modeParam?.toLowerCase() == modes.delete ||  args.delete || args.d) mode = modes.delete;
   let argsEnv = envParam || args.config || args.c;
+  let argsAuth = authMethod?.toLowerCase() || launch.auth.oauth; //default is oauth
+  if(args.jwt) argsAuth = launch.auth.jwt;
+  if(args.oauth) argsAuth = launch.auth.oauth;
   
   const argsVersion = args.v || args.version;
   const argsHelp =  args.h || args.help;
@@ -65,7 +70,7 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
   // aep-tag-tool -c ./myCSV.csv --delete "2023"
 
   //create AuthObj from config.yml
-  let authObj = launch.createAuthObjSync(argsEnv);
+  let authObj = launch.createAuthObjSync(argsEnv, argsAuth);
   debugDryRun(JSON.stringify(authObj, null, 2));
   if(!authObj) {
     console.log("Authentication not properly configured. Make sure your config file has the required Auth values.");
@@ -101,7 +106,8 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
       });
     }
   } else if(mode == modes.import){  //IMPORT
-    const importPID = pidParam || args.pid || args.p || "";
+    let importPID = pidParam || args.pid || args.p || "";
+    let importTitle = titleParam || args.title || args.t || "";
 
     //importFile. --file, -f first priority, --import, -i second priority
     let propertiesFile = dataParam || args.file || args.f || args.import || args.i;
@@ -117,10 +123,15 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
       return;
       // }
     } else {
-      propsToImport[propertiesFile] = importPID;
+      //single property to import
+      let propertyObj = launch.createLaunchObjSync(propertiesFile);
+      propertyObj.propertyName = importTitle;
+      propertyObj.propID = importPID;
+      propsToImport[propertiesFile] = propertyObj;
     }
     
-    debugDryRun(JSON.stringify(propsToImport,null,2));
+    debugDryRun(propsToImport);
+    
     recursiveImport(authObj, propsToImport);
     
   } else if(mode == modes.delete){ //DELETE
@@ -151,37 +162,33 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
 }
 
 //TODO Recursively importing files results in messages being mixed. Need to review before enabling.
-function recursiveImport(authObj, propertyFilesToImport){
+function recursiveImport(authObj, propertyObjsToImport){
   //Grab the first file and remove it from propertyFilesToImport
-  let nextPropertyFile = Object.keys(propertyFilesToImport)[0];
-  let nextPID = propertyFilesToImport[nextPropertyFile];
-  delete propertyFilesToImport[nextPropertyFile];
-  
-  if(nextPropertyFile) { 
-    console.log("Importing: " + nextPropertyFile);
+  let propertyFile = Object.keys(propertyObjsToImport)[0];
+  let propertyObj = Object.values(propertyObjsToImport)[0];
+  delete propertyObjsToImport[propertyFile];
 
-    let propertyObj = launch.createLaunchObjSync(nextPropertyFile);    
-    if(!propertyObj){
-      console.log("Cannot parse or it DNE: " + nextPropertyFile);
+  if(propertyFile) { 
+    console.log("Importing: " + propertyFile);
+    if(!propertyFile){
+      console.log("Cannot parse or it DNE: " + propertyFile);
       console.log("Skipping...");
     } else { 
       let actions = newman.getImportActions(args.C, args.E, args.D, args.R, args.L, args.P);
-      if(!actions.includes("C") && !nextPID){
+      if(!actions.includes("C")){
         console.log("A PID (-p) is required when importing without creating a new property");
         console.log("Skipping..");
       } else {
         if(debug.enabled("dryrun")){
-          // var f2 = function (k, v) { return k && v && typeof v !== "number" ? "" + v : v; };
-          debugDryRun("Importing: " + nextPropertyFile);
-          // debugDryRun(JSON.stringify(propertyObj, f2, 2));
-          debugDryRun("PID: " + nextPID);
-          debugDryRun("Actions: " + actions);
-          debugDryRun("Auth: " + authObj);
-          return recursiveImport(authObj, propertyFilesToImport);
+          debugDryRun("Importing: " + propertyFile + "\n" +
+            "PID: " + propertyObj.propID + "\n" +
+            "Actions: " + actions + "\n" +
+            "Auth: " + authObj);
+          return recursiveImport(authObj, propertyObjsToImport);
         } else {
           //TODO decide on global inclusion
-          return newman.importTag(authObj, propertyObj, actions, nextPID, "")
-            .then(() => recursiveImport(authObj, propertyFilesToImport));
+          return newman.importTag(authObj, propertyObj, actions, "")
+            .then(() => recursiveImport(authObj, propertyObjsToImport));
         }
       }
     }
