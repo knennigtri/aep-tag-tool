@@ -14,7 +14,7 @@ exports.debugOptions = {
   "newman:cli": "Newman cli output for verbose messaging of collections"
 };
 
-let REPORTERS = ["emojitrain", "junit", "html"];
+let REPORTERS = ["emojitrain", "junit"];
 let IO_OAUTH_COLLECTION = require("./postman/Adobe IO Token OAuth.postman_collection.json");
 let IO_JWT_COLLECTION = require("./postman/Adobe IO Token.postman_collection.json");
 let EXPORT_COLLECTION = require("./postman/Export Tag Property.postman_collection.json");
@@ -34,7 +34,7 @@ if (debug.enabled("collections")) {
 //Mac: DEBUG=newman:cli aep-tag-tool....
 //WIN: set DEBUG=newman:cli & aep-tag-tool....
 if (debug.enabled("newman:cli")) {
-  REPORTERS = ["cli", "junit", "html"];
+  REPORTERS = ["cli", "junit"];
 }
 
 let TIMESTAMP = formatDateTime();
