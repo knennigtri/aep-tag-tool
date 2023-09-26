@@ -15,14 +15,14 @@ exports.debugOptions = {
 const auth = {
   jwt: "jwt",
   oauth: "oauth"
-}
+};
 const POSTMAN_ENV = require("./postman/aep-tag-tool.postman_environment.json");
 
 function createPostmanEnvObjFromConfig(file, authMethod){
   if(authMethod == auth.oauth){
-    return createOAuthPostmanEnvObjFromConfig(file, auth.oauth)
+    return createOAuthPostmanEnvObjFromConfig(file, auth.oauth);
   } if(authMethod == auth.jwt) {
-    return createJWTPostmanEnvObjFromConfig(file, auth.jwt)
+    return createJWTPostmanEnvObjFromConfig(file, auth.jwt);
   }
   return "";
 }
@@ -41,7 +41,7 @@ function createOAuthPostmanEnvObjFromConfig(file){
   foundValues.CLIENT_ID = findNestedObj(fileContentsJSON,"API_KEY") || findNestedObj(fileContentsJSON,"CLIENT_ID");
   foundValues.CLIENT_SECRETS = findNestedObj(fileContentsJSON,"CLIENT_SECRETS");
   foundValues.ORG_ID = findNestedObj(fileContentsJSON,"ORG_ID") || findNestedObj(fileContentsJSON,"IMS_ORG_ID");
-  foundValues.SCOPES = findNestedObj(fileContentsJSON,"SCOPES")
+  foundValues.SCOPES = findNestedObj(fileContentsJSON,"SCOPES");
   foundValues.AUTH_METHOD = auth.oauth;
   
   for(let key in foundValues){

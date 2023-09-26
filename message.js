@@ -111,7 +111,9 @@ If -C is not used with the remaining parameters, a PID is required in parameters
   -P  Publishes the library into Prod
 
 Create the tag property file using the export command:
-   >  `+ packageInfo.name.replace("@knennigtri/", "") + ` -c <configFile> --export <pid>`;
+   >  
+   ` + packageInfo.name.replace("@knennigtri/", "") + ` -c <configFile> --export <pid>
+   `;
 const HELP_DELETE =
 `Mode: Delete
 Requires:

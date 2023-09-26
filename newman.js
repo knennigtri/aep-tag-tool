@@ -24,7 +24,7 @@ let DELETE_PROPS = require("./postman/Delete Properties.postman_collection.json"
 //Development commands
 if (debug.enabled("collections")) {
   debugCollections("Using Postman Collections");
-  IO_OAUTH_COLLECTION = ""
+  IO_OAUTH_COLLECTION = "";
   IO_JWT_COLLECTION = "https://www.getpostman.com/collections/6ad99074fc75d564ac8a";
   IMPORT_COLLECTION = "https://www.getpostman.com/collections/2f3dc4c81eb464c21693";
   DELETE_PROPS = "https://www.getpostman.com/collections/357a7d9bea644bfc5b46";
@@ -147,7 +147,7 @@ function authenicateAIO(environment) {
   let auth_method;
   for(let i = 0; i < environment.values.length; i++){
     if(environment.values[i].key == "AUTH_METHOD"){
-      auth_method = environment.values[i].value
+      auth_method = environment.values[i].value;
       i = environment.values.length;
     }
   }
