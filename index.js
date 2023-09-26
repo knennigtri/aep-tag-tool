@@ -132,7 +132,7 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
     
     debugDryRun(propsToImport);
     
-    recursiveImport(authObj, propsToImport, importTitle);
+    recursiveImport(authObj, propsToImport);
     
   } else if(mode == modes.delete){ //DELETE
     //searchStr. --search, -s first priority, --delete, -d second priority
@@ -164,13 +164,13 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
 //TODO Recursively importing files results in messages being mixed. Need to review before enabling.
 function recursiveImport(authObj, propertyObjsToImport){
   //Grab the first file and remove it from propertyFilesToImport
-  let propertyObj = Object.keys(propertyObjsToImport)[0];
-  let propertyFile = Object.values(propertyObjsToImport)[0]
+  let propertyFile = Object.keys(propertyObjsToImport)[0];
+  let propertyObj = Object.values(propertyObjsToImport)[0];
   delete propertyObjsToImport[propertyFile];
-  
-  if(propertyObj) { 
-    console.log("Importing: " + propertyObj);
-    if(!propertyObj){
+
+  if(propertyFile) { 
+    console.log("Importing: " + propertyFile);
+    if(!propertyFile){
       console.log("Cannot parse or it DNE: " + propertyFile);
       console.log("Skipping...");
     } else { 
@@ -180,12 +180,10 @@ function recursiveImport(authObj, propertyObjsToImport){
         console.log("Skipping..");
       } else {
         if(debug.enabled("dryrun")){
-          // var f2 = function (k, v) { return k && v && typeof v !== "number" ? "" + v : v; };
-          debugDryRun("Importing: " + propertyObj);
-          // debugDryRun(JSON.stringify(propertyObj, f2, 2));
-          debugDryRun("PID: " + propertyObj.propID);
-          debugDryRun("Actions: " + actions);
-          debugDryRun("Auth: " + authObj);
+          debugDryRun("Importing: " + propertyFile + "\n" +
+            "PID: " + propertyObj.propID + "\n" +
+            "Actions: " + actions + "\n" +
+            "Auth: " + authObj);
           return recursiveImport(authObj, propertyObjsToImport);
         } else {
           //TODO decide on global inclusion
