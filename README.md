@@ -195,7 +195,7 @@ If `-C` is not used with the remaining parameters, a PID is required in paramete
 
   `-R`  Imports rule components. `propertyFile.rules.[rules]` is required.
   
-  `-L`  Builds a library of all items the Dev environment
+  `-L`  Builds a library of all items into the Dev environment
   
   `-P`  Publishes the library into Prod
 
@@ -204,12 +204,12 @@ If `-C` is not used with the remaining parameters, a PID is required in paramete
 1. Export the desired property as specified above
 2. In the new Organization, create an Adobe IO project with the Launch API
    1. download the OAuth JSON
-3. The command below will only import Extensions (-E), Data Elements (-D) and Rules (-R) from the origPropertyExport.json
+3. The command below will only import (E)xtensions, (D)ata Elements and (R)ules from the origPropertyExport.json and build a (L)ibrary into the Dev Environment:
 ```
- aep-tag-tool -c newOrg-oauth-config.json --import origPropertyExport.json -EDR
+ aep-tag-tool -c newOrg-oauth-config.json --import origPropertyExport.json -EDRL
 ```
-4. Manually update any values unique to the Adobe org. Typically in the Extension values.
-5. Verify the import and build and deploy a new Library
+1. Manually update any values unique to the Adobe org. Typically in the Extension values.
+2. Verify the import and build and deploy a new Library
 
 ## Delete tag properties that contain a specific string
 Quickly delete web properties that might have been created with this tool. Delete mode allows you to search for web properties in an Adobe organization based on a search string. If any web properties contain the search string, they are deleted. This is particularly useful if you are developing your own property to import/export since all properties end with a timestamp. Searching (-s) for `2022-10-25` would delete `MyProperty 2022-10-25T20:57:42.049Z`, `MyProperty 2022-10-25T21:57:42.049Z`, and `MyProperty 2022-10-25T20:58:42.049Z`.
