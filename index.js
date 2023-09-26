@@ -20,12 +20,16 @@ const modes = {
   delete: "delete"
 };
 
-function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchStrParam){
+function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchStrParam, authMethod){
   let mode = "";
-  if(modeParam && modeParam.toLowerCase() == modes.export ||  args.export || args.e) mode = modes.export;
-  if(modeParam && modeParam.toLowerCase() == modes.import ||  args.import || args.i) mode = modes.import;
-  if(modeParam && modeParam.toLowerCase() == modes.delete ||  args.delete || args.d) mode = modes.delete;
+  if(modeParam?.toLowerCase() == modes.export ||  args.export || args.e) mode = modes.export;
+  if(modeParam?.toLowerCase() == modes.import ||  args.import || args.i) mode = modes.import;
+  if(modeParam?.toLowerCase() == modes.delete ||  args.delete || args.d) mode = modes.delete;
   let argsEnv = envParam || args.config || args.c;
+  let argsAuth = authMethod?.toLowerCase() || launch.auth.oauth; //default is oauth
+  if(args.jwt) argsAuth = launch.auth.jwt;
+  if(args.oauth) argsAuth = launch.auth.oauth;
+  
   
   const argsVersion = args.v || args.version;
   const argsHelp =  args.h || args.help;
@@ -65,7 +69,7 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
   // aep-tag-tool -c ./myCSV.csv --delete "2023"
 
   //create AuthObj from config.yml
-  let authObj = launch.createAuthObjSync(argsEnv);
+  let authObj = launch.createAuthObjSync(argsEnv, argsAuth);
   debugDryRun(JSON.stringify(authObj, null, 2));
   if(!authObj) {
     console.log("Authentication not properly configured. Make sure your config file has the required Auth values.");

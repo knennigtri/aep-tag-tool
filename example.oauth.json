@@ -1,0 +1,12 @@
+{
+  "ORG_ID": "xxxxxxxxxxxxxxxxxxxxx@AdobeOrg",
+  "CLIENT_SECRETS": [ "xxxxxxxxxxxxxxxxxxxxx" ],
+  "CLIENT_ID": "xxxxxxxxxxxxxxxxxxxxx",
+  "SCOPES": [
+    "xxxxxxxxx",
+    "xxxxxxxxx",
+    "xxxxxxxxx"
+  ],
+  "TECHNICAL_ACCOUNT_ID": "xxxxxxxxxxxxxxxxxxxxx@techacct.adobe.com",
+  "TECHNICAL_ACCOUNT_EMAIL": "xxxxxxxxxxxxxxxxxxxxx@techacct.adobe.com"
+}
