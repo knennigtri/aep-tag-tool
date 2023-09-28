@@ -1,3 +1,4 @@
+const fs = require('fs')
 const newman = require("./newman.js");
 const pmEnv = require("./pmEnvironment.js");
 const importObjUtil = require("./importObjectUtil.js");
@@ -23,13 +24,13 @@ const modes = {
   delete: "delete"
 };
 
-function init(){
+async function init(){
   let mode = "";
   if(args.export || args.e) mode = modes.export;
   if(args.import || args.i) mode = modes.import;
   if(args.delete || args.d) mode = modes.delete;
   let argsEnv = args.config || args.c;
-  let argsAuth = authMethod?.toLowerCase() || pmEnv.auth.oauth; //default is oauth
+  let argsAuth = pmEnv.auth.oauth; //default is oauth
   if(args.jwt) argsAuth = pmEnv.auth.jwt;
   if(args.oauth) argsAuth = pmEnv.auth.oauth;
   
@@ -65,8 +66,7 @@ function init(){
     return;
   }
   
-  //TODO Allow for a config.csv which contains many config.yml files
-  // aep-tag-tool -c ./myCSV.csv --import
+  //TODO Allow for a config.csv which contains many oauth.json files
   // aep-tag-tool -c ./myCSV.csv --import ./myproperty.json
   // aep-tag-tool -c ./myCSV.csv --delete "2023"
 
@@ -107,33 +107,28 @@ function init(){
       });
     }
   } else if(mode == modes.import){  //IMPORT
+    let newSettings = args.settings;
     let importPID = args.pid || args.p || "";
     let importTitle = args.title || args.t;
 
     //importFile. --file, -f first priority, --import, -i second priority
     let propertiesFile = args.file || args.f || args.import || args.i;
-    let propsToImport = {};
+    let propertyObj = {};
     if(typeof propertiesFile == ("boolean" || "undefined")) {
-      //TODO Recursive imports turned off until working
-      // let configFileProperties = launch.getPropertiesFromConfig(argsEnv);
-      // if(configFileProperties) {
-      //   propsToImport = configFileProperties;
-      // } else {
-      console.log("Import mode must have at least 1 propertyFile. See -h import");
+      console.log("Import mode must have at valid property file. See -h import");
       console.log(message.HELP);
       return;
-      // }
     } else {
-      //single property to import
-      let propertyObj = importObjUtil.createLaunchObjSync(propertiesFile);
+      propertyObj = importObjUtil.createLaunchObjSync(propertiesFile);
       propertyObj.propertyName = importTitle || propertyObj.propertyName;
       propertyObj.propID = importPID;
-      propsToImport[propertiesFile] = propertyObj;
+      if(newSettings){
+        propertyObj = await importObjUtil.updateSettings(propertyObj, newSettings);
+        if(debug.enabled("dryrun")) fs.writeFileSync("./updatedTag.json", JSON.stringify(propertyObj, null, 2));
+      }
     }
-    
-    debugDryRun(propsToImport);
-    
-    recursiveImport(authObj, propsToImport);
+    debugDryRun(propertyObj);
+    importProperty(authObj, propertyObj)
     
   } else if(mode == modes.delete){ //DELETE
     //searchStr. --search, -s first priority, --delete, -d second priority
@@ -162,43 +157,29 @@ function init(){
   }
 }
 
-//TODO Recursively importing files results in messages being mixed. Need to review before enabling.
-function recursiveImport(authObj, propertyObjsToImport){
-  //Grab the first file and remove it from propertyFilesToImport
-  let propertyFile = Object.keys(propertyObjsToImport)[0];
-  let propertyObj = Object.values(propertyObjsToImport)[0];
-  delete propertyObjsToImport[propertyFile];
-
-  if(propertyFile) { 
-    console.log("Importing: " + propertyFile);
-    if(!propertyFile){
-      console.log("Cannot parse or it DNE: " + propertyFile);
-      console.log("Skipping...");
-    } else { 
-      let actions = newman.getImportActions(args.C, args.E, args.D, args.R, args.L, args.P);
-      if(!actions.includes("C")){
-        console.log("A PID (-p) is required when importing without creating a new property");
-        console.log("Skipping..");
+function importProperty(authObj, propertyObj){
+  if(propertyObj) { 
+    console.log("Importing: " + propertyObj.propertyName);
+    let actions = newman.getImportActions(args.C, args.E, args.D, args.R, args.L, args.P);
+    if(!actions.includes("C")){
+      console.log("A PID (-p) is required when importing without creating a new property");
+      console.log("Skipping..");
+    } else {
+      if(debug.enabled("dryrun")){
+        debugDryRun("Importing: " + propertyFile + "\n" +
+          "PID: " + propertyObj.propID + "\n" +
+          "Actions: " + actions + "\n" +
+          "Auth: " + authObj);
+        return;
       } else {
-        if(debug.enabled("dryrun")){
-          debugDryRun("Importing: " + propertyFile + "\n" +
-            "PID: " + propertyObj.propID + "\n" +
-            "Actions: " + actions + "\n" +
-            "Auth: " + authObj);
-          return recursiveImport(authObj, propertyObjsToImport);
-        } else {
-          //TODO decide on global inclusion
-          return newman.importTag(authObj, propertyObj, actions, "")
-            .then(() => recursiveImport(authObj, propertyObjsToImport));
-        }
+        return newman.importTag(authObj, propertyObj, actions, "");
       }
     }
   } else {
+    console.log("Import mode must have at valid property object. See -h import");
+    console.log(message.HELP);
     return;
-    // return Promise.resolve(nextPropertyFile);
   }
-
-
 }
 
 exports.run = init;
