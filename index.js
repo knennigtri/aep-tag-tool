@@ -1,5 +1,5 @@
 const newman = require("./newman.js");
-const launch = require("./launch.js");
+const pmEnv = require("./pmEnvironment.js");
 const packageInfo = require("./package.json");
 const minimist = require("minimist");
 const args = minimist(process.argv.slice(2));
@@ -28,9 +28,9 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
   if(modeParam?.toLowerCase() == modes.import ||  args.import || args.i) mode = modes.import;
   if(modeParam?.toLowerCase() == modes.delete ||  args.delete || args.d) mode = modes.delete;
   let argsEnv = envParam || args.config || args.c;
-  let argsAuth = authMethod?.toLowerCase() || launch.auth.oauth; //default is oauth
-  if(args.jwt) argsAuth = launch.auth.jwt;
-  if(args.oauth) argsAuth = launch.auth.oauth;
+  let argsAuth = authMethod?.toLowerCase() || pmEnv.auth.oauth; //default is oauth
+  if(args.jwt) argsAuth = pmEnv.auth.jwt;
+  if(args.oauth) argsAuth = pmEnv.auth.oauth;
   
   const argsVersion = args.v || args.version;
   const argsHelp =  args.h || args.help;
@@ -70,7 +70,7 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
   // aep-tag-tool -c ./myCSV.csv --delete "2023"
 
   //create AuthObj from config.yml
-  let authObj = launch.createAuthObjSync(argsEnv, argsAuth);
+  let authObj = pmEnv.createAuthObjSync(argsEnv, argsAuth);
   debugDryRun(JSON.stringify(authObj, null, 2));
   if(!authObj) {
     console.log("Authentication not properly configured. Make sure your config file has the required Auth values.");
@@ -107,7 +107,7 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
     }
   } else if(mode == modes.import){  //IMPORT
     let importPID = pidParam || args.pid || args.p || "";
-    let importTitle = titleParam || args.title || args.t || "";
+    let importTitle = titleParam || args.title || args.t;
 
     //importFile. --file, -f first priority, --import, -i second priority
     let propertiesFile = dataParam || args.file || args.f || args.import || args.i;
@@ -124,8 +124,8 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
       // }
     } else {
       //single property to import
-      let propertyObj = launch.createLaunchObjSync(propertiesFile);
-      propertyObj.propertyName = importTitle;
+      let propertyObj = pmEnv.createLaunchObjSync(propertiesFile);
+      propertyObj.propertyName = importTitle || propertyObj.propertyName;
       propertyObj.propID = importPID;
       propsToImport[propertiesFile] = propertyObj;
     }

@@ -1,7 +1,7 @@
 const packageInfo = require("./package.json");
 const index = require("./index.js");
 const newman = require("./newman.js");
-const launch = require("./launch.js");
+const pmEnv = require("./pmEnvironment.js");
 
 const HELP_config = "-c, --config <myconfig.yml>         Specify a config file";
 const HELP_F =      "-f, --file   <file>                 [import] file containing import json";
@@ -144,7 +144,7 @@ const HELP_DEBUG =
     .replaceAll(",","")
     .replaceAll("{\n","")
     .replaceAll("}","")
-  + JSON.stringify(launch.debugOptions, null, 2)
+  + JSON.stringify(pmEnv.debugOptions, null, 2)
     .replaceAll("\": ","     ")   
     .replaceAll("\"","")
     .replaceAll(",","")

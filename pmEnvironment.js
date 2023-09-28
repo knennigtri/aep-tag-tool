@@ -250,6 +250,7 @@ function createFileObj(file){
 
 exports.createAuthObjSync = createPostmanEnvObjFromConfig;
 exports.setEnvironmentValue = setPostmanEnvironmentValue;
+
 exports.createLaunchObjSync = getWebPropertyFromFile;
 exports.getPropertiesFromConfig = getWebPropertiesFromConfig;
 exports.auth = auth;

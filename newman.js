@@ -1,5 +1,5 @@
 const newman = require("newman");
-const launch = require("./launch.js");
+const pmEnv = require("./pmEnvironment.js");
 const fs = require("fs");
 //https://www.npmjs.com/package/debug
 //Mac: DEBUG=* aep-tag-tool....
@@ -80,7 +80,7 @@ function importTag(env, importObj, actions, globals) {
           if(!actions) actions = getImportActions(); //TODO verify it works
           if(actions[0] != "C"){
             if(importObj.propID){
-              let env = launch.setEnvironmentValue(resultEnv, "propID", importObj.propID);
+              let env = pmEnv.setEnvironmentValue(resultEnv, "propID", importObj.propID);
               if(env) resolve(env);
               else reject(new Error("Cannot update environment"));
             } else {
@@ -153,9 +153,9 @@ function authenicateAIO(environment) {
   }
 
   let auth_collection;
-  if(auth_method == launch.auth.oauth){
+  if(auth_method == pmEnv.auth.oauth){
     auth_collection = IO_OAUTH_COLLECTION;
-  } else if(auth_method == launch.auth.jwt){
+  } else if(auth_method == pmEnv.auth.jwt){
     auth_collection = IO_JWT_COLLECTION;
   }
   return newmanRun("auth", 
