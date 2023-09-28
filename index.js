@@ -1,5 +1,6 @@
 const newman = require("./newman.js");
 const pmEnv = require("./pmEnvironment.js");
+const importObjUtil = require("./importObjectUtil.js");
 const packageInfo = require("./package.json");
 const minimist = require("minimist");
 const args = minimist(process.argv.slice(2));
@@ -70,7 +71,7 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
   // aep-tag-tool -c ./myCSV.csv --delete "2023"
 
   //create AuthObj from config.yml
-  let authObj = pmEnv.createAuthObjSync(argsEnv, argsAuth);
+  let authObj = pmEnv.createAuthObj(argsEnv, argsAuth);
   debugDryRun(JSON.stringify(authObj, null, 2));
   if(!authObj) {
     console.log("Authentication not properly configured. Make sure your config file has the required Auth values.");
@@ -124,7 +125,7 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
       // }
     } else {
       //single property to import
-      let propertyObj = pmEnv.createLaunchObjSync(propertiesFile);
+      let propertyObj = importObjUtil.createLaunchObjSync(propertiesFile);
       propertyObj.propertyName = importTitle || propertyObj.propertyName;
       propertyObj.propID = importPID;
       propsToImport[propertiesFile] = propertyObj;
