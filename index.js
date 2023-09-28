@@ -22,13 +22,13 @@ const modes = {
   import: "import",
   delete: "delete"
 };
-//TODO reimplement as a JSON input
-function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchStrParam, titleParam, authMethod){
+
+function init(){
   let mode = "";
-  if(modeParam?.toLowerCase() == modes.export ||  args.export || args.e) mode = modes.export;
-  if(modeParam?.toLowerCase() == modes.import ||  args.import || args.i) mode = modes.import;
-  if(modeParam?.toLowerCase() == modes.delete ||  args.delete || args.d) mode = modes.delete;
-  let argsEnv = envParam || args.config || args.c;
+  if(args.export || args.e) mode = modes.export;
+  if(args.import || args.i) mode = modes.import;
+  if(args.delete || args.d) mode = modes.delete;
+  let argsEnv = args.config || args.c;
   let argsAuth = authMethod?.toLowerCase() || pmEnv.auth.oauth; //default is oauth
   if(args.jwt) argsAuth = pmEnv.auth.jwt;
   if(args.oauth) argsAuth = pmEnv.auth.oauth;
@@ -82,10 +82,10 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
   console.log("Running mode: " + mode);
   if(mode == modes.export){ //EXPORT
     //optionally change the working directory for export
-    const workingDir = workingDirParam || args.o || args.output;
+    const workingDir = args.o || args.output;
 
     //exportPID. --pid, -p first priority, --export, -e second priority
-    let exportPID = pidParam || args.pid || args.p || args.export || args.e;
+    let exportPID = args.pid || args.p || args.export || args.e;
     if(typeof exportPID == ("boolean" || "undefined")) {
       console.log("Export mode must have a property ID specified. See -h export");
       console.log(message.HELP);
@@ -107,11 +107,11 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
       });
     }
   } else if(mode == modes.import){  //IMPORT
-    let importPID = pidParam || args.pid || args.p || "";
-    let importTitle = titleParam || args.title || args.t;
+    let importPID = args.pid || args.p || "";
+    let importTitle = args.title || args.t;
 
     //importFile. --file, -f first priority, --import, -i second priority
-    let propertiesFile = dataParam || args.file || args.f || args.import || args.i;
+    let propertiesFile = args.file || args.f || args.import || args.i;
     let propsToImport = {};
     if(typeof propertiesFile == ("boolean" || "undefined")) {
       //TODO Recursive imports turned off until working
@@ -137,7 +137,7 @@ function init(envParam, modeParam, dataParam, pidParam, workingDirParam, searchS
     
   } else if(mode == modes.delete){ //DELETE
     //searchStr. --search, -s first priority, --delete, -d second priority
-    let searchStr = searchStrParam || args.search || args.s || args.delete || args.d;
+    let searchStr = args.search || args.s || args.delete || args.d;
     if(typeof searchStr == ("boolean" || "undefined")){
       console.log("Delete mode must have a search string specified. See -h delete");
       console.log(message.HELP);
