@@ -48,6 +48,7 @@ async function init(){
       if(argsHelp.toLowerCase() == "export") console.log(message.HELP_EXPORT);
       if(argsHelp.toLowerCase() == "import") console.log(message.HELP_IMPORT);
       if(argsHelp.toLowerCase() == "delete") console.log(message.HELP_DELETE);
+      if(argsHelp.toLowerCase() == "settings") console.log(message.HELP_SETTINGS);
       if(argsHelp.toLowerCase() == "debug") console.log(message.HELP_DEBUG);
     }
     return;
@@ -84,8 +85,7 @@ async function init(){
     //optionally change the working directory for export
     const workingDir = args.o || args.output;
 
-    //exportPID. --pid, -p first priority, --export, -e second priority
-    let exportPID = args.pid || args.p || args.export || args.e;
+    let exportPID = args.export || args.e;
     if(typeof exportPID == ("boolean" || "undefined")) {
       console.log("Export mode must have a property ID specified. See -h export");
       console.log(message.HELP);
@@ -107,12 +107,11 @@ async function init(){
       });
     }
   } else if(mode == modes.import){  //IMPORT
-    let newSettings = args.settings;
+    let newSettings = args.settings || args.s;
     let importPID = args.pid || args.p || "";
     let importTitle = args.title || args.t;
 
-    //importFile. --file, -f first priority, --import, -i second priority
-    let propertiesFile = args.file || args.f || args.import || args.i;
+    let propertiesFile = args.import || args.i;
     let propertyObj = {};
     if(typeof propertiesFile == ("boolean" || "undefined")) {
       console.log("Import mode must have at valid property file. See -h import");
@@ -131,8 +130,7 @@ async function init(){
     importProperty(authObj, propertyObj)
     
   } else if(mode == modes.delete){ //DELETE
-    //searchStr. --search, -s first priority, --delete, -d second priority
-    let searchStr = args.search || args.s || args.delete || args.d;
+    let searchStr = args.delete || args.d;
     if(typeof searchStr == ("boolean" || "undefined")){
       console.log("Delete mode must have a search string specified. See -h delete");
       console.log(message.HELP);

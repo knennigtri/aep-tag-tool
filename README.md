@@ -11,17 +11,20 @@ This is a project to automates postman collections using the [Reactor API](https
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Installation](#installation)
-- [Command Line Tool](#command-line-tool)
-- [Create config file for Authentication](#create-config-file-for-authentication)
-- [Usage](#usage)
-- [Export a Tag](#export-a-tag)
-- [Import a Tag](#import-a-tag)
-  - [CEDRLP params](#cedrlp-params)
-  - [Import into other Adobe Organizations](#import-into-other-adobe-organizations)
-- [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
-- [Using this tool without NPM](#using-this-tool-without-npm)
-  - [Postman files](#postman-files)
+- [AEP Tag Tool](#aep-tag-tool)
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Command Line Tool](#command-line-tool)
+  - [Create config file for Authentication](#create-config-file-for-authentication)
+  - [Usage](#usage)
+  - [Export a Tag](#export-a-tag)
+  - [Import a Tag](#import-a-tag)
+    - [CEDRLP params](#cedrlp-params)
+    - [Import into other Adobe Organizations](#import-into-other-adobe-organizations)
+      - [newSettings.yml](#newsettingsyml)
+  - [Delete tag properties that contain a specific string](#delete-tag-properties-that-contain-a-specific-string)
+  - [Using this tool without NPM](#using-this-tool-without-npm)
+    - [Postman files](#postman-files)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -42,6 +45,11 @@ Export a tag property:
 Import a tag property:
 ```bash
  aep-tag-tool -c auth-config.json --import tagPropertyData.json
+```
+
+Import a tag property into a different organization with unique organization values
+```bash
+ aep-tag-tool -c auth-config.json --import tagPropertyData.json --settings newSettings.yml
 ```
 
 Delete a tag properties that contain 2022 in the title
@@ -107,12 +115,10 @@ Usage: aep-tag-tool [ARGS]
     -i, --import <propertyFile.json>    Mode to import a property given a config file.
     -d, --delete <searchStr>            Mode to delete properties containing a specific string
     -C,-E,-D,-R,-L,-P                   [import] Options to partially import. See -h import
-    -f, --file   <file>                 [import] file containing import json
-    -t, --title  <title>                [import] optional new title of tag property;
-    -p, --pid    <pid>                  [export, import] property ID
-    -s, --search <str>                  [delete] search string for properties deletion
+    -t, --title  <title>                [import] optional new title of tag property
+    -p, --pid    <pid>                  [import] import into an existing property ID
+    -s, --settings  <settings.yml>      [import] unique property settings for a new org
     -o, --output <folder>               [export] folder path to save export property. Default ./
-    -g  <postman_globals.json>          Not supported currently
     -v, --version                       Displays version of this package
     --jwt                               Use if using JWT Auth. Deprecated by Adobe. Default is OAuth.
     -h, --help
@@ -120,6 +126,7 @@ Usage: aep-tag-tool [ARGS]
                export 
                import
                delete
+               settings
                debug
 ```
 ## Export a Tag
@@ -199,12 +206,70 @@ If `-C` is not used with the remaining parameters, a PID is required in paramete
 
 
 ### Import into other Adobe Organizations
+When importing into new organizations, some values may need to be changed in the import file. 
+You can create a settings.yml file to find/replace extension/dataElement settings key/value pairs
+in your tag property.
+
+To better understand how to build this yaml file, export a tag property first and investivate the structure of a extension or data element. An example export json might looks like:
+```
+{
+  "propID": "PR79571639d7bd48cba6f936ab611ced96",
+  "propertyName": "CS - Target, Analytics",
+  "extensions": [
+    {
+      "id": "EX068a1f9c2d124c8fb44abb5e519f7293",
+      "type": "extensions",
+      "attributes": {
+        "created_at": "2020-04-24T18:59:50.894Z",
+        "enabled": true,
+        "name": "adobe-analytics",
+        "published": true,
+        "delegate_descriptor_id": "adobe-analytics::extensionConfiguration::config",
+        "display_name": "Adobe Analytics",
+        "review_status": "unsubmitted",
+        "version": "1.8.5",
+        "settings": "{\"orgId\":\"123456@AdobeOrg\",\"libraryCode\":{\"type\":\"managed\",\"company\":\"XXXXX\",\"accounts\":{\"staging\":[\"XXXXXX\"],\"production\":[\"XXXXXXX\"],\"development\":[\"XXXXXXX\"]},\"scopeTrackerGlobally\":false},\"trackerProperties\":{\"currencyCode\":\"USD\",\"trackInlineStats\":true,\"trackDownloadLinks\":true,\"trackExternalLinks\":true,\"linkDownloadFileTypes\":}}"
+      }
+    },
+    ...
+  ]
+}
+```
+#### newSettings.yml
+When building the newSettings.yml file, it should be structured:
+level 1 - extensions | dataElements
+level 2 - attibutes.name based on the export json of the desired element
+level 3 - the key/value pair in the attributes.settings that you would like to replace
+
+Example newsettings.yml
+```
+---
+extensions:
+ adobe-mcid:
+  orgId: "123345@AdobeOrg"
+ adobe-target:
+  imsOrgId: "123345@AdobeOrg"
+  clientCode: "XXXXXXX"
+  serverDomain: "XXXX.tt.omtrdc.net"
+ adobe-analytics:
+  orgId: "123345@AdobeOrg"
+  company: "XXXXXXX"
+  staging: "reportSuiteXXXX"
+  production: "reportSuiteXXXX"
+  development: "reportSuiteXXXX"
+dataElements:
+ myDataEleement:
+  name: "valueXXXXXX"
+---
+```
+
+Optionally you can manually change the values in a new organization by:
 1. Export the desired property as specified above
 2. In the new Organization, create an Adobe IO project with the Launch API
    1. download the OAuth JSON
 3. The command below will only import (E)xtensions, (D)ata Elements and (R)ules from the origPropertyExport.json and build a (L)ibrary into the Dev Environment:
 ```
- aep-tag-tool -c newOrg-oauth-config.json --import origPropertyExport.json -EDRL
+ aep-tag-tool -c newOrg-oauth-config.json --import origPropertyExport.json -EDR
 ```
 1. Manually update any values unique to the Adobe org. Typically in the Extension values.
 2. Verify the import and build and deploy a new Library
