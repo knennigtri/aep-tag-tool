@@ -53,14 +53,14 @@ function exportTag(env, pid, exportDir, callback) {
     .then(function(resultEnv){
       let tagExport = {};
       tagExport.propID = pid;
-      tagExport.propertyName = getEnvironmentValue(resultEnv, "exportPropName");
-      tagExport.extensions = getEnvironmentValue(resultEnv, "exportExtensions");
-      tagExport.dataElements = getEnvironmentValue(resultEnv, "exportDataElements");
-      tagExport.ruleNames = getEnvironmentValue(resultEnv, "exportRules");
+      tagExport.propertyName = pmEnv.getEnvValue(resultEnv, "exportPropName");
+      tagExport.extensions = pmEnv.getEnvValue(resultEnv, "exportExtensions");
+      tagExport.dataElements = pmEnv.getEnvValue(resultEnv, "exportDataElements");
+      tagExport.ruleNames = pmEnv.getEnvValue(resultEnv, "exportRules");
       tagExport.rules = {};
       for (var element in tagExport.ruleNames) {
         let ruleName = tagExport.ruleNames[element].attributes.name;
-        tagExport.rules[ruleName] = getEnvironmentValue(resultEnv, "exportRuleCmps-" + element);
+        tagExport.rules[ruleName] = pmEnv.getEnvValue(resultEnv, "exportRuleCmps-" + element);
       }
       //Write to a file
       var propName = tagExport.propertyName.replace(/\s+/g, "-").toLowerCase();
@@ -80,7 +80,7 @@ function importTag(env, importObj, actions, globals) {
           if(!actions) actions = getImportActions(); //TODO verify it works
           if(actions[0] != "C"){
             if(importObj.propID){
-              let env = pmEnv.setEnvironmentValue(resultEnv, "propID", importObj.propID);
+              let env = pmEnv.setEnvValue(resultEnv, "propID", importObj.propID);
               if(env) resolve(env);
               else reject(new Error("Cannot update environment"));
             } else {
@@ -118,7 +118,7 @@ function recurseImportChain(environment, importItems, actions, globals){
       return publishLibraryToProd(environment, globals)
         .then((resultEnv) => recurseImportChain(resultEnv, "", actions, globals))
         .then(function (resultEnv){
-          let artifactURL = getEnvironmentValue(resultEnv, "prodArtifactURL");
+          let artifactURL = pmEnv.getEnvValue(resultEnv, "prodArtifactURL");
           console.log("Prod Library embed code: ");
           console.log("<script src='"+artifactURL+"' async></script>");
         });
@@ -291,16 +291,6 @@ function getImportActions(create, extensions, dataElements, rules, libraryToDev,
   }
   debugNewman(actions);
   return actions;
-}
-
-function getEnvironmentValue(envObj, key) {
-  let envVals = JSON.parse(JSON.stringify(envObj.values));
-  for (var element of envVals) {
-    if (element.key == key) {
-      return element.value;
-    }
-  }
-  return "";
 }
 
 exports.getImportActions = getImportActions;

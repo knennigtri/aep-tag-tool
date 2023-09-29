@@ -116,6 +116,17 @@ function setEnvValue(envObj, key, value){
   return null;
 }
 
+function getEnvValue(envObj, key) {
+  let envVals = JSON.parse(JSON.stringify(envObj.values));
+  for (var element of envVals) {
+    if (element.key == key) {
+      return element.value;
+    }
+  }
+  return "";
+}
+
 exports.createAuthObj = createEnvObjFromConfig;
-exports.setEnvironmentValue = setEnvValue;
+exports.setEnvValue = setEnvValue;
+exports.getEnvValue = getEnvValue;
 exports.auth = auth;
