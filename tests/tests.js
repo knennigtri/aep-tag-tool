@@ -1,7 +1,7 @@
 "use strict";
 // var tagTool = require("../index.js");
 const fs = require('fs').promises;
-var parser = require("../updateImportObject.js");
+var importObject = require("../importObjectUtil.js");
 var minimist = require("minimist");
 var args = minimist(process.argv.slice(3));
 const debug = require("debug");
@@ -10,11 +10,11 @@ const debugTests = debug("tests");
 //Tests parser.js
 async function test(){
   const file = await readJsonFile("tests/empty-ext-simple.json");
-  var obj = parser.addSettings(file,"tests/vlab-values.yml");
+  var obj = await importObject.updateSettings(file,"tests/vlab2-settings.yml");
 
   let newFile = "tests/updatedImportObj.json";
   await writeJsonFile(newFile, obj);
-  debugTests("Modified JSON data written to" + newFile);
+  debugTests("Modified JSON data written to " + newFile);
 };
 async function readJsonFile(importPath) {
   const data = await fs.readFile(importPath, 'utf8');
