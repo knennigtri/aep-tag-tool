@@ -68,7 +68,7 @@ function createJWTEnvObjFromConfig(file){
   foundValues.CLIENT_ID = parserUtil.findNestedObj(fileContentsJSON,"API_KEY") || parserUtil.findNestedObj(fileContentsJSON,"CLIENT_ID");
   foundValues.CLIENT_SECRET = parserUtil.findNestedObj(fileContentsJSON,"CLIENT_SECRET");
   foundValues.ORG_ID = parserUtil.findNestedObj(fileContentsJSON,"ORG_ID") || parserUtil.findNestedObj(fileContentsJSON,"IMS_ORG_ID");
-  foundValues.TECHNICAL_ACCOUNT_ID = parserUtil.findNestedObj(fileContentsJSON,"TECHNICAL_ACCOUNT_ID") || findNestedObj(fileContentsJSON,"IMS_ORG_ID");
+  foundValues.TECHNICAL_ACCOUNT_ID = parserUtil.findNestedObj(fileContentsJSON,"TECHNICAL_ACCOUNT_ID") || parserUtil.findNestedObj(fileContentsJSON,"IMS_ORG_ID");
   foundValues.PRIVATE_KEY = parserUtil.findNestedObj(fileContentsJSON,"PRIVATE_KEY");
   foundValues.AUTH_METHOD = auth.jwt;
   

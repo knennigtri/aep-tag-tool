@@ -1,9 +1,9 @@
 "use strict";
 // var tagTool = require("../index.js");
-const fs = require('fs').promises;
+const fs = require("fs").promises;
 var importObject = require("../importObjectUtil.js");
-var minimist = require("minimist");
-var args = minimist(process.argv.slice(3));
+// var minimist = require("minimist");
+// var args = minimist(process.argv.slice(3));
 const debug = require("debug");
 const debugTests = debug("tests");
 
@@ -15,9 +15,9 @@ async function test(){
   let newFile = "tests/updatedImportObj.json";
   await writeJsonFile(newFile, obj);
   debugTests("Modified JSON data written to " + newFile);
-};
+}
 async function readJsonFile(importPath) {
-  const data = await fs.readFile(importPath, 'utf8');
+  const data = await fs.readFile(importPath, "utf8");
   return JSON.parse(data);
 }
 async function writeJsonFile(importPath, data) {

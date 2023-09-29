@@ -2,9 +2,9 @@ const newman = require("./newman.js");
 const pmEnv = require("./pmEnvironment.js");
 const importObjUtil = require("./importObjectUtil.js");
 const packageInfo = require("./package.json");
-const fs = require('fs');
-const path = require("path");
-const csv = require('csv-parser');
+// const fs = require('fs');
+// const path = require("path");
+// const csv = require('csv-parser');
 const minimist = require("minimist");
 const args = minimist(process.argv.slice(2));
 //https://www.npmjs.com/package/debug
@@ -72,7 +72,7 @@ async function init(){
   //TODO Allow for a config.csv which contains many oauth.json files
   // aep-tag-tool -c ./myCSV.csv --import ./myproperty.json
   // aep-tag-tool -c ./myCSV.csv --delete "2023"
- /*
+  /*
   if(path.extname(argsEnv) == ".csv"){
   fs.createReadStream(argsEnv)
     .pipe(csv())
@@ -85,7 +85,7 @@ async function init(){
       console.log("DONE");
     });
   } else { */
-    await runTool(argsEnv, argsAuth, mode);
+  await runTool(argsEnv, argsAuth, mode);
   // }
 }
 
@@ -146,7 +146,7 @@ async function runTool(authConfig, authMethod, mode, settings){
         }
       }
       // debugDryRun(propertyObj);
-      await importProperty(authObj, propertyObj)
+      await importProperty(authObj, propertyObj);
       
     } else if(mode == modes.delete){ //DELETE
       let searchStr = args.delete || args.d;
@@ -173,7 +173,7 @@ async function runTool(authConfig, authMethod, mode, settings){
       console.log(message.HELP);
     }
   } catch (error) {
-    console.error('Error in runTool:', error);
+    console.error("Error in runTool:", error);
   }
 }
 
@@ -204,7 +204,7 @@ async function importProperty(authObj, propertyObj) {
       console.log("Import completed for: " + propertyObj.propertyName);
     }
   } catch (error) {
-    console.error('Error importing property:', error);
+    console.error("Error importing property:", error);
   }
 }
 
