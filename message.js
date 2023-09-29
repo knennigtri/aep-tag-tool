@@ -1,15 +1,14 @@
 const packageInfo = require("./package.json");
 const index = require("./index.js");
 const newman = require("./newman.js");
-const launch = require("./launch.js");
+const pmEnv = require("./pmEnvironment.js");
 
 const HELP_config = "-c, --config <myconfig.yml>         Specify a config file";
-const HELP_F =      "-f, --file   <file>                 [import] file containing import json";
 const HELP_T =      "-t, --title  <title>                [import] optional new title of tag property";
-const HELP_P =      "-p, --pid    <pid>                  [export, import] property ID";
-const HELP_S =      "-s, --search <str>                  [delete] search string for properties deletion";
-const HELP_O =      "-o, --output <folder>               [export] folder path to save export property. Default ./";
+const HELP_P =      "-p, --pid    <pid>                  [import] import into an existing property ID";
+const HELP_S =      "-s, --settings  <settings.yml>      [import] unique property settings for a new org";
 const HELP_CEDRLP = "-C,-E,-D,-R,-L,-P                   [import] Options to partially import. See -h import";
+const HELP_O =      "-o, --output <folder>               [export] folder path to save export property. Default ./";
 const HELP_export = "-e, --export <PID>                  Mode to export a given property ID.";
 const HELP_import = "-i, --import <propertyFile.json>    Mode to import a property given a config file.";
 const HELP_delete = "-d, --delete <searchStr>            Mode to delete properties containing a specific string";
@@ -21,12 +20,10 @@ const HELP =
     ` + HELP_import + `
     ` + HELP_delete + `
     ` + HELP_CEDRLP + `
-    ` + HELP_F + `
     ` + HELP_T + `
     ` + HELP_P + `
     ` + HELP_S + `
     ` + HELP_O + `
-    -g  <postman_globals.json>          Not supported currently
     -v, --version                       Displays version of this package
     --jwt                               Use if using JWT Auth. Deprecated by Adobe. Default is OAuth.
     -h, --help
@@ -34,6 +31,7 @@ const HELP =
                export 
                import
                delete
+               settings
                debug`;
 const CONFIGFILE_EXAMPLE = 
  `In your Adobe IO Project under Credentials click the "Download JSON" button
@@ -75,6 +73,31 @@ import:
   ./propertyThree.json:
 ---
 `;
+const HELP_SETTINGS = 
+`
+When importing into new organizations, some values may need to be changed in the import file. 
+This is a helper find/replace extension/dataElement settings key/value pairs
+to automate import with unique values.
+newsettings.yml
+---
+extensions:
+ adobe-mcid:
+  orgId: "123345@AdobeOrg"
+ adobe-target:
+  imsOrgId: "123345@AdobeOrg"
+  clientCode: "XXXXXXX"
+  serverDomain: "XXXX.tt.omtrdc.net"
+ adobe-analytics:
+  orgId: "123345@AdobeOrg"
+  company: "XXXXXXX"
+  staging: "reportSuiteXXXX"
+  production: "reportSuiteXXXX"
+  development: "reportSuiteXXXX"
+dataElements:
+ myDataEleement:
+  name: "valueXXXXXX"
+---
+`;
 const HELP_EXPORT =
 `Mode: Export
 Requires:
@@ -93,10 +116,10 @@ Requires:
  ` + HELP_config + `
  ` + HELP_import + `
 
-Optionally include the property file with a parameter
- ` + HELP_F + `
+Optional params:
  ` + HELP_T + `
  ` + HELP_P + `
+ ` + HELP_S + `
 Note: PID is ignored unless importing to an existing property (-C is omited)
 
 You can specify exactly what you want to create/import with these params. 
@@ -118,11 +141,8 @@ const HELP_DELETE =
 `Mode: Delete
 Requires:
  ` + HELP_config + `
- ` + HELP_delete + `
+ ` + HELP_delete;
 
-Optionally include the search string with a parameter
- ` + HELP_S + `
-    `;
 const HELP_DEBUG =
 `Debug options:
   Mac:
@@ -144,7 +164,7 @@ const HELP_DEBUG =
     .replaceAll(",","")
     .replaceAll("{\n","")
     .replaceAll("}","")
-  + JSON.stringify(launch.debugOptions, null, 2)
+  + JSON.stringify(pmEnv.debugOptions, null, 2)
     .replaceAll("\": ","     ")   
     .replaceAll("\"","")
     .replaceAll(",","")
@@ -157,4 +177,5 @@ exports.CONFIGFILE_EXAMPLE = CONFIGFILE_EXAMPLE;
 exports.HELP_EXPORT = HELP_EXPORT;
 exports.HELP_IMPORT = HELP_IMPORT;
 exports.HELP_DELETE = HELP_DELETE;
+exports.HELP_SETTINGS = HELP_SETTINGS;
 exports.HELP_DEBUG = HELP_DEBUG;

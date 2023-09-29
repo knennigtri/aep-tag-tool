@@ -1,7 +1,0 @@
----
-propertyName: ExL Tutorial
-extensions: exl-tutorial-exports/tutorial-extensions.json
-dataElements: exl-tutorial-exports/tutorial-data-elements.json
-rules:
- "[10] Target": exl-tutorial-exports/tutorial-rulecmp-target.json
----
