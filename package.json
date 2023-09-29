@@ -56,7 +56,6 @@
   },
   "license": "ISC",
   "dependencies": {
-    "csv-parser": "^3.0.0",
     "debug": "^4.3.4",
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.7",
