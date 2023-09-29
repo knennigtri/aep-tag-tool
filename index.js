@@ -72,6 +72,7 @@ async function init(){
   //TODO Allow for a config.csv which contains many oauth.json files
   // aep-tag-tool -c ./myCSV.csv --import ./myproperty.json
   // aep-tag-tool -c ./myCSV.csv --delete "2023"
+ /*
   if(path.extname(argsEnv) == ".csv"){
   fs.createReadStream(argsEnv)
     .pipe(csv())
@@ -83,9 +84,9 @@ async function init(){
       // All rows have been parsed, and data now contains objects with headers as keys
       console.log("DONE");
     });
-  } else {
+  } else { */
     await runTool(argsEnv, argsAuth, mode);
-  }
+  // }
 }
 
 async function runTool(authConfig, authMethod, mode, settings){
