@@ -13,44 +13,9 @@ exports.debugOptions = {
   "property": "messages related to the property file",
   "config": "Messages related to config file"
 };
-
-//Get any import properties from the config file
-function getWebPropertiesFromConfig(file){
-    let fileContents = parserUtil.getFileObj(file);
-    let workingDir = parserUtil.getWorkingDir(file);
-    let fileContentsJSON = parserUtil.getJSONSync(fileContents);
-  
-    console.log(fileContentsJSON);
-    let importsFound = findNestedObj(fileContentsJSON,"IMPORT");
-  
-    let properties = {};
-    if(typeof importsFound == "string"){ //parse the string of files into a JSON
-      importsFound = importsFound.split(" ");
-    }
-    if(Array.isArray(importsFound)){
-      for(let i in importsFound){
-        properties[importsFound[i]] = "";
-      }
-    } else properties = importsFound; //set the json
-  
-    //update any file paths absolute
-    if(properties) {
-      for(let str in properties){
-        let absStr = resolveFileWithContents(str,workingDir);
-        if(absStr != str){
-          properties[absStr] = properties[str];
-          delete properties[str];
-        }
-      }
-  
-      debugConfig(properties);
-      return(properties);
-    }
-    return "";
-  }
   
   //Create an web property import object from a file
-  function getWebPropertyFromFile(file){
+function getWebPropertyFromFile(file){
     debugConfig(getWebPropertyFromFile);
     let fileObj = parserUtil.getFileObj(file);
     let workingDir = parserUtil.getWorkingDir(file);
