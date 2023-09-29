@@ -9,7 +9,7 @@ const debugTests = debug("tests");
 
 //Tests parser.js
 async function test(){
-  const file = await readJsonFile("tests/empty-ext-simple.json");
+  const file = await readJsonFile("examples/luma-dev.json");
   var obj = await importObject.updateSettings(file,"tests/vlab2-settings.yml");
 
   let newFile = "tests/updatedImportObj.json";
