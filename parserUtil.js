@@ -2,13 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const yaml = require("js-yaml");
 const debug = require("debug");
-const debugJSON = debug("json");
-const debugReplace = debug("replace");
-const debugProperty = debug("property");
-const debugConfig = debug("config");
+const debugJSON = debug("parser:json");
+const debugReplace = debug("parser:replace");
+const debugVerbose = debug("parser:verbose");
 exports.debugOptions = {
-  "json": "Messages on JSON obj creation from files",
-  "replace": "Messages on key/value replacement"
+  "parser:json": "Messages on JSON obj creation from files",
+  "parser:replace": "Messages on key/value replacement",
+  "parser:verbose": ""
 };
 
 //Input yaml contents or JSON contents to return a valid JSON object
@@ -40,20 +40,20 @@ function replaceValueInJSON(jsonObject, keyToFind, newValue) {
   if (typeof jsonObject !== "object" || jsonObject === null) {
     return jsonObject;
   }
-
+  
   if (Array.isArray(jsonObject)) {
+    
     for (let i = 0; i < jsonObject.length; i++) {
       jsonObject[i] = replaceValueInJSON(jsonObject[i], keyToFind, newValue);
     }
   } else {
     for (const key in jsonObject) {
-      if (Object.prototype.hasOwnProperty.call(key)) {
-        if (key === keyToFind) {
-          debugReplace("Found key '" + keyToFind + "' with value '" + jsonObject[key] + "' and replacing with '" + newValue + "'");
-          jsonObject[key] = newValue;
-        } else {
-          jsonObject[key] = replaceValueInJSON(jsonObject[key], keyToFind, newValue);
-        }
+      debugReplace("replace: " + key);
+      if (key === keyToFind) {
+        debugReplace("Found key '" + keyToFind + "' with value '" + jsonObject[key] + "' and replacing with '" + newValue + "'");
+        jsonObject[key] = newValue;
+      } else {
+        jsonObject[key] = replaceValueInJSON(jsonObject[key], keyToFind, newValue);
       }
     }
   }
@@ -66,7 +66,6 @@ function replaceValueInJSON(jsonObject, keyToFind, newValue) {
 //   workingDir: <dir of file>
 // }
 function getFileObjAndWorkingDir(file){
-  debugProperty(getFileObjAndWorkingDir);
   let obj = {};
   if(typeof file == "string"){
     if(fs.lstatSync(file).isFile()){
@@ -99,7 +98,7 @@ function findNestedObj(entireObj, keyToFind) {
   let foundValue;
   JSON.stringify(entireObj, (curKey, curVal) => {
     if(curKey.toUpperCase().replace("-","_").replace(" ","_") == keyToFind){
-      debugConfig("Found: " + keyToFind);
+      debugVerbose("Found: " + keyToFind);
       foundValue = curVal;
     }
     return curVal;

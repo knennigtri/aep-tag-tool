@@ -5,13 +5,13 @@ const yaml = require("js-yaml");
 //Mac: DEBUG=* aep-tag-tool....
 //WIN: set DEBUG=* & aep-tag-tool....
 const debug = require("debug");
-const debugParser = debug("parser");
-const debugNewSettings = debug("new setting");
-const debugConfig = require("debug")("config");
+const debugImportObj = debug("import");
+const debugNewSettings = debug("import:setting");
+const debugConfig = debug("import:config");
 exports.debugOptions = {
-  "json": "Messages on JSON obj creation from files",
-  "property": "messages related to the property file",
-  "config": "Messages related to config file"
+  "import": "checks if values have been found/replaces in import object",
+  "import:setting": "new settings displayed",
+  "import:config": "debug the web property created from the file"
 };
   
 //Create an web property import object from a file
@@ -39,18 +39,15 @@ async function updateSettings(importObj, newSettingsFile) {
     const yamlContent = await fs.readFile(newSettingsFile, "utf8");
     const parsedYaml = yaml.loadAll(yamlContent);
 
-    debugParser("Parsing through replacement values");
+    debugImportObj("Parsing through replacement values");
     for (const tagResourceName in parsedYaml[0]) {
       const resourceObjects = parsedYaml[0][tagResourceName];
       for (const objName in resourceObjects) {
         const newSettings = resourceObjects[objName];
-        const found = replaceSettings(importObj, tagResourceName, objName, newSettings);
-
-        if (!found) {
-          debugParser("'" + tagResourceName + ":" + objName + "' not found in import json");
-        }
+        importObj = replaceSettings(importObj, tagResourceName, objName, newSettings);
       }
     }
+    if(debug.enabled("import")) await fs.writeFile("updatedImport.json", JSON.stringify(importObj, null, 2));
     return importObj; 
   } catch (error) {
     console.error("Error:", error);
@@ -58,24 +55,28 @@ async function updateSettings(importObj, newSettingsFile) {
 }
 
 // Replaces a settings key/value pair in the objName if present in the importData
-function replaceSettings(importData, tagResourceName, objName, newSettings) {
-  if (importData[tagResourceName]) {
-    for (const key of importData[tagResourceName]) {
+function replaceSettings(importData, tagComponentName, objName, newSettings) {
+  let componentArr = importData[tagComponentName];
+  if (componentArr) {
+    for (const key of componentArr) {
       const keyName = key.attributes.name;
       if (keyName === objName) {
-        debugParser("Found '" + tagResourceName + ":" + objName + "'. Replacing old settings.");
+        debugImportObj("Found '" + tagComponentName + ":" + objName + "'. Replacing old settings.");
         debugNewSettings(newSettings);
 
-        const settings = JSON.parse(key.attributes.settings);
+        let settings = JSON.parse(key.attributes.settings);
         for (const setting in newSettings) {
-          parserUtil.replaceValueInJSON(settings, setting, newSettings[setting]);
+          settings = parserUtil.replaceValueInJSON(settings, setting, newSettings[setting]);
         }
+        debugNewSettings("Applying to settings JSON:");
+        debugNewSettings(settings);
         key.attributes.settings = JSON.stringify(settings);
-        return true;
+        return importData;
       }
     }
   }
-  return false;
+  debugImportObj("'" + tagComponentName + ":" + objName + "' not found in import json");
+  return importData;
 }
 
 
