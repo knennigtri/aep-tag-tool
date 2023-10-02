@@ -49,12 +49,12 @@ function replaceValueInJSON(jsonObject, keyToFind, newValue) {
   } else {
     for (const key in jsonObject) {
       debugReplace("replace: " + key);
-        if (key === keyToFind) {
-          debugReplace("Found key '" + keyToFind + "' with value '" + jsonObject[key] + "' and replacing with '" + newValue + "'");
-          jsonObject[key] = newValue;
-        } else {
-          jsonObject[key] = replaceValueInJSON(jsonObject[key], keyToFind, newValue);
-        }
+      if (key === keyToFind) {
+        debugReplace("Found key '" + keyToFind + "' with value '" + jsonObject[key] + "' and replacing with '" + newValue + "'");
+        jsonObject[key] = newValue;
+      } else {
+        jsonObject[key] = replaceValueInJSON(jsonObject[key], keyToFind, newValue);
+      }
     }
   }
   return jsonObject;

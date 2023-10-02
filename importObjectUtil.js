@@ -56,7 +56,7 @@ async function updateSettings(importObj, newSettingsFile) {
 
 // Replaces a settings key/value pair in the objName if present in the importData
 function replaceSettings(importData, tagComponentName, objName, newSettings) {
-  let componentArr = importData[tagComponentName]
+  let componentArr = importData[tagComponentName];
   if (componentArr) {
     for (const key of componentArr) {
       const keyName = key.attributes.name;
@@ -68,7 +68,7 @@ function replaceSettings(importData, tagComponentName, objName, newSettings) {
         for (const setting in newSettings) {
           settings = parserUtil.replaceValueInJSON(settings, setting, newSettings[setting]);
         }
-        debugNewSettings("Applying to settings JSON:")
+        debugNewSettings("Applying to settings JSON:");
         debugNewSettings(settings);
         key.attributes.settings = JSON.stringify(settings);
         return importData;
