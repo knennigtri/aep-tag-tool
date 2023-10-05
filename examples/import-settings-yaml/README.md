@@ -13,14 +13,10 @@ tag-component:
     settings-key: value
 ```
 
-## tag-component
-Should be **extensions** or **dataElements** depending on the type of component-item being updating.
-
-## component-item
-Must be the `attributes.name` value of the desired component-item
-
-## settings-key: value
-Must be a key/value pair in the `attributes.settings` of the desired component-item
+ * `tag-component`: Should be **extensions** or **dataElements** depending on the type of component-item being updating.
+ * `component-item`: Must be the **attributes.name** value of the desired component-item
+ * `settings-key`: value
+Must be a key/value pair in the **attributes.settings** of the desired component-item
 
 ## Example
 **my-exported-tag.json**
