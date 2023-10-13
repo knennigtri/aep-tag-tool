@@ -38,7 +38,7 @@ if (debug.enabled("newman:cli")) {
 }
 
 let TIMESTAMP = formatDateTime();
-let reportersDir = "newman/";
+let reportersDir = "bin/newman/";
 
 function exportTag(env, pid, exportDir, callback) {
   authenicateAIO(env)
