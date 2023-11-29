@@ -26,32 +26,32 @@ const modes = {
   delete: "delete"
 };
 
-async function init(){
+async function init() {
   let mode = "";
-  if(args.export || args.e) mode = modes.export;
-  if(args.import || args.i) mode = modes.import;
-  if(args.delete || args.d) mode = modes.delete;
+  if (args.export || args.e) mode = modes.export;
+  if (args.import || args.i) mode = modes.import;
+  if (args.delete || args.d) mode = modes.delete;
   let argsEnv = args.config || args.c;
   let argsAuth = pmEnv.auth.oauth; //default is oauth
-  if(args.jwt) argsAuth = pmEnv.auth.jwt;
-  if(args.oauth) argsAuth = pmEnv.auth.oauth;
-  
-  const argsVersion = args.v || args.version;
-  const argsHelp =  args.h || args.help;
+  if (args.jwt) argsAuth = pmEnv.auth.jwt;
+  if (args.oauth) argsAuth = pmEnv.auth.oauth;
 
-  debugArgs(JSON.stringify(args,null,2));
-  
+  const argsVersion = args.v || args.version;
+  const argsHelp = args.h || args.help;
+
+  debugArgs(JSON.stringify(args, null, 2));
+
   // Show CLI help
   if (argsHelp) {
-    if(argsHelp == true){
+    if (argsHelp == true) {
       console.log(message.HELP);
     } else {
-      if(argsHelp.toLowerCase() == "config") console.log(message.CONFIGFILE_EXAMPLE);
-      if(argsHelp.toLowerCase() == "export") console.log(message.HELP_EXPORT);
-      if(argsHelp.toLowerCase() == "import") console.log(message.HELP_IMPORT);
-      if(argsHelp.toLowerCase() == "delete") console.log(message.HELP_DELETE);
-      if(argsHelp.toLowerCase() == "settings") console.log(message.HELP_SETTINGS);
-      if(argsHelp.toLowerCase() == "debug") console.log(message.HELP_DEBUG);
+      if (argsHelp.toLowerCase() == "config") console.log(message.CONFIGFILE_EXAMPLE);
+      if (argsHelp.toLowerCase() == "export") console.log(message.HELP_EXPORT);
+      if (argsHelp.toLowerCase() == "import") console.log(message.HELP_IMPORT);
+      if (argsHelp.toLowerCase() == "delete") console.log(message.HELP_DELETE);
+      if (argsHelp.toLowerCase() == "settings") console.log(message.HELP_SETTINGS);
+      if (argsHelp.toLowerCase() == "debug") console.log(message.HELP_DEBUG);
     }
     return;
   }
@@ -63,12 +63,12 @@ async function init(){
   }
 
   /** All Modes require an environment */
-  if(!argsEnv){
+  if (!argsEnv) {
     console.log("No environment Specified.");
     console.log(message.HELP);
     return;
   }
-  
+
   //TODO Allow for a config.csv which contains many oauth.json files
   // aep-tag-tool -c ./myCSV.csv --import ./myproperty.json
   // aep-tag-tool -c ./myCSV.csv --delete "2023"
@@ -89,51 +89,51 @@ async function init(){
   // }
 }
 
-async function runTool(authConfig, authMethod, mode, settings){
+async function runTool(authConfig, authMethod, mode, settings) {
   //create AuthObj from config.json
   let authObj = pmEnv.createAuthObj(authConfig, authMethod);
-  if(!authObj) {
+  if (!authObj) {
     console.log("Authentication not properly configured. Make sure your config file has the required Auth values.");
     console.log("Use -h config to learn mode");
     return;
   } else console.log("Auth object successfully created.");
-  
+
   console.log("Running mode: " + mode);
   try {
-    if(mode == modes.export){ //EXPORT
+    if (mode == modes.export) { //EXPORT
       //optionally change the working directory for export
       const workingDir = args.o || args.output;
 
       let exportPID = args.export || args.e;
-      if(typeof exportPID == ("boolean" || "undefined")) {
+      if (typeof exportPID == ("boolean" || "undefined")) {
         console.log("Export mode must have a property ID specified. See -h export");
         console.log(message.HELP);
         return;
       }
-      
-      if(debug.enabled("dryrun")){
+
+      if (debug.enabled("dryrun")) {
         debugArgs("PID: " + exportPID);
         debugArgs("workingDir: " + workingDir);
       } else {
-        newman.exportTag(authObj, exportPID, workingDir, function(err, resultObj){
-          if(err){
+        newman.exportTag(authObj, exportPID, workingDir, function (err, resultObj) {
+          if (err) {
             console.error(err);
             console.log(message.HELP);
           }
-          if(resultObj) {
+          if (resultObj) {
             console.log("Complete. Check logs for any issues.");
           }
         });
       }
-    } else if(mode == modes.import){  //IMPORT
+    } else if (mode == modes.import) {  //IMPORT
       let newSettings = settings || args.settings || args.s;
-      
+
       let importPID = args.pid || args.p || "";
       let importTitle = args.title || args.t;
 
       let propertiesFile = args.import || args.i;
       let propertyObj = {};
-      if(typeof propertiesFile == ("boolean" || "undefined")) {
+      if (typeof propertiesFile == ("boolean" || "undefined")) {
         console.log("Import mode must have at valid property file. See -h import");
         console.log(message.HELP);
         return;
@@ -141,29 +141,29 @@ async function runTool(authConfig, authMethod, mode, settings){
         propertyObj = importObjUtil.createLaunchObjSync(propertiesFile);
         propertyObj.propertyName = importTitle || propertyObj.propertyName;
         propertyObj.propID = importPID;
-        if(newSettings){
+        if (newSettings) {
           propertyObj = await importObjUtil.updateSettings(propertyObj, newSettings);
         }
       }
       // debugDryRun(propertyObj);
       await importProperty(authObj, propertyObj);
-      
-    } else if(mode == modes.delete){ //DELETE
+
+    } else if (mode == modes.delete) { //DELETE
       let searchStr = args.delete || args.d;
-      if(typeof searchStr == ("boolean" || "undefined")){
+      if (typeof searchStr == ("boolean" || "undefined")) {
         console.log("Delete mode must have a search string specified. See -h delete");
         console.log(message.HELP);
         return;
       }
-      
-      if(debug.enabled("dryrun")){
+
+      if (debug.enabled("dryrun")) {
         debugArgs("SearchStr: " + searchStr);
       } else {
-        newman.deleteTags(authObj, searchStr, function(err, resultObj){
-          if(err){
+        newman.deleteTags(authObj, searchStr, function (err, resultObj) {
+          if (err) {
             console.error(err);
           }
-          if(resultObj) {
+          if (resultObj) {
             console.log("Complete. Check logs for any issues.");
           }
         });
@@ -186,7 +186,7 @@ async function importProperty(authObj, propertyObj) {
 
   console.log("Importing: " + propertyObj.propertyName);
   const actions = newman.getImportActions(args.C, args.E, args.D, args.R, args.L, args.P);
-  
+
   if (!actions.includes("C")) {
     console.log("A PID (-p) is required when importing without creating a new property");
     console.log("Skipping..");
@@ -208,6 +208,21 @@ async function importProperty(authObj, propertyObj) {
   }
 }
 
+function createPostmanEnvironment(aioProjectFile) {
+  return pmEnv.createAuthObj(aioProjectFile);
+}
 
+function updateTagObjectSettings(tagObj, settingsFile) {
+  return importObjUtil.updateSettings(tagObj, settingsFile);
+}
+
+async function importTag(env, importObj) {
+    return newman.importTag(env, importObj);
+}
+
+
+exports.importTag = importTag;
+exports.createPostmanEnvironment = createPostmanEnvironment;
+exports.updateTagObjectSettings = updateTagObjectSettings;
 exports.run = init;
 exports.modes = modes;
