@@ -13,12 +13,10 @@ const auth = {
 const POSTMAN_ENV = require("./postman/aep-tag-tool.postman_environment.json");
 
 function createEnvObjFromConfig(file, authMethod){
-  if(authMethod == auth.oauth){
-    return createOAuthEnvObjFromConfig(file, auth.oauth);
-  } if(authMethod == auth.jwt) {
+  if(authMethod == auth.jwt) {
     return createJWTEnvObjFromConfig(file, auth.jwt);
   }
-  return "";
+  return createOAuthEnvObjFromConfig(file, auth.oauth);;
 }
 
 // Returns a Postman Environment json with the correct variables for OAuth
@@ -30,7 +28,7 @@ function createOAuthEnvObjFromConfig(file){
   let postmanObj = POSTMAN_ENV;
   let authParamCount = 0; // counter to make sure all auth params are set
 
-  console.log("Looking for auth values in config file...");
+  debugPMEnv("Looking for auth values in config file...");
   let foundValues = {};
   foundValues.CLIENT_ID = parserUtil.findNestedObj(fileContentsJSON,"API_KEY") || parserUtil.findNestedObj(fileContentsJSON,"CLIENT_ID");
   foundValues.CLIENT_SECRETS = parserUtil.findNestedObj(fileContentsJSON,"CLIENT_SECRETS");
@@ -63,7 +61,7 @@ function createJWTEnvObjFromConfig(file){
   let postmanObj = POSTMAN_ENV;
   let authParamCount = 0; // counter to make sure all auth params are set
 
-  console.log("Looking for auth values in config file...");
+  debugPMEnv("Looking for auth values in config file...");
   let foundValues = {};
   foundValues.CLIENT_ID = parserUtil.findNestedObj(fileContentsJSON,"API_KEY") || parserUtil.findNestedObj(fileContentsJSON,"CLIENT_ID");
   foundValues.CLIENT_SECRET = parserUtil.findNestedObj(fileContentsJSON,"CLIENT_SECRET");
