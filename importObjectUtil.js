@@ -1,5 +1,5 @@
 const parserUtil = require("./parserUtil.js");
-const fs = require("fs").promises;
+const fs = require("fs");
 const yaml = require("js-yaml");
 //https://www.npmjs.com/package/debug
 //Mac: DEBUG=* aep-tag-tool....
@@ -34,9 +34,9 @@ function getWebPropertyFromFile(file){
   return resultDataContents;
 }
 
-async function updateSettings(importObj, newSettingsFile) {
+function updateSettings(importObj, newSettingsFile) {
   try {
-    const yamlContent = await fs.readFile(newSettingsFile, "utf8");
+    const yamlContent = fs.readFileSync(newSettingsFile, "utf8");
     const parsedYaml = yaml.loadAll(yamlContent);
 
     debugImportObj("Parsing through replacement values");
@@ -47,7 +47,7 @@ async function updateSettings(importObj, newSettingsFile) {
         importObj = replaceSettings(importObj, tagResourceName, objName, newSettings);
       }
     }
-    if(debug.enabled("import")) await fs.writeFile("updatedImport.json", JSON.stringify(importObj, null, 2));
+    if(debugImportObj.enabled) fs.writeFileSync("updatedImport.json", JSON.stringify(importObj));
     return importObj; 
   } catch (error) {
     console.error("Error:", error);
@@ -56,7 +56,12 @@ async function updateSettings(importObj, newSettingsFile) {
 
 // Replaces a settings key/value pair in the objName if present in the importData
 function replaceSettings(importData, tagComponentName, objName, newSettings) {
-  let componentArr = importData[tagComponentName];
+  let data = importData;
+  if(typeof importData === "string"){
+    debugImportObj("Import Data is of type string, converting to JSON")
+    data = JSON.parse(importData);
+  }
+  let componentArr = data[tagComponentName];
   if (componentArr) {
     for (const key of componentArr) {
       const keyName = key.attributes.name;
@@ -71,12 +76,12 @@ function replaceSettings(importData, tagComponentName, objName, newSettings) {
         debugNewSettings("Applying to settings JSON:");
         debugNewSettings(settings);
         key.attributes.settings = JSON.stringify(settings);
-        return importData;
+        return data;
       }
     }
   }
   debugImportObj("'" + tagComponentName + ":" + objName + "' not found in import json");
-  return importData;
+  return data;
 }
 
 
