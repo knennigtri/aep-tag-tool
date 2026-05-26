@@ -246,7 +246,18 @@ function newmanRun(cmdName, env, globals, collection, folder, data, envVar) {
       reporters: REPORTERS,
       reporter: {
         "junit": { export: reportersDir + reportName + ".xml" }
-      }//TODO investigate saving via Win and Mac
+      } //TODO investigate saving via Win and Mac
+    }).on('console', function (err, o) {
+      // console.log(o.messages[o.cursor.iteration]);
+    }).on('assertion', function (err, o) {
+      if (!err) { return; }
+      //TODO Integrate assertions. review Offer collection with mswuser-env 
+      // console.log({
+      //     "Content": data[o.cursor.iteration]?.title,
+      //     "Response": o.assertion,
+      //     "Error": o.error.message,
+          
+      // });
     }).on("done", function (err, summary) {
       if (err) reject(err);
 

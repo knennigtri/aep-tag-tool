@@ -1,7 +1,6 @@
 const newman = require("./newman.js");
 const pmEnv = require("./pmEnvironment.js");
 const importObjUtil = require("./importObjectUtil.js");
-const packageInfo = require("./package.json");
 // const fs = require('fs');
 // const path = require("path");
 // const csv = require('csv-parser');
@@ -25,69 +24,6 @@ const modes = {
   import: "import",
   delete: "delete"
 };
-
-async function init() {
-  let mode = "";
-  if (args.export || args.e) mode = modes.export;
-  if (args.import || args.i) mode = modes.import;
-  if (args.delete || args.d) mode = modes.delete;
-  let argsEnv = args.config || args.c;
-  let argsAuth = pmEnv.auth.oauth; //default is oauth
-  if (args.jwt) argsAuth = pmEnv.auth.jwt;
-  if (args.oauth) argsAuth = pmEnv.auth.oauth;
-
-  const argsVersion = args.v || args.version;
-  const argsHelp = args.h || args.help;
-
-  debugArgs(JSON.stringify(args, null, 2));
-
-  // Show CLI help
-  if (argsHelp) {
-    if (argsHelp == true) {
-      console.log(message.HELP);
-    } else {
-      if (argsHelp.toLowerCase() == "config") console.log(message.CONFIGFILE_EXAMPLE);
-      if (argsHelp.toLowerCase() == "export") console.log(message.HELP_EXPORT);
-      if (argsHelp.toLowerCase() == "import") console.log(message.HELP_IMPORT);
-      if (argsHelp.toLowerCase() == "delete") console.log(message.HELP_DELETE);
-      if (argsHelp.toLowerCase() == "settings") console.log(message.HELP_SETTINGS);
-      if (argsHelp.toLowerCase() == "debug") console.log(message.HELP_DEBUG);
-    }
-    return;
-  }
-
-  // Show version
-  if (argsVersion) {
-    console.log(packageInfo.version);
-    return;
-  }
-
-  /** All Modes require an environment */
-  if (!argsEnv) {
-    console.log("No environment Specified.");
-    console.log(message.HELP);
-    return;
-  }
-
-  //TODO Allow for a config.csv which contains many oauth.json files
-  // aep-tag-tool -c ./myCSV.csv --import ./myproperty.json
-  // aep-tag-tool -c ./myCSV.csv --delete "2023"
-  /*
-  if(path.extname(argsEnv) == ".csv"){
-  fs.createReadStream(argsEnv)
-    .pipe(csv())
-    .on('data', async (row) => {
-      console.log(row)
-      await runTool(row.config,argsAuth, mode, row.settings);
-    })
-    .on('end', () => {
-      // All rows have been parsed, and data now contains objects with headers as keys
-      console.log("DONE");
-    });
-  } else { */
-  await runTool(argsEnv, argsAuth, mode);
-  // }
-}
 
 async function runTool(authConfig, authMethod, mode, settings) {
   //create AuthObj from config.json
@@ -217,12 +153,12 @@ function updateTagObjectSettings(tagObj, settingsFile) {
 }
 
 async function importTag(env, importObj) {
-    return newman.importTag(env, importObj);
+  return newman.importTag(env, importObj);
 }
 
 
 exports.importTag = importTag;
 exports.createPostmanEnvironment = createPostmanEnvironment;
 exports.updateTagObjectSettings = updateTagObjectSettings;
-exports.run = init;
+exports.run = runTool;
 exports.modes = modes;

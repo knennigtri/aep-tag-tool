@@ -6,7 +6,9 @@ environments/
 newman/
 dev/
 *vLab*
+*auth.json
 
 token.*
 
 node_modules/
+.cursor/
