@@ -16,7 +16,7 @@ function createEnvObjFromConfig(file, authMethod){
   if(authMethod == auth.jwt) {
     return createJWTEnvObjFromConfig(file, auth.jwt);
   }
-  return createOAuthEnvObjFromConfig(file, auth.oauth);;
+  return createOAuthEnvObjFromConfig(file, auth.oauth);
 }
 
 // Returns a Postman Environment json with the correct variables for OAuth
@@ -24,6 +24,12 @@ function createOAuthEnvObjFromConfig(file){
   let fileContents = parserUtil.getFileObj(file);
   let fileContentsJSON = parserUtil.getJSONSync(fileContents);
   if(!fileContentsJSON) return;
+
+  const workspaceOAuth = parserUtil.extractOAuthFlatFromAdobeWorkspaceExport(fileContentsJSON);
+  if (workspaceOAuth) {
+    fileContentsJSON = workspaceOAuth;
+    debugPMEnv("Using OAuth fields from Developer Console workspace export (project/workspace JSON).");
+  }
 
   let postmanObj = POSTMAN_ENV;
   let authParamCount = 0; // counter to make sure all auth params are set

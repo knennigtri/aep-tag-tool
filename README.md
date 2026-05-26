@@ -62,6 +62,12 @@ Delete a tag properties that contain 2022 in the title
       2. (JWT only) Download the public/private key
    2. Go to the Credentials screen and download the JSON. Adobe has deprecated JWT and OAuth is preferred.
 
+You can use either format below with `-c`:
+- **Dedicated auth JSON / YAML**: flat OAuth fields (recommended for CI and sharing non–workspace-export configs).
+- **Developer Console workspace / project JSON**: the file that includes nested `project.org` and `project.workspace.details.credentials[]` with an `oauth_server_to_server` block (often named like `{project}-{workspace}.json`). The tool detects this shape and maps `client_id`, `client_secrets`, `scopes`, and `project.org.ims_org_id` to the OAuth variables for the Launch / Reactor API.
+
+Do not commit credential files or real client secrets.
+
 For OAuth credentials, make sure the JSON contains at least:
     
 ```json

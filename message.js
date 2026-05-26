@@ -35,7 +35,11 @@ const HELP =
                debug`;
 const CONFIGFILE_EXAMPLE = 
  `In your Adobe IO Project under Credentials click the "Download JSON" button
- For OAuth credentials, make sure the JSON contains at least:
+
+OAuth may be EITHER flat OAuth fields (below), OR a workspace/project JSON with
+ oauth_server_to_server nested under project.workspace.details.credentials[].
+
+ Flat OAuth credentials, make sure the JSON contains at least:
  {
   "ORG_ID": "xxxxxxxxxxxxxxxxxxxxx@AdobeOrg",
   "CLIENT_SECRETS": [ "xxxxxxxxxxxxxxxxxxxxx" ],

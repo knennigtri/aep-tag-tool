@@ -105,7 +105,77 @@ function findNestedObj(entireObj, keyToFind) {
   });
   return foundValue;
 }
-  
+
+/**
+ * Adobe Developer Console project/workspace JSON nests OAuth Server-to-Server
+ * credentials under `project.workspace.details.credentials[].oauth_server_to_server`.
+ * Returns a shallow object `{ CLIENT_ID, CLIENT_SECRETS, ORG_ID, SCOPES }` suitable
+ * for OAuth Postman auth, or `null` if this is not that shape (legacy configs still use
+ * `findNestedObj` recursively).
+ *
+ * Prefer a credential whose `integration_type` is `oauth_server_to_server`.
+ *
+ * @param {object} entireObj Parsed JSON root
+ * @returns {object|null}
+ */
+function extractOAuthFlatFromAdobeWorkspaceExport(entireObj) {
+  const project = entireObj && entireObj.project;
+  if (!project || typeof project !== "object") {
+    return null;
+  }
+  const details = project.workspace && project.workspace.details;
+  const creds = details && Array.isArray(details.credentials) ? details.credentials : null;
+  if (!creds || creds.length === 0) {
+    return null;
+  }
+
+  let imsOrg = "";
+  if (project.org && typeof project.org === "object") {
+    if (typeof project.org.ims_org_id === "string") {
+      imsOrg = project.org.ims_org_id;
+    }
+    if (!imsOrg && typeof project.org.imsOrgId === "string") {
+      imsOrg = project.org.imsOrgId;
+    }
+  }
+  if (!imsOrg) {
+    return null;
+  }
+
+  const withOauth = creds.filter(
+    (c) => c &&
+      typeof c === "object" &&
+      c.oauth_server_to_server &&
+      typeof c.oauth_server_to_server === "object"
+  );
+  if (!withOauth.length) {
+    return null;
+  }
+  let entry = withOauth.find(
+    (c) => c.integration_type === "oauth_server_to_server"
+  );
+  if (!entry) {
+    entry = withOauth[0];
+  }
+  const oauth = entry.oauth_server_to_server;
+
+  const clientId = oauth.client_id;
+  const secrets = oauth.client_secrets;
+  const scopes = oauth.scopes;
+
+  if (typeof clientId !== "string" || !secrets || !Array.isArray(secrets) ||
+    secrets.length === 0 || !Array.isArray(scopes)) {
+    return null;
+  }
+
+  return {
+    CLIENT_ID: clientId,
+    CLIENT_SECRETS: secrets,
+    ORG_ID: imsOrg,
+    SCOPES: scopes
+  };
+}
+
 //Helper method to either return the absPath or the contents of the config file
 function resolveFileWithContents(val, workingDir, extractContents) {
   if(typeof val == "string"){
@@ -122,6 +192,7 @@ function resolveFileWithContents(val, workingDir, extractContents) {
 exports.replaceValueInJSON = replaceValueInJSON;
 exports.getJSONSync = getJSONSync;
 exports.findNestedObj = findNestedObj;
+exports.extractOAuthFlatFromAdobeWorkspaceExport = extractOAuthFlatFromAdobeWorkspaceExport;
 exports.resolveFileWithContents = resolveFileWithContents;
 exports.getFileObj = getFileObj;
 exports.getWorkingDir = getWorkingDir;
