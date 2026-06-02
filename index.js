@@ -1,9 +1,6 @@
 const newman = require("./newman.js");
 const pmEnv = require("./pmEnvironment.js");
 const importObjUtil = require("./importObjectUtil.js");
-// const fs = require('fs');
-// const path = require("path");
-// const csv = require('csv-parser');
 const minimist = require("minimist");
 const args = minimist(process.argv.slice(2));
 //https://www.npmjs.com/package/debug
@@ -25,123 +22,119 @@ const modes = {
   delete: "delete"
 };
 
+function missingRequiredString(value) {
+  return typeof value !== "string" || value.trim() === "";
+}
+
 async function runTool(authConfig, authMethod, mode, settings) {
-  //create AuthObj from config.json
   let authObj = pmEnv.createAuthObj(authConfig, authMethod);
   if (!authObj) {
-    console.log("Authentication not properly configured. Make sure your config file has the required Auth values.");
-    console.log("Use -h config to learn mode");
+    throw new Error(
+      "Authentication not properly configured. Make sure your config file has the required Auth values. Use -h config"
+    );
+  }
+  console.log("Auth object successfully created.");
+
+  if (!mode) {
+    console.log("No mode selected");
+    console.log(message.HELP);
     return;
-  } else console.log("Auth object successfully created.");
+  }
 
   console.log("Running mode: " + mode);
-  try {
-    if (mode == modes.export) { //EXPORT
-      //optionally change the working directory for export
-      const workingDir = args.o || args.output;
 
-      let exportPID = args.export || args.e;
-      if (typeof exportPID == ("boolean" || "undefined")) {
-        console.log("Export mode must have a property ID specified. See -h export");
-        console.log(message.HELP);
-        return;
-      }
-
-      if (debug.enabled("dryrun")) {
-        debugArgs("PID: " + exportPID);
-        debugArgs("workingDir: " + workingDir);
-      } else {
-        newman.exportTag(authObj, exportPID, workingDir, function (err, resultObj) {
-          if (err) {
-            console.error(err);
-            console.log(message.HELP);
-          }
-          if (resultObj) {
-            console.log("Complete. Check logs for any issues.");
-          }
-        });
-      }
-    } else if (mode == modes.import) {  //IMPORT
-      let newSettings = settings || args.settings || args.s;
-
-      let importPID = args.pid || args.p || "";
-      let importTitle = args.title || args.t;
-
-      let propertiesFile = args.import || args.i;
-      let propertyObj = {};
-      if (typeof propertiesFile == ("boolean" || "undefined")) {
-        console.log("Import mode must have at valid property file. See -h import");
-        console.log(message.HELP);
-        return;
-      } else {
-        propertyObj = importObjUtil.createLaunchObjSync(propertiesFile);
-        propertyObj.propertyName = importTitle || propertyObj.propertyName;
-        propertyObj.propID = importPID;
-        if (newSettings) {
-          propertyObj = await importObjUtil.updateSettings(propertyObj, newSettings);
-        }
-      }
-      // debugDryRun(propertyObj);
-      await importProperty(authObj, propertyObj);
-
-    } else if (mode == modes.delete) { //DELETE
-      let searchStr = args.delete || args.d;
-      if (typeof searchStr == ("boolean" || "undefined")) {
-        console.log("Delete mode must have a search string specified. See -h delete");
-        console.log(message.HELP);
-        return;
-      }
-
-      if (debug.enabled("dryrun")) {
-        debugArgs("SearchStr: " + searchStr);
-      } else {
-        newman.deleteTags(authObj, searchStr, function (err, resultObj) {
-          if (err) {
-            console.error(err);
-          }
-          if (resultObj) {
-            console.log("Complete. Check logs for any issues.");
-          }
-        });
-      }
-    } else {
-      console.log("No mode selected");
+  if (mode === modes.export) {
+    const workingDir = args.o || args.output;
+    const exportPID = args.export || args.e;
+    if (missingRequiredString(exportPID)) {
+      console.log("Export mode must have a property ID specified. See -h export");
       console.log(message.HELP);
+      throw new Error("Export mode requires a property ID (-e / --export)");
     }
-  } catch (error) {
-    console.error("Error in runTool:", error);
+    if (debug.enabled("dryrun")) {
+      debugArgs("PID: " + exportPID);
+      debugArgs("workingDir: " + workingDir);
+      return;
+    }
+    await newman.exportTag(authObj, exportPID, workingDir);
+    console.log("Complete. Check logs for any issues.");
+    return;
   }
+
+  if (mode === modes.import) {
+    const newSettings = settings || args.settings || args.s;
+    const importPID = args.pid || args.p || "";
+    const importTitle = args.title || args.t;
+    const propertiesFile = args.import || args.i;
+
+    if (missingRequiredString(propertiesFile)) {
+      console.log("Import mode must have a valid property file. See -h import");
+      console.log(message.HELP);
+      throw new Error("Import mode requires a property file (-i / --import)");
+    }
+
+    let propertyObj = importObjUtil.createLaunchObjSync(propertiesFile);
+    if (!propertyObj) {
+      throw new Error("Could not load import property file: " + propertiesFile);
+    }
+    propertyObj.propertyName = importTitle || propertyObj.propertyName;
+    propertyObj.propID = importPID;
+    if (newSettings) {
+      propertyObj = importObjUtil.updateSettings(propertyObj, newSettings);
+      if (!propertyObj) {
+        throw new Error("Settings update failed for: " + newSettings);
+      }
+    }
+    await importProperty(authObj, propertyObj);
+    return;
+  }
+
+  if (mode === modes.delete) {
+    const searchStr = args.delete || args.d;
+    if (missingRequiredString(searchStr)) {
+      console.log("Delete mode must have a search string specified. See -h delete");
+      console.log(message.HELP);
+      throw new Error("Delete mode requires a search string (-d / --delete)");
+    }
+    if (debug.enabled("dryrun")) {
+      debugArgs("SearchStr: " + searchStr);
+      return;
+    }
+    await newman.deleteTags(authObj, searchStr);
+    console.log("Complete. Check logs for any issues.");
+    return;
+  }
+
+  console.log("Unknown mode: " + mode);
+  console.log(message.HELP);
 }
 
 async function importProperty(authObj, propertyObj) {
   if (!propertyObj) {
     console.log("Import mode must have a valid property object. See -h import");
     console.log(message.HELP);
-    return;
+    throw new Error("Invalid property object for import");
   }
 
   console.log("Importing: " + propertyObj.propertyName);
   const actions = newman.getImportActions(args.C, args.E, args.D, args.R, args.L, args.P);
 
-  if (!actions.includes("C")) {
-    console.log("A PID (-p) is required when importing without creating a new property");
-    console.log("Skipping..");
+  if (!actions.includes("C") && missingRequiredString(propertyObj.propID)) {
+    throw new Error(
+      "A PID (-p) is required when importing without creating a new property (-C not in import actions)"
+    );
+  }
+
+  if (debug.enabled("dryrun")) {
+    debugDryRun(
+      "PID: " + propertyObj.propID + "\n" +
+      "Actions: " + actions
+    );
     return;
   }
 
-  try {
-    if (debug.enabled("dryrun")) {
-      debugDryRun(
-        "PID: " + propertyObj.propID + "\n" +
-        "Actions: " + actions
-      );
-    } else {
-      await newman.importTag(authObj, propertyObj, actions, "");
-      console.log("Import completed for: " + propertyObj.propertyName);
-    }
-  } catch (error) {
-    console.error("Error importing property:", error);
-  }
+  await newman.importTag(authObj, propertyObj, actions, "");
+  console.log("Import completed for: " + propertyObj.propertyName);
 }
 
 function createPostmanEnvironment(aioProjectFile) {
@@ -152,10 +145,9 @@ function updateTagObjectSettings(tagObj, settingsFile) {
   return importObjUtil.updateSettings(tagObj, settingsFile);
 }
 
-async function importTag(env, importObj) {
-  return newman.importTag(env, importObj);
+function importTag(env, importObj, actions, globals) {
+  return newman.importTag(env, importObj, actions, globals);
 }
-
 
 exports.importTag = importTag;
 exports.createPostmanEnvironment = createPostmanEnvironment;

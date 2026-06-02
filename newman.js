@@ -42,8 +42,8 @@ if (debug.enabled("newman:cli")) {
 let TIMESTAMP = formatDateTime();
 let reportersDir = "bin/newman/logs";
 
-function exportTag(env, pid, exportDir, callback) {
-  authenicateAIO(env)
+function exportTag(env, pid, exportDir) {
+  return authenicateAIO(env)
     .then((resultEnv) => newmanRun("exportTag",
       resultEnv, "",
       EXPORT_COLLECTION, "",
@@ -69,12 +69,11 @@ function exportTag(env, pid, exportDir, callback) {
       const outputFile = path.join(exportDir, fileBase + ".json");
       fs.mkdirSync(path.dirname(outputFile), { recursive: true });
       fs.writeFileSync(outputFile, JSON.stringify(tagExport, null, 2));
-    })
-    .then((resultEnv) => callback(null, resultEnv))
-    .catch(err => callback(err, null));
+      return resultEnv;
+    });
 }
 
-async function importTag(env, importObj, actions, globals) {
+function importTag(env, importObj, actions, globals) {
   return authenicateAIO(env)
     .then(function (resultEnv) { //Add propID if importing to an existing property
       return new Promise(function (resolve, reject) {
@@ -119,14 +118,14 @@ function recurseImportChain(environment, importItems, actions, globals) {
           console.log("Prod Library embed code: ");
           console.log("<script src='" + artifactURL + "' async></script>");
         });
-    } else Promise.resolve(environment);
-  } else {
-    return Promise.resolve(environment);
+    }
+    return recurseImportChain(environment, importItems, actions, globals);
   }
+  return Promise.resolve(environment);
 }
 
-function deleteTags(env, searchStr, callback) {
-  authenicateAIO(env)
+function deleteTags(env, searchStr) {
+  return authenicateAIO(env)
     .then((resultEnv) => newmanRun("deleteTags",
       resultEnv, "",
       DELETE_PROPS, "",
@@ -134,9 +133,7 @@ function deleteTags(env, searchStr, callback) {
         "key": "tagNameIncludes",
         "value": searchStr
       }])
-    )
-    .then((resultEnv) => callback(null, resultEnv))
-    .catch(err => callback(err, null));
+    );
 }
 
 // Runs the Adobe IO Token collection
@@ -188,20 +185,24 @@ function importDataElements(environment, importItems, globals) {
     importItems.dataElements, "");
 }
 
-async function importRules(environment, importItems, globals) {
-  for (const rule in importItems.rules) {
-    await newmanRun(rule,
-      environment,
+function importRules(environment, importItems, globals) {
+  let env = environment;
+  const rules = importItems.rules || {};
+  return Object.keys(rules).reduce((chain, rule) => {
+    return chain.then(() => newmanRun(rule,
+      env,
       globals,
       IMPORT_COLLECTION,
       "Add Tag Rule and CMPs",
-      importItems.rules[rule],
+      rules[rule],
       [{
         "key": "ruleName",
         "value": rule
-      }]);
-  }
-  return environment;
+      }])
+    ).then((resultEnv) => {
+      env = resultEnv;
+    });
+  }, Promise.resolve()).then(() => env);
 }
 
 // Runs the Import Tag collection folder "Publish Dev"
@@ -261,14 +262,17 @@ function newmanRun(cmdName, env, globals, collection, folder, data, envVar) {
           
       // });
     }).on("done", function (err, summary) {
-      if (err) reject(err);
-
-      if (summary.run.failures == "") {
-        console.log("Success!");
-      } else {
-        reject("API Failures. Check the report logs in " + reportersDir);
+      if (err) {
+        reject(err);
+        return;
       }
-      resolve(summary.environment);
+      const failures = summary.run.failures;
+      if (!failures || failures.length === 0) {
+        console.log("Success!");
+        resolve(summary.environment);
+        return;
+      }
+      reject(new Error("API Failures. Check the report logs in " + reportersDir));
     });
   });
 }

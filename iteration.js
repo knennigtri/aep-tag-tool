@@ -23,46 +23,47 @@ try {
 } catch (err) {
   console.error("Error reading file:", err);
 }
-run(DEFAULT_AIO_DIR, aepTagObj, DEFAULT_ORG_SETTINGS);
+run(DEFAULT_AIO_DIR, aepTagObj, DEFAULT_ORG_SETTINGS).catch((err) => {
+  console.error(err);
+  process.exitCode = 1;
+});
 
 /* Read the contents of a folder and makes an array of 
  postman environment objects from the AIO project JSONs */
-function run(aioFolder, tag, settingsFolder) {
+async function run(aioFolder, tag, settingsFolder) {
   const aioFilesFolder = aioFolder || DEFAULT_AIO_DIR;
-  let envObjs = [];
-  try {
-    const files = fs.readdirSync(aioFilesFolder);
-    let jsonFiles = files.filter((file) => path.extname(file).toLowerCase() === ".json");
-    jsonFiles.forEach((fileName) => {
-      // Construct the full path of the file
-      const filePath = path.join(aioFilesFolder, fileName);
-      try {
-        const stats = fs.statSync(filePath);
-        if (stats.isFile()) {
-          console.log("AIO Project File:", fileName);
-          let envObj = tagTool.createPostmanEnvironment(filePath);
-          if (debugIndex.enabled) writeToFile(envObj, path.join(OUTPUT_DIR_ENVIRONMENTS, fileName));
+  const envObjs = [];
+  const files = fs.readdirSync(aioFilesFolder);
+  const jsonFiles = files.filter((file) => path.extname(file).toLowerCase() === ".json");
 
-          // Update tag settings based on Org specific settings file
-          let orgTag = buildTagForOrg(tag, path.parse(fileName).name, settingsFolder);
+  for (const fileName of jsonFiles) {
+    const filePath = path.join(aioFilesFolder, fileName);
+    const stats = fs.statSync(filePath);
+    if (!stats.isFile()) {
+      continue;
+    }
 
-          (async () => {
-            console.log("Running Newman to import the tag to: " + envObj.name);
-            try {
-              await tagTool.importTag(envObj, orgTag);
-            } catch (error) {
-              console.error("async didn't work");
-            }
-          })();
+    console.log("AIO Project File:", fileName);
+    const envObj = tagTool.createPostmanEnvironment(filePath);
+    if (!envObj) {
+      console.error("Skipping " + fileName + ": could not build Postman environment");
+      continue;
+    }
+    if (debugIndex.enabled) {
+      writeToFile(envObj, path.join(OUTPUT_DIR_ENVIRONMENTS, fileName));
+    }
 
-        }
-      } catch (statErr) {
-        console.error("Error getting file stats:", statErr);
-      }
-    });
-  } catch (err) {
-    console.error("Error reading folder:", err);
+    const orgTag = buildTagForOrg(tag, path.parse(fileName).name, settingsFolder);
+    if (!orgTag) {
+      console.error("Skipping import for " + fileName + ": invalid tag object");
+      continue;
+    }
+
+    console.log("Running Newman to import the tag to: " + envObj.name);
+    await tagTool.importTag(envObj, orgTag);
+    envObjs.push(envObj);
   }
+
   return envObjs;
 }
 

@@ -48,9 +48,10 @@ function updateSettings(importObj, newSettingsFile) {
       }
     }
     if(debugImportObj.enabled) fs.writeFileSync("updatedImport.json", JSON.stringify(importObj));
-    return importObj; 
+    return importObj;
   } catch (error) {
     console.error("Error:", error);
+    throw error;
   }
 }
 
