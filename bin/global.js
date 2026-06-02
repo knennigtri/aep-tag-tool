@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
-var module = require("../index.js");
-
-module.run();
+require("../cli.js").init().catch((err) => {
+  console.error(err);
+  process.exitCode = 1;
+});

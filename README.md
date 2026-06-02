@@ -50,9 +50,10 @@ Import a tag property into a different organization with unique organization val
  aep-tag-tool -c auth-config.json --import tagPropertyData.json --settings newSettings.yml
 ```
 
-Delete a tag properties that contain 2022 in the title
+Preview then delete tag properties whose names contain a string (e.g. `2023` in the title)
 ```bash
  aep-tag-tool -c auth-config.json --delete "2023"
+ aep-tag-tool -c auth-config.json --delete "2023" --confirm
 ```
 
 ## Create config file for Authentication
@@ -61,6 +62,12 @@ Delete a tag properties that contain 2022 in the title
       1. Generate a public/private key pair
       2. (JWT only) Download the public/private key
    2. Go to the Credentials screen and download the JSON. Adobe has deprecated JWT and OAuth is preferred.
+
+You can use either format below with `-c`:
+- **Dedicated auth JSON / YAML**: flat OAuth fields (recommended for CI and sharing non–workspace-export configs).
+- **Developer Console workspace / project JSON**: the file that includes nested `project.org` and `project.workspace.details.credentials[]` with an `oauth_server_to_server` block (often named like `{project}-{workspace}.json`). The tool detects this shape and maps `client_id`, `client_secrets`, `scopes`, and `project.org.ims_org_id` to the OAuth variables for the Launch / Reactor API.
+
+Do not commit credential files or real client secrets.
 
 For OAuth credentials, make sure the JSON contains at least:
     
@@ -273,17 +280,15 @@ Optionally you can manually change the values in a new organization by:
 2. Verify the import and build and deploy a new Library
 
 ## Delete tag properties that contain a specific string
-Quickly delete web properties that might have been created with this tool. Delete mode allows you to search for web properties in an Adobe organization based on a search string. If any web properties contain the search string, they are deleted. This is particularly useful if you are developing your own property to import/export since all properties end with a timestamp. Searching (-s) for `2022-10-25` would delete `MyProperty 2022-10-25T20:57:42.049Z`, `MyProperty 2022-10-25T21:57:42.049Z`, and `MyProperty 2022-10-25T20:58:42.049Z`.
+Search for web properties in an Adobe organization whose **name contains** a string. By default, delete mode is **preview only** — it lists matching property names and IDs without deleting anything. Add `--confirm` to run the same search and delete those properties.
+
+This is useful when developing with import/export, since property names often include timestamps (e.g. searching `2022-10-25` matches `MyProperty 2022-10-25T20:57:42.049Z`).
 
 Requires:
 ```
  -c, --config <myconfig.yml>         Specify a config file
- -d, --delete <searchStr>            Mode to delete properties containing a specific string
-```
-
-Optionally include the search string with a parameter
-```
- -s, --search <str>                  [delete] search string for properties deletion
+ -d, --delete <searchStr>            Preview properties whose names contain the string
+     --confirm                       Actually delete the matching properties
 ```
 
 ## Using this tool without NPM
@@ -293,7 +298,7 @@ The Postman collections apart of this tool can also be used with [Postman](https
 * Download the [OAuth Authentication Collection](postman/Adobe%20IO%20Token%20OAuth.postman_collection.json)
 * Download the [Import Collection](postman/Import%20Tag%20Property.postman_collection.json)
 * Download the [Export Collection](postman/Export%20Tag%20Property.postman_collection.json)
-* Download the [Delete Collection](postman/Export%20Tag%20Property.postman_collection.json)
+* Download the [Delete Collection](postman/Delete%20Properties.postman_collection.json)
 * Download a sample [Environment file](postman/aep-tag-tool.postman_environment.json)
   * See configuration instructions: [docs/environment.md](docs/environment.md)
 * Download the [JWT Authentication Collection](postman/Adobe%20IO%20Token.postman_collection.json)

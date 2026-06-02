@@ -1,0 +1,18 @@
+---
+dataElements:
+ z_rule.target.aemPublish_cookieDomain:
+  value: "publish-XXXXXX-XXXXXXX.adobeaemcloud.com"
+ z_ext.aa.audienceManagerSubdomain:
+  value: "XXXXXX"
+ z_ext.aa.reportGlobal:
+  value: "XXXXX"
+ z_ext.aa.reportWKND:
+  value: "XXXXX"
+ z_ext.aa.trackingServer:
+  value: "XXXXXX.sc.omtrdc.net"
+ z_ext.at.clientCode:
+  value: "XXXXXXXX"
+ z_ext.at.serverDomain:
+  value: "XXXXXXXXX.tt.omtrdc.net"
+ z_orgId:
+  value: "XXXXXXXXXX@AdobeOrg"

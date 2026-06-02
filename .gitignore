@@ -6,7 +6,12 @@ environments/
 newman/
 dev/
 *vLab*
+*auth.json
+tests/auths/*
+!tests/auths/README.md
+!tests/auths/auth-workspace.example.json
 
 token.*
 
 node_modules/
+.cursor/

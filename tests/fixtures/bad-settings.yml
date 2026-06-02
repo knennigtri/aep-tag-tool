@@ -1,0 +1,6 @@
+---
+settings-vars:
+  orgId: "test@AdobeOrg"
+extensions:
+  does-not-exist:
+    orgId: "{{ orgId }}"

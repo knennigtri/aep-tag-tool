@@ -1,0 +1,41 @@
+{
+  "project": {
+    "id": "0000000000000000000",
+    "name": "example-project",
+    "title": "Example AIO Project",
+    "org": {
+      "id": "0000000",
+      "name": "ExampleOrg",
+      "ims_org_id": "0000000000000000000@AdobeOrg"
+    },
+    "workspace": {
+      "id": "0000000000000000000",
+      "name": "Production",
+      "title": "Production",
+      "details": {
+        "credentials": [
+          {
+            "id": "000000",
+            "name": "Example OAuth credential",
+            "integration_type": "oauth_server_to_server",
+            "oauth_server_to_server": {
+              "client_id": "example-client-id",
+              "client_secrets": ["example-client-secret"],
+              "technical_account_email": "00000000-0000-0000-0000-000000000000@techacct.adobe.com",
+              "technical_account_id": "0000000000000000000@techacct.adobe.com",
+              "scopes": [
+                "openid",
+                "AdobeID",
+                "read_organizations",
+                "additional_info.projectedProductContext"
+              ]
+            }
+          }
+        ],
+        "services": [],
+        "runtime": { "namespaces": [] },
+        "events": { "registrations": [] }
+      }
+    }
+  }
+}

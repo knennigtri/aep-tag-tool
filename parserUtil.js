@@ -105,7 +105,167 @@ function findNestedObj(entireObj, keyToFind) {
   });
   return foundValue;
 }
-  
+
+/**
+ * @param {object} entireObj Parsed Adobe IO project/workspace JSON root
+ * @returns {{ creds: object[], imsOrg: string }|null}
+ */
+function getAdobeWorkspaceCredentialContext(entireObj) {
+  const project = entireObj && entireObj.project;
+  if (!project || typeof project !== "object") {
+    return null;
+  }
+  const details = project.workspace && project.workspace.details;
+  const creds = details && Array.isArray(details.credentials) ? details.credentials : null;
+  if (!creds || creds.length === 0) {
+    return null;
+  }
+
+  let imsOrg = "";
+  if (project.org && typeof project.org === "object") {
+    if (typeof project.org.ims_org_id === "string") {
+      imsOrg = project.org.ims_org_id;
+    }
+    if (!imsOrg && typeof project.org.imsOrgId === "string") {
+      imsOrg = project.org.imsOrgId;
+    }
+  }
+  if (!imsOrg) {
+    return null;
+  }
+  return { creds, imsOrg };
+}
+
+/**
+ * Adobe Developer Console project/workspace JSON nests OAuth Server-to-Server
+ * credentials under `project.workspace.details.credentials[].oauth_server_to_server`.
+ * Returns a shallow object `{ CLIENT_ID, CLIENT_SECRETS, ORG_ID, SCOPES }` suitable
+ * for OAuth Postman auth, or `null` if this is not that shape (legacy configs still use
+ * `findNestedObj` recursively).
+ *
+ * Prefer a credential whose `integration_type` is `oauth_server_to_server`.
+ *
+ * @param {object} entireObj Parsed JSON root
+ * @returns {object|null}
+ */
+function extractOAuthFlatFromAdobeWorkspaceExport(entireObj) {
+  const ctx = getAdobeWorkspaceCredentialContext(entireObj);
+  if (!ctx) {
+    return null;
+  }
+  const { creds, imsOrg } = ctx;
+
+  const withOauth = creds.filter(
+    (c) => c &&
+      typeof c === "object" &&
+      c.oauth_server_to_server &&
+      typeof c.oauth_server_to_server === "object"
+  );
+  if (!withOauth.length) {
+    return null;
+  }
+  let entry = withOauth.find(
+    (c) => c.integration_type === "oauth_server_to_server"
+  );
+  if (!entry) {
+    entry = withOauth[0];
+  }
+  const oauth = entry.oauth_server_to_server;
+
+  const clientId = oauth.client_id;
+  const secrets = oauth.client_secrets;
+  const scopes = oauth.scopes;
+
+  if (typeof clientId !== "string" || !secrets || !Array.isArray(secrets) ||
+    secrets.length === 0 || !Array.isArray(scopes)) {
+    return null;
+  }
+
+  return {
+    CLIENT_ID: clientId,
+    CLIENT_SECRETS: secrets,
+    ORG_ID: imsOrg,
+    SCOPES: scopes
+  };
+}
+
+/**
+ * Service Account (JWT) credentials in workspace exports may appear as
+ * `credentials[].service_account` or legacy `credentials[].jwt` blocks.
+ *
+ * @param {object} entireObj Parsed JSON root
+ * @returns {object|null}
+ */
+function extractJWTFlatFromAdobeWorkspaceExport(entireObj) {
+  const ctx = getAdobeWorkspaceCredentialContext(entireObj);
+  if (!ctx) {
+    return null;
+  }
+  const { creds, imsOrg } = ctx;
+
+  const withJwt = creds.filter((c) => {
+    if (!c || typeof c !== "object") {
+      return false;
+    }
+    const block = c.service_account || c.jwt;
+    return block && typeof block === "object";
+  });
+  if (!withJwt.length) {
+    return null;
+  }
+
+  let entry = withJwt.find((c) => {
+    const t = c.integration_type;
+    return typeof t === "string" &&
+      (t === "service_account" || t.includes("jwt") || t.includes("service_account"));
+  });
+  if (!entry) {
+    entry = withJwt[0];
+  }
+  const jwtBlock = entry.service_account || entry.jwt;
+
+  const clientId = jwtBlock.client_id || jwtBlock.api_key;
+  const clientSecret = jwtBlock.client_secret;
+  const technicalAccountId =
+    jwtBlock.technical_account_id || jwtBlock.technicalAccountId;
+  const privateKey = jwtBlock.private_key || jwtBlock.privateKey;
+
+  if (typeof clientId !== "string" || typeof clientSecret !== "string" ||
+    typeof technicalAccountId !== "string") {
+    return null;
+  }
+
+  const flat = {
+    CLIENT_ID: clientId,
+    CLIENT_SECRET: clientSecret,
+    ORG_ID: imsOrg,
+    TECHNICAL_ACCOUNT_ID: technicalAccountId,
+    AUTH_METHOD: "jwt"
+  };
+  if (privateKey) {
+    flat.PRIVATE_KEY = privateKey;
+  }
+  return flat;
+}
+
+/**
+ * Build a safe single-segment filename base from a tag property display name.
+ * @param {string} name Property name from Reactor export
+ * @returns {string}
+ */
+function sanitizeFileBaseName(name) {
+  if (name === undefined || name === null || String(name).trim() === "") {
+    return "export";
+  }
+  return String(name)
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[/\\:*?"<>|]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "") || "export";
+}
+
 //Helper method to either return the absPath or the contents of the config file
 function resolveFileWithContents(val, workingDir, extractContents) {
   if(typeof val == "string"){
@@ -122,6 +282,10 @@ function resolveFileWithContents(val, workingDir, extractContents) {
 exports.replaceValueInJSON = replaceValueInJSON;
 exports.getJSONSync = getJSONSync;
 exports.findNestedObj = findNestedObj;
+exports.getAdobeWorkspaceCredentialContext = getAdobeWorkspaceCredentialContext;
+exports.extractOAuthFlatFromAdobeWorkspaceExport = extractOAuthFlatFromAdobeWorkspaceExport;
+exports.extractJWTFlatFromAdobeWorkspaceExport = extractJWTFlatFromAdobeWorkspaceExport;
 exports.resolveFileWithContents = resolveFileWithContents;
 exports.getFileObj = getFileObj;
 exports.getWorkingDir = getWorkingDir;
+exports.sanitizeFileBaseName = sanitizeFileBaseName;

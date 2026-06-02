@@ -1,0 +1,19 @@
+---
+extensions:
+ adobe-mcid:
+  orgId: "12345123451234512345@AdobeOrg"
+ adobe-target-v2:
+  imsOrgId: "12345123451234512345@AdobeOrg"
+  clientCode: "adobeXXXXXX"
+  serverDomain: "adobeXXXX.tt.omtrdc.net"
+ adobe-analytics:
+  orgId: "12345123451234512345@AdobeOrg"
+  staging: ["XXXXstage","XXXXgloba"]
+  production: ["XXXXprod","XXXXglobal"]
+  development: ["XXXXdev","XXXXglobal"]
+  partner: "XXXXXX"
+  trackingServer: "XXXXXX.sc.omtrdc.net"
+dataElements:
+ aemPublish_cookieDomain:
+  value: "<aem-url>"
+---
