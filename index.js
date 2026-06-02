@@ -1,6 +1,7 @@
 const newman = require("./newman.js");
 const pmEnv = require("./pmEnvironment.js");
 const importObjUtil = require("./importObjectUtil.js");
+const cliOutput = require("./cliOutput.js");
 const minimist = require("minimist");
 const args = minimist(process.argv.slice(2));
 //https://www.npmjs.com/package/debug
@@ -33,31 +34,33 @@ async function runTool(authConfig, authMethod, mode, settings) {
       "Authentication not properly configured. Make sure your config file has the required Auth values. Use -h config"
     );
   }
-  console.log("Auth object successfully created.");
+  cliOutput.configOk(authConfig);
 
   if (!mode) {
-    console.log("No mode selected");
+    cliOutput.warn("No mode selected (use --export, --import, or --delete)");
     console.log(message.HELP);
     return;
   }
-
-  console.log("Running mode: " + mode);
 
   if (mode === modes.export) {
     const workingDir = args.o || args.output;
     const exportPID = args.export || args.e;
     if (missingRequiredString(exportPID)) {
-      console.log("Export mode must have a property ID specified. See -h export");
+      cliOutput.error("Export requires a property ID (-e / --export)");
       console.log(message.HELP);
       throw new Error("Export mode requires a property ID (-e / --export)");
     }
     if (debug.enabled("dryrun")) {
+      cliOutput.dryRun("export", {
+        "Property ID": exportPID,
+        "Output folder": workingDir || "."
+      });
       debugArgs("PID: " + exportPID);
       debugArgs("workingDir: " + workingDir);
       return;
     }
+    cliOutput.exportStart({ pid: exportPID, outputDir: workingDir || "." });
     await newman.exportTag(authObj, exportPID, workingDir);
-    console.log("Complete. Check logs for any issues.");
     return;
   }
 
@@ -68,7 +71,7 @@ async function runTool(authConfig, authMethod, mode, settings) {
     const propertiesFile = args.import || args.i;
 
     if (missingRequiredString(propertiesFile)) {
-      console.log("Import mode must have a valid property file. See -h import");
+      cliOutput.error("Import requires a property JSON file (-i / --import)");
       console.log(message.HELP);
       throw new Error("Import mode requires a property file (-i / --import)");
     }
@@ -85,38 +88,43 @@ async function runTool(authConfig, authMethod, mode, settings) {
         throw new Error("Settings update failed for: " + newSettings);
       }
     }
-    await importProperty(authObj, propertyObj);
+    await importProperty(authObj, propertyObj, {
+      settingsFile: newSettings,
+      sourceFile: propertiesFile
+    });
     return;
   }
 
   if (mode === modes.delete) {
     const searchStr = args.delete || args.d;
     if (missingRequiredString(searchStr)) {
-      console.log("Delete mode must have a search string specified. See -h delete");
+      cliOutput.error("Delete requires a search string (-d / --delete)");
       console.log(message.HELP);
       throw new Error("Delete mode requires a search string (-d / --delete)");
     }
     if (debug.enabled("dryrun")) {
+      cliOutput.dryRun("delete", { "Name contains": searchStr });
       debugArgs("SearchStr: " + searchStr);
       return;
     }
+    cliOutput.deleteStart({ searchStr });
     await newman.deleteTags(authObj, searchStr);
-    console.log("Complete. Check logs for any issues.");
+    cliOutput.deleteDone();
     return;
   }
 
-  console.log("Unknown mode: " + mode);
+  cliOutput.warn("Unknown mode: " + mode);
   console.log(message.HELP);
 }
 
-async function importProperty(authObj, propertyObj) {
+async function importProperty(authObj, propertyObj, options) {
+  options = options || {};
   if (!propertyObj) {
-    console.log("Import mode must have a valid property object. See -h import");
+    cliOutput.error("Invalid property object for import");
     console.log(message.HELP);
     throw new Error("Invalid property object for import");
   }
 
-  console.log("Importing: " + propertyObj.propertyName);
   const actions = newman.getImportActions(args.C, args.E, args.D, args.R, args.L, args.P);
 
   if (!actions.includes("C") && missingRequiredString(propertyObj.propID)) {
@@ -126,6 +134,11 @@ async function importProperty(authObj, propertyObj) {
   }
 
   if (debug.enabled("dryrun")) {
+    cliOutput.dryRun("import", {
+      Property: propertyObj.propertyName,
+      "Property ID": propertyObj.propID || "(new)",
+      Steps: cliOutput.formatImportActions(actions)
+    });
     debugDryRun(
       "PID: " + propertyObj.propID + "\n" +
       "Actions: " + actions
@@ -133,8 +146,19 @@ async function importProperty(authObj, propertyObj) {
     return;
   }
 
+  cliOutput.importStart({
+    propertyName: propertyObj.propertyName,
+    propID: propertyObj.propID,
+    settingsFile: options.settingsFile,
+    actions,
+    actionsLabel: cliOutput.formatImportActions(actions)
+  });
+
   await newman.importTag(authObj, propertyObj, actions, "");
-  console.log("Import completed for: " + propertyObj.propertyName);
+  cliOutput.importDone({
+    propertyName: propertyObj.propertyName,
+    propID: propertyObj.propID
+  });
 }
 
 function createPostmanEnvironment(aioProjectFile) {

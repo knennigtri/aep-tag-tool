@@ -1,6 +1,7 @@
 const newman = require("newman");
 const pmEnv = require("./pmEnvironment.js");
 const parserUtil = require("./parserUtil.js");
+const cliOutput = require("./cliOutput.js");
 const fs = require("fs");
 const path = require("path");
 //https://www.npmjs.com/package/debug
@@ -16,7 +17,7 @@ exports.debugOptions = {
   "newman:cli": "Newman cli output for verbose messaging of collections"
 };
 
-let REPORTERS = ["emojitrain", "junit"];
+let REPORTERS = ["junit"];
 let IO_OAUTH_COLLECTION = require("./postman/Adobe IO Token OAuth.postman_collection.json");
 let IO_JWT_COLLECTION = require("./postman/Adobe IO Token.postman_collection.json");
 let EXPORT_COLLECTION = require("./postman/Export Tag Property.postman_collection.json");
@@ -69,6 +70,15 @@ function exportTag(env, pid, exportDir) {
       const outputFile = path.join(exportDir, fileBase + ".json");
       fs.mkdirSync(path.dirname(outputFile), { recursive: true });
       fs.writeFileSync(outputFile, JSON.stringify(tagExport, null, 2));
+      cliOutput.exportDone({
+        propertyName: tagExport.propertyName,
+        outputFile,
+        counts: {
+          extensions: cliOutput.countExportItems(tagExport.extensions),
+          dataElements: cliOutput.countExportItems(tagExport.dataElements),
+          rules: cliOutput.countExportItems(tagExport.rules)
+        }
+      });
       return resultEnv;
     });
 }
@@ -114,9 +124,11 @@ function recurseImportChain(environment, importItems, actions, globals) {
       return publishLibraryToProd(environment, globals)
         .then((resultEnv) => recurseImportChain(resultEnv, "", actions, globals))
         .then(function (resultEnv) {
-          let artifactURL = pmEnv.getEnvValue(resultEnv, "prodArtifactURL");
-          console.log("Prod Library embed code: ");
-          console.log("<script src='" + artifactURL + "' async></script>");
+          const artifactURL = pmEnv.getEnvValue(resultEnv, "prodArtifactURL");
+          if (artifactURL) {
+            cliOutput.importEmbedCode(artifactURL);
+          }
+          return resultEnv;
         });
     }
     return recurseImportChain(environment, importItems, actions, globals);
@@ -228,11 +240,7 @@ function newmanRun(cmdName, env, globals, collection, folder, data, envVar) {
   debugNewman(JSON.stringify(data, f2, 2));
 
   const reportName = TIMESTAMP + "-" + cmdName + "-Report";
-  if (folder && folder != "") {
-    console.log("Running: " + folder + " for: " + cmdName);
-  } else {
-    console.log("Running: " + cmdName);
-  }
+  cliOutput.stepStart(cmdName, folder);
 
   debugNewman("ReportNameHTML: " + reportersDir + reportName + ".[html | xml]");
   // Uncomment to generate the final postman environment file
@@ -263,15 +271,21 @@ function newmanRun(cmdName, env, globals, collection, folder, data, envVar) {
       // });
     }).on("done", function (err, summary) {
       if (err) {
+        cliOutput.stepFail(cmdName, folder, err.message || String(err));
         reject(err);
         return;
       }
       const failures = summary.run.failures;
       if (!failures || failures.length === 0) {
-        console.log("Success!");
+        cliOutput.stepDone(cmdName, folder);
         resolve(summary.environment);
         return;
       }
+      const failMsg = failures[0] && failures[0].error
+        ? failures[0].error.message
+        : "One or more Postman tests failed";
+      cliOutput.stepFail(cmdName, folder, failMsg);
+      cliOutput.apiFailure(reportersDir);
       reject(new Error("API Failures. Check the report logs in " + reportersDir));
     });
   });

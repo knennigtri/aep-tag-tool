@@ -25,8 +25,8 @@
     "release:beta": "npm version patch && npm run publish:beta",
     "publish:beta": "npm publish --tag beta",
     "cleanup": "rm -R newman && rm tests/updatedImportObj.json",
-    "test": "node tests/auth-config.test.js && node tests/export-filename.test.js && node tests/async-api.test.js && node tests/tests.js",
-    "test:noLogs": "node tests/auth-config.test.js && node tests/export-filename.test.js && node tests/async-api.test.js && node tests/tests.js -- --hideconsole"
+    "test": "node tests/auth-config.test.js && node tests/export-filename.test.js && node tests/cli-output.test.js && node tests/async-api.test.js && node tests/tests.js",
+    "test:noLogs": "node tests/auth-config.test.js && node tests/export-filename.test.js && node tests/cli-output.test.js && node tests/async-api.test.js && node tests/tests.js -- --hideconsole"
   },
   "keywords": [
     "aep",
