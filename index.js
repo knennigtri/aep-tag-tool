@@ -97,19 +97,31 @@ async function runTool(authConfig, authMethod, mode, settings) {
 
   if (mode === modes.delete) {
     const searchStr = args.delete || args.d;
+    const confirm = args.confirm === true;
     if (missingRequiredString(searchStr)) {
       cliOutput.error("Delete requires a search string (-d / --delete)");
       console.log(message.HELP);
       throw new Error("Delete mode requires a search string (-d / --delete)");
     }
     if (debug.enabled("dryrun")) {
-      cliOutput.dryRun("delete", { "Name contains": searchStr });
+      cliOutput.dryRun("delete", {
+        "Name contains": searchStr,
+        Mode: confirm ? "Delete (confirmed)" : "Preview"
+      });
       debugArgs("SearchStr: " + searchStr);
+      debugArgs("confirm: " + confirm);
       return;
     }
-    cliOutput.deleteStart({ searchStr });
-    await newman.deleteTags(authObj, searchStr);
-    cliOutput.deleteDone();
+    cliOutput.deleteStart({ searchStr, confirm });
+    const resultEnv = await newman.deleteTags(authObj, searchStr, { confirm });
+    const previewList = cliOutput.parseDeletePreviewList(
+      pmEnv.getEnvValue(resultEnv, "deletePreviewList")
+    );
+    if (confirm) {
+      cliOutput.deleteDoneConfirmed(previewList);
+    } else {
+      cliOutput.deletePreview(previewList, searchStr);
+    }
     return;
   }
 

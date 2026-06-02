@@ -170,16 +170,64 @@ function importEmbedCode(artifactURL) {
 
 function deleteStart(options) {
   resetSteps();
-  banner("delete", "Remove properties whose names contain a string");
+  const subtitle = options.confirm
+    ? "Delete properties whose names contain the search string"
+    : "Preview only — no properties will be deleted";
+  banner("delete", subtitle);
   field("Name contains", options.searchStr);
+  field("Mode", options.confirm ? "Delete (confirmed)" : "Preview");
   blank();
 }
 
-function deleteDone() {
+function parseDeletePreviewList(jsonStr) {
+  if (!jsonStr || typeof jsonStr !== "string") {
+    return [];
+  }
+  try {
+    const parsed = JSON.parse(jsonStr);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function deletePreview(previewList, searchStr) {
   blank();
   divider();
-  console.log(c.green("✓ Delete run finished"));
-  console.log(c.dim("  Review JUnit report in bin/newman/logs for details."));
+  const count = previewList.length;
+  if (count === 0) {
+    console.log(c.green("✓ Preview complete"));
+    console.log(c.dim("  No properties match \"" + searchStr + "\"."));
+  } else {
+    console.log(c.yellow("Preview") + " — " + count + " propert" + (count === 1 ? "y" : "ies") +
+      " would be deleted:");
+    blank();
+    previewList.forEach((item, index) => {
+      const name = item.name || "(unknown)";
+      const id = item.id || "";
+      console.log("  " + c.dim(String(index + 1) + ".") + " " + name);
+      if (id) {
+        console.log("      " + c.dim(id));
+      }
+    });
+  }
+  blank();
+  console.log(c.dim("  Re-run the same command with ") + c.bold("--confirm") +
+    c.dim(" to delete these properties."));
+  console.log(c.dim("  Example:"));
+  console.log(c.dim("    aep-tag-tool -c <config> --delete \"" + searchStr + "\" --confirm"));
+  blank();
+}
+
+function deleteDoneConfirmed(previewList) {
+  blank();
+  divider();
+  const count = previewList ? previewList.length : 0;
+  console.log(c.green("✓ Delete complete"));
+  if (count > 0) {
+    field("Properties removed", String(count));
+  }
+  console.log(c.dim("  JUnit report: bin/newman/logs"));
   blank();
 }
 
@@ -262,7 +310,9 @@ exports.importStart = importStart;
 exports.importDone = importDone;
 exports.importEmbedCode = importEmbedCode;
 exports.deleteStart = deleteStart;
-exports.deleteDone = deleteDone;
+exports.deletePreview = deletePreview;
+exports.deleteDoneConfirmed = deleteDoneConfirmed;
+exports.parseDeletePreviewList = parseDeletePreviewList;
 exports.dryRun = dryRun;
 exports.configOk = configOk;
 exports.apiFailure = apiFailure;

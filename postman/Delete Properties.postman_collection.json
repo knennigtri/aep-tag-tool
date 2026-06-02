@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "275f3fe8-1bc3-41d8-8d07-19d1fc9257ea",
+		"_postman_id": "c9ef8ad9-bf94-48ca-b9e8-3baecac93f95",
 		"name": "Delete Properties",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17913394"
 	},
 	"item": [
 		{
@@ -39,7 +40,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "bearer {{ACCESS_TOKEN}}",
+						"value": "bearer {{access_token}}",
 						"type": "text"
 					},
 					{
@@ -83,26 +84,44 @@
 					"script": {
 						"exec": [
 							"var res = JSON.parse(responseBody);",
-							"",
-							"array = []",
-							"",
 							"var includeStr = pm.variables.get(\"tagNameIncludes\");",
-							"console.log(\"String: \" + includeStr);",
+							"var array = [];",
+							"var confirm = pm.environment.get(\"DELETE_CONFIRM\") === \"true\";",
 							"",
-							"for(var obj of res.data){",
-							"    if(obj.attributes.name.includes(includeStr)){",
-							"        console.log(\"Deleting: \" + obj.attributes.name);",
+							"for (var obj of res.data) {",
+							"    if (obj.attributes.name.includes(includeStr)) {",
 							"        array.push(obj);",
 							"    }",
 							"}",
 							"",
 							"pm.collectionVariables.set(\"delProps\", array);",
 							"",
-							"pm.test(\"PropIDs to delete saved.\", function () {",
-							"  pm.response.to.have.status(200);",
+							"// For CLI: Node reads this after Newman",
+							"var preview = array.map(function (p) {",
+							"    return { id: p.id, name: p.attributes.name };",
+							"});",
+							"pm.environment.set(\"deletePreviewList\", JSON.stringify(preview));",
+							"pm.environment.set(\"deletePreviewCount\", String(preview.length));",
+							"",
+							"if (confirm) {",
+							"    console.log(\"DELETE_CONFIRM=true — will delete \" + preview.length + \" propert(ies).\");",
+							"    for (var i = 0; i < preview.length; i++) {",
+							"        console.log(\"  - \" + preview[i].name + \" (\" + preview[i].id + \")\");",
+							"    }",
+							"} else {",
+							"    console.log(\"Preview only (DELETE_CONFIRM is not true) — \" + preview.length + \" match(es):\");",
+							"    for (var j = 0; j < preview.length; j++) {",
+							"        console.log(\"  - \" + preview[j].name + \" (\" + preview[j].id + \")\");",
+							"    }",
+							"    postman.setNextRequest(null);  // do not run \"Delete Property\"",
+							"}",
+							"",
+							"pm.test(\"Matching properties saved\", function () {",
+							"    pm.response.to.have.status(200);",
 							"});"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				},
 				{
@@ -111,7 +130,8 @@
 						"exec": [
 							""
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -120,7 +140,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "bearer {{ACCESS_TOKEN}}",
+						"value": "bearer {{access_token}}",
 						"type": "text"
 					},
 					{
@@ -183,13 +203,19 @@
 							"    }",
 							"} else console.log(\"No Properties to Delete\");"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				},
 				{
 					"listen": "prerequest",
 					"script": {
 						"exec": [
+							"if (pm.environment.get(\"DELETE_CONFIRM\") !== \"true\") {",
+							"    postman.setNextRequest(null);",
+							"    return;",
+							"}",
+							"",
 							"var delProps = pm.variables.get(\"delProps\");",
 							"var count;",
 							"if (!pm.variables.has(\"count\") || (pm.variables.get(\"count\") === \"\")){",
@@ -203,7 +229,8 @@
 							"    pm.collectionVariables.set(\"delPropID\", delProps[count].id);",
 							"}"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -212,7 +239,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "bearer {{ACCESS_TOKEN}}",
+						"value": "bearer {{access_token}}",
 						"type": "text"
 					},
 					{
@@ -276,6 +303,28 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "companyID",
+			"value": ""
+		},
+		{
+			"key": "tagNameIncludes",
+			"value": ""
+		},
+		{
+			"key": "delProps",
+			"value": ""
+		},
+		{
+			"key": "count",
+			"value": ""
+		},
+		{
+			"key": "delPropID",
+			"value": ""
 		}
 	]
 }

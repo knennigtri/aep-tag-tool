@@ -136,16 +136,24 @@ function recurseImportChain(environment, importItems, actions, globals) {
   return Promise.resolve(environment);
 }
 
-function deleteTags(env, searchStr) {
+function deleteTags(env, searchStr, options) {
+  const confirm = options && options.confirm === true;
   return authenicateAIO(env)
-    .then((resultEnv) => newmanRun("deleteTags",
-      resultEnv, "",
-      DELETE_PROPS, "",
-      "", [{
-        "key": "tagNameIncludes",
-        "value": searchStr
-      }])
-    );
+    .then((resultEnv) => {
+      let runEnv = resultEnv;
+      const accessToken = pmEnv.getEnvValue(resultEnv, "ACCESS_TOKEN");
+      if (accessToken) {
+        runEnv = pmEnv.setEnvValue(runEnv, "access_token", accessToken);
+      }
+      runEnv = pmEnv.setEnvValue(runEnv, "DELETE_CONFIRM", confirm ? "true" : "false");
+      return newmanRun("deleteTags",
+        runEnv, "",
+        DELETE_PROPS, "",
+        "", [{
+          "key": "tagNameIncludes",
+          "value": searchStr
+        }]);
+    });
 }
 
 // Runs the Adobe IO Token collection

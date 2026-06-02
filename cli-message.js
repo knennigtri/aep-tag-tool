@@ -13,7 +13,8 @@ const param_CEDRLP = "-C,-E,-D,-R,-L,-P                   [import] Options to pa
 const param_O = "-o, --output <folder>               [export] folder path to save export property. Default ./";
 const param_export = "-e, --export <PID>                  Mode to export a given property ID.";
 const param_import = "-i, --import <propertyFile.json>    Mode to import a property given a config file.";
-const param_delete = "-d, --delete <searchStr>            Mode to delete properties containing a specific string";
+const param_delete = "-d, --delete <searchStr>            List or delete properties whose names contain a string";
+const param_confirm = "    --confirm                       [delete] perform deletion (default is preview only)";
 
 function formatDebugOpts(obj) {
   return JSON.stringify(obj, null, 2)
@@ -45,6 +46,7 @@ const HELP = {
     ` + param_export + `
     ` + param_import + `
     ` + param_delete + `
+    ` + param_confirm + `
     ` + param_CEDRLP + `
     ` + param_T + `
     ` + param_P + `
@@ -173,7 +175,14 @@ Create the tag property file using the export command:
     `Mode: Delete
 Requires:
  ` + param_config + `
- ` + param_delete,
+ ` + param_delete + `
+
+By default, --delete only lists matching properties (preview).
+Add --confirm to delete them after reviewing the list.
+
+Examples:
+  ${cliName} -c auth.json --delete "2023"
+  ${cliName} -c auth.json --delete "2023" --confirm`,
   debug: HELP_DEBUG
 };
 
