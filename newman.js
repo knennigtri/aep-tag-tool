@@ -8,7 +8,6 @@ const path = require("path");
 //Mac: DEBUG=* aep-tag-tool....
 //WIN: set DEBUG=* & aep-tag-tool....
 const debug = require("debug");
-const debugCollections = require("debug")("collections");
 const debugNewman = require("debug")("newman");
 require("debug")("newman:cli");
 exports.debugOptions = {
@@ -268,9 +267,9 @@ function newmanRun(cmdName, env, globals, collection, folder, data, envVar) {
       reporter: {
         "junit": { export: reportersDir + reportName + ".xml" }
       } //TODO investigate saving via Win and Mac
-    }).on('console', function (err, o) {
+    }).on("console", function () {
       // console.log(o.messages[o.cursor.iteration]);
-    }).on('assertion', function (err, o) {
+    }).on("assertion", function (err) {
       if (!err) { return; }
       //TODO Integrate assertions. review Offer collection with mswuser-env 
       // console.log({

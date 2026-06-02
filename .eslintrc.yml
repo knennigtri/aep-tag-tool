@@ -1,6 +1,8 @@
 env:
   node: true
   es2021: true
+ignorePatterns:
+  - doc/**
 extends: eslint:recommended
 overrides: []
 parserOptions:
