@@ -247,6 +247,8 @@ function newmanRun(cmdName, env, globals, collection, folder, data, envVar) {
   var f2 = function (k, v) { return k && v && typeof v !== "number" ? "" + v : v; };
   debugNewman(JSON.stringify(data, f2, 2));
 
+  fs.mkdirSync(reportersDir, { recursive: true });
+
   const reportName = TIMESTAMP + "-" + cmdName + "-Report";
   cliOutput.stepStart(cmdName, folder);
 

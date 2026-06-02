@@ -47,11 +47,14 @@
     "test": "test"
   },
   "license": "ISC",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "dependencies": {
     "debug": "^4.3.4",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.1.1",
     "minimist": "^1.2.7",
-    "newman": "^4.6.1"
+    "newman": "^6.2.2"
   },
   "devDependencies": {
     "depcheck": "^1.4.3",
