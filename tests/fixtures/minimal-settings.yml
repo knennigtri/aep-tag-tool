@@ -1,0 +1,12 @@
+---
+settings-vars:
+  orgId: "new@AdobeOrg"
+extensions:
+  adobe-mcid:
+    orgId: "{{ orgId }}"
+  adobe-analytics:
+    orgId: "{{ orgId }}"
+    staging: ["rs1"]
+dataElements:
+  aemPublish_cookieDomain:
+    value: "new.example.com"

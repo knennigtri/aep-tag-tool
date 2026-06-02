@@ -1,17 +1,21 @@
 # Understand settings.yml
 settings.yml Format:
 ```yaml
-tag-component:
-  component-itemX:
-    settings-keyA: value
-    settings-keyB: value
-    settings-keyC: value
-  component-item2:
-    settings-keyY: value
-tag-component:
-  component-item:
-    settings-key: value
+---
+settings-vars:
+  orgId: "YOUR_IMS_ORG@AdobeOrg"
+extensions:
+  adobe-mcid:
+    orgId: "{{ orgId }}"
+  adobe-target:
+    imsOrgId: "{{ orgId }}"
+dataElements:
+  aemPublish_cookieDomain:
+    value: "publish-xxxxx.adobeaemcloud.com"
 ```
+
+ * `settings-vars` (alias `vars`): shared values referenced as `{{ varName }}` in extension/dataElement blocks.
+ * `tag-component`: Should be **extensions** or **dataElements** depending on the type of component-item being updating.
 
  * `tag-component`: Should be **extensions** or **dataElements** depending on the type of component-item being updating.
  * `component-item`: Must be the **attributes.name** value of the desired component-item
@@ -63,3 +67,10 @@ extentions:
     orgId: 12345123451234512345@AdobeOrg
 ```
 
+## Validate before import
+
+Check that extension/data element names and setting keys exist in your export (no auth required):
+
+```bash
+aep-tag-tool -i ./my-export.json -s ./my-settings.yml --validate-settings
+```

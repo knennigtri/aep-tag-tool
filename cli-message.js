@@ -15,6 +15,7 @@ const param_export = "-e, --export <PID>                  Mode to export a given
 const param_import = "-i, --import <propertyFile.json>    Mode to import a property given a config file.";
 const param_delete = "-d, --delete <searchStr>            List or delete properties whose names contain a string";
 const param_confirm = "    --confirm                       [delete] perform deletion (default is preview only)";
+const param_validate_settings = "    --validate-settings             [import] validate -s settings.yml against -i import JSON (no API calls)";
 
 function formatDebugOpts(obj) {
   return JSON.stringify(obj, null, 2)
@@ -47,6 +48,7 @@ const HELP = {
     ` + param_import + `
     ` + param_delete + `
     ` + param_confirm + `
+    ` + param_validate_settings + `
     ` + param_CEDRLP + `
     ` + param_T + `
     ` + param_P + `
@@ -154,6 +156,17 @@ Optional params:
  ` + param_T + `
  ` + param_P + `
  ` + param_S + `
+ ` + param_validate_settings + `
+
+Settings YAML may define shared vars (no API calls for validate):
+---
+settings-vars:
+  orgId: "YOUR_IMS_ORG@AdobeOrg"
+extensions:
+  adobe-mcid:
+    orgId: "{{ orgId }}"
+---
+
 Note: PID is ignored unless importing to an existing property (-C is omited)
 
 You can specify exactly what you want to create/import with these params.

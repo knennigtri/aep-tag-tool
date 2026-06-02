@@ -1,6 +1,8 @@
 const pmEnv = require("./pmEnvironment.js");
 const packageInfo = require("./package.json");
 const aepTagTool = require("./index.js");
+const importObjUtil = require("./importObjectUtil.js");
+const cliOutput = require("./cliOutput.js");
 const minimist = require("minimist");
 const args = minimist(process.argv.slice(2));
 //https://www.npmjs.com/package/debug
@@ -42,6 +44,23 @@ async function init() {
   // Show version
   if (argsVersion) {
     console.log(packageInfo.version);
+    return;
+  }
+
+  if (args["validate-settings"] || args.validateSettings) {
+    const importFile = args.import || args.i;
+    const settingsFile = args.settings || args.s;
+    if (!importFile || !settingsFile) {
+      cliOutput.error("--validate-settings requires -i/--import and -s/--settings");
+      console.log(HELP.default);
+      process.exitCode = 1;
+      return;
+    }
+    const result = importObjUtil.validateSettings(importFile, settingsFile);
+    cliOutput.settingsValidation(result, importFile, settingsFile);
+    if (!result.ok) {
+      process.exitCode = 1;
+    }
     return;
   }
 

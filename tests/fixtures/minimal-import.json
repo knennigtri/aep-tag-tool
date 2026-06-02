@@ -1,0 +1,30 @@
+{
+  "propID": "PR00000000000000000000",
+  "propertyName": "Test Property",
+  "extensions": [
+    {
+      "type": "extensions",
+      "attributes": {
+        "name": "adobe-mcid",
+        "settings": "{\"orgId\":\"old@AdobeOrg\"}"
+      }
+    },
+    {
+      "type": "extensions",
+      "attributes": {
+        "name": "adobe-analytics",
+        "settings": "{\"orgId\":\"old@AdobeOrg\",\"libraryCode\":{\"accounts\":{\"staging\":[\"old\"],\"production\":[\"old\"],\"development\":[\"old\"]}}}"
+      }
+    }
+  ],
+  "dataElements": [
+    {
+      "type": "data_elements",
+      "attributes": {
+        "name": "aemPublish_cookieDomain",
+        "settings": "{\"value\":\"old.example.com\"}"
+      }
+    }
+  ],
+  "rules": {}
+}

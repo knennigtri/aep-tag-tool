@@ -265,6 +265,36 @@ function error(message) {
   console.log(c.red("✗ ") + message);
 }
 
+function settingsValidation(result, importFile, settingsFile) {
+  blank();
+  console.log(c.bold("Settings validation"));
+  field("Import file", importFile);
+  field("Settings file", settingsFile);
+  blank();
+
+  if (result.matched.length) {
+    console.log(c.green("Matched components (" + result.matched.length + "):"));
+    result.matched.forEach((item) => {
+      console.log(
+        "  " + item.section + "." + item.name +
+        c.dim(" → keys: " + item.keys.join(", "))
+      );
+    });
+    blank();
+  }
+
+  result.warnings.forEach((msg) => warn(msg));
+  result.errors.forEach((msg) => error(msg));
+
+  blank();
+  if (result.ok) {
+    console.log(c.green("✓ Settings file is valid for this import."));
+  } else {
+    console.log(c.red("✗ Settings validation failed."));
+  }
+  blank();
+}
+
 const IMPORT_ACTION_LABELS = {
   C: "Create property",
   E: "Extensions",
@@ -318,4 +348,5 @@ exports.configOk = configOk;
 exports.apiFailure = apiFailure;
 exports.warn = warn;
 exports.error = error;
+exports.settingsValidation = settingsValidation;
 exports.stepLabel = stepLabel;

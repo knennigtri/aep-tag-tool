@@ -185,8 +185,13 @@ function importTag(env, importObj, actions, globals) {
   return newman.importTag(env, importObj, actions, globals);
 }
 
+function validateSettings(importFile, settingsFile) {
+  return importObjUtil.validateSettings(importFile, settingsFile);
+}
+
 exports.importTag = importTag;
 exports.createPostmanEnvironment = createPostmanEnvironment;
 exports.updateTagObjectSettings = updateTagObjectSettings;
+exports.validateSettings = validateSettings;
 exports.run = runTool;
 exports.modes = modes;
