@@ -1,6 +1,8 @@
 const newman = require("newman");
 const pmEnv = require("./pmEnvironment.js");
+const parserUtil = require("./parserUtil.js");
 const fs = require("fs");
+const path = require("path");
 //https://www.npmjs.com/package/debug
 //Mac: DEBUG=* aep-tag-tool....
 //WIN: set DEBUG=* & aep-tag-tool....
@@ -62,11 +64,11 @@ function exportTag(env, pid, exportDir, callback) {
         let ruleName = tagExport.ruleNames[element].attributes.name;
         tagExport.rules[ruleName] = pmEnv.getEnvValue(resultEnv, "exportRuleCmps-" + element);
       }
-      //Write to a file
-      var propName = tagExport.propertyName.replace(/\s+/g, "-").toLowerCase();
-      //TODO fix -o outputDir
       if (!exportDir) exportDir = ".";
-      fs.writeFileSync(exportDir + "/" + propName + ".json", JSON.stringify(tagExport, null, 2));
+      const fileBase = parserUtil.sanitizeFileBaseName(tagExport.propertyName);
+      const outputFile = path.join(exportDir, fileBase + ".json");
+      fs.mkdirSync(path.dirname(outputFile), { recursive: true });
+      fs.writeFileSync(outputFile, JSON.stringify(tagExport, null, 2));
     })
     .then((resultEnv) => callback(null, resultEnv))
     .catch(err => callback(err, null));

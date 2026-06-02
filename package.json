@@ -12,6 +12,7 @@
   },
   "main": "index.js",
   "scripts": {
+    "aep-tag-tool": "node bin/global.js",
     "preversion": "git fetch --tags && npm run lint && npm run test:noLogs",
     "version": "npm run build",
     "postversion": "git push --follow-tags && npm run cleanup",
@@ -24,8 +25,8 @@
     "release:beta": "npm version patch && npm run publish:beta",
     "publish:beta": "npm publish --tag beta",
     "cleanup": "rm -R newman && rm tests/updatedImportObj.json",
-    "test": "node tests/tests.js",
-    "test:noLogs": "node tests/tests.js -- --hideconsole"
+    "test": "node tests/auth-config.test.js && node tests/export-filename.test.js && node tests/tests.js",
+    "test:noLogs": "node tests/auth-config.test.js && node tests/export-filename.test.js && node tests/tests.js -- --hideconsole"
   },
   "keywords": [
     "aep",
