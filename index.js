@@ -68,6 +68,7 @@ async function runTool(authConfig, authMethod, mode, settings) {
     const newSettings = settings || args.settings || args.s;
     const importPID = args.pid || args.p || "";
     const importTitle = args.title || args.t;
+    const argsDebug = args.debug !== undefined;
     const propertiesFile = args.import || args.i;
 
     if (missingRequiredString(propertiesFile)) {
@@ -82,6 +83,7 @@ async function runTool(authConfig, authMethod, mode, settings) {
     }
     propertyObj.propertyName = importTitle || propertyObj.propertyName;
     propertyObj.propID = importPID;
+    propertyObj.appendTimestamp = argsDebug;
     if (newSettings) {
       propertyObj = importObjUtil.updateSettings(propertyObj, newSettings);
       if (!propertyObj) {

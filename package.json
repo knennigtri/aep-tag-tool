@@ -1,6 +1,6 @@
 {
   "name": "@knennigtri/aep-tag-tool",
-  "version": "2.0.0",
+  "version": "2.2.0",
   "description": "Export and Import Adobe Experience Platform Tags (previously Launch) with optional variable updates based on Organzations",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
     "publish:bugfix": "npm publish --tag bugfix",
     "release:beta": "npm version patch && npm run publish:beta",
     "publish:beta": "npm publish --tag beta",
-    "cleanup": "rm -R newman && rm tests/updatedImportObj.json",
+    "cleanup": "rm -R bin/newman && rm tests/updatedImportObj.json",
     "test": "node tests/auth-config.test.js && node tests/export-filename.test.js && node tests/cli-output.test.js && node tests/delete-preview.test.js && node tests/settings-yaml.test.js && node tests/async-api.test.js && node tests/tests.js",
     "test:noLogs": "node tests/auth-config.test.js && node tests/export-filename.test.js && node tests/cli-output.test.js && node tests/delete-preview.test.js && node tests/settings-yaml.test.js && node tests/async-api.test.js && node tests/tests.js -- --hideconsole"
   },
