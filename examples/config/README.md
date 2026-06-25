@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Generate an Auth file](#generate-an-auth-file)
+  - [OAuth](#oauth)
+  - [JWT](#jwt)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Generate an Auth file
 
 ## OAuth

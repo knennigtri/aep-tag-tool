@@ -1,3 +1,20 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Backlog](#backlog)
+  - [Generate settings YAML from export (curated profiles)](#generate-settings-yaml-from-export-curated-profiles)
+    - [Approach](#approach)
+      - [Extension profile (initial)](#extension-profile-initial)
+      - [Data elements](#data-elements)
+      - [`settings-vars` / templating](#settings-vars--templating)
+    - [Proposed CLI](#proposed-cli)
+    - [Implementation notes](#implementation-notes)
+    - [Out of scope (for later)](#out-of-scope-for-later)
+    - [Workflow for new org](#workflow-for-new-org)
+    - [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Backlog
 
 ## Generate settings YAML from export (curated profiles)

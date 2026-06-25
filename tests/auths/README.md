@@ -1,3 +1,10 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Auth config fixtures](#auth-config-fixtures)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Auth config fixtures
 
 Place Adobe Developer Console **project/workspace JSON** downloads here for local runs:

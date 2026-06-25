@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Understand settings.yml](#understand-settingsyml)
+  - [Example](#example)
+  - [Validate before import](#validate-before-import)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Understand settings.yml
 settings.yml Format:
 ```yaml
