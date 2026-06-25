@@ -179,13 +179,27 @@ function authenicateAIO(environment) {
 
 // Runs the Import Tag collection folder "Create Tag Property"
 function createProperty(environment, importItems, globals) {
+  const envVars = [{
+    key: "propName",
+    value: importItems.propertyName
+  }];
+
+  if (importItems.appendTimestamp) {
+    envVars.push({
+      key: "PROPERTY_UID",
+      value: " " + formatDateTime()
+    });
+  } else {
+    envVars.push({
+      key: "PROPERTY_UID",
+      value: ""
+    });
+  }
+
   return newmanRun("createProp",
     environment, globals,
     IMPORT_COLLECTION, "Create Tag Property",
-    "", [{
-      "key": "propName",
-      "value": importItems.propertyName
-    }]);
+    "", envVars);
 }
 
 // Runs the Import Tag collection folder "Add Tag Extensions"

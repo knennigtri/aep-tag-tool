@@ -12,6 +12,7 @@ const HELP_O =      "-o, --output <folder>               [export] folder path to
 const HELP_export = "-e, --export <PID>                  Mode to export a given property ID.";
 const HELP_import = "-i, --import <propertyFile.json>    Mode to import a property given a config file.";
 const HELP_delete = "-d, --delete <searchStr>            Mode to delete properties containing a specific string";
+const HELP_debug = "    --debug                         [import] append timestamp to created property name";
 const HELP =
 "Usage: "+ packageInfo.name.replace("@knennigtri/", "") + ` [ARGS]
  Arguments:
@@ -20,6 +21,7 @@ const HELP =
     ` + HELP_import + `
     ` + HELP_delete + `
     ` + HELP_CEDRLP + `
+    ` + HELP_debug + `
     ` + HELP_T + `
     ` + HELP_P + `
     ` + HELP_S + `
@@ -124,13 +126,7 @@ Optional params:
  ` + HELP_T + `
  ` + HELP_P + `
  ` + HELP_S + `
-Note: PID is ignored unless importing to an existing property (-C is omited)
-
-You can specify exactly what you want to create/import with these params. 
-No matter the parameter order, they will always execute in the order below.
-  -C  Creates a new property.
-
-If -C is not used with the remaining parameters, a PID is required in parameters
+ ` + HELP_debug + `
   -E  Imports extensions. propertyFile.extensions is required.
   -D  Imports data elements. propertyFile.dataElement is required.
   -R  Imports rule components. propertyFile.rules.[rules] is required.

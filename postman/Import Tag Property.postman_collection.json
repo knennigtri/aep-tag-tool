@@ -78,16 +78,25 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var resp = JSON.parse(responseBody);",
-									"",
-									"pm.environment.set(\"propID\", resp.data.id);",
-									"pm.environment.set(\"propFullName\", resp.data.attributes.name);",
-									"",
-									"",
-									"pm.test(\"Property: \" +resp.data.attributes.name+ \" created with ID: \" + resp.data.id, function () {",
-									"  pm.response.to.have.status(201);",
-									"  pm.expect(resp.data.id).to.be.not.empty;",
-									"});"
+									"var resp = {};",
+									"try { resp = JSON.parse(responseBody); } catch (e) { }",
+									"var respData = resp.data || {};",
+									"if (pm.response.code === 409) {",
+									"    pm.test(\"Property creation failed due to name conflict\", function () {",
+									"        pm.expect.fail(\"Property name already exists. Use --debug to append a timestamp or -t to set a unique title.\");",
+									"    });",
+									"} else if (!respData.id) {",
+									"    pm.test(\"Property creation response contains ID\", function () {",
+									"        pm.expect.fail(\"Create Property response did not return an ID.\");",
+									"    });",
+									"} else {",
+									"    pm.environment.set(\"propID\", respData.id);",
+									"    pm.environment.set(\"propFullName\", respData.attributes && respData.attributes.name);",
+									"    pm.test(\"Property: \" + respData.attributes.name + \" created with ID: \" + respData.id, function () {",
+									"      pm.response.to.have.status(201);",
+									"      pm.expect(respData.id).to.be.not.empty;",
+									"    });",
+									"}"
 								],
 								"type": "text/javascript"
 							}
@@ -100,8 +109,9 @@
 									"    pm.environment.set(\"propName\",\"Tag Importer\");",
 									"}",
 									"",
-									"var now = new Date(Date.now());",
-									"postman.setEnvironmentVariable(\"PROPERTY_UID\", now.toISOString());"
+									"if (!pm.environment.get(\"PROPERTY_UID\")) {",
+									"    pm.environment.set(\"PROPERTY_UID\", \"\");",
+									"}"
 								],
 								"type": "text/javascript"
 							}
@@ -138,7 +148,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"data\": {\n    \"attributes\": {\n      \"name\": \"{{propName}} {{PROPERTY_UID}}\",\n      \"domains\": [\n        \"example.com\"\n      ],\n      \"platform\": \"web\"\n    },\n    \"type\": \"properties\"\n  }\n}"
+							"raw": "{\n  \"data\": {\n    \"attributes\": {\n      \"name\": \"{{propName}}{{PROPERTY_UID}}\",\n      \"domains\": [\n        \"example.com\"\n      ],\n      \"platform\": \"web\"\n    },\n    \"type\": \"properties\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/companies/{{companyID}}/properties",

@@ -119,10 +119,11 @@ Usage: aep-tag-tool [ARGS]
     -e, --export <PID>                  Mode to export a given property ID.
     -i, --import <propertyFile.json>    Mode to import a property given a config file.
     -d, --delete <searchStr>            Mode to delete properties containing a specific string
+    --debug                            [import] append timestamp to created property name
     -C,-E,-D,-R,-L,-P                   [import] Options to partially import. See -h import
     -t, --title  <title>                [import] optional new title of tag property
     -p, --pid    <pid>                  [import] import into an existing property ID
-    -s, --settings  <settings.yml>      [import] unique property settings for a new org
+    -s, --settings <settings.yml>      [import] unique property settings for a new org
     -o, --output <folder>               [export] folder path to save export property. Default ./
     -v, --version                       Displays version of this package
     --jwt                               Use if using JWT Auth. Deprecated by Adobe. Default is OAuth.
@@ -181,10 +182,11 @@ Requires:
 Optionally include the property file with a parameter
 ```
  -f, --file   <file>                 [import] file containing import json
+ --debug                            [import] append timestamp to created property name
  -t, --title  <title>                [import] optional new title of tag property;
  -p, --pid    <pid>                  [export, import] property ID
 ```
-Note: PID is ignored unless importing to an existing property (-C is omited)
+Note: PID is ignored unless importing to an existing property (-C is omitted)
 
 propertyFile.json file requires:
  1. propertyFile.propertyName

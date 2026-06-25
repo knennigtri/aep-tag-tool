@@ -11,7 +11,7 @@ const args = minimist(process.argv.slice(2));
 const debug = require("debug");
 const debugArgs = debug("args");
 
-const { HELP } = require("./cli-message.js");
+const { HELP } = require("./message.js");
 
 const modes = {
   export: "export",
@@ -37,7 +37,7 @@ async function init() {
   // Show CLI help
   if (argsHelp) {
     const helpType = argsHelp === true ? "default" : String(argsHelp).toLowerCase();
-    console.log(HELP[helpType] || HELP.default);
+    console.log(HELP[helpType] || HELP);
     return;
   }
 
